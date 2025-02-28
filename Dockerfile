@@ -1,22 +1,23 @@
+# Use an official Node.js runtime as a parent image
 FROM node:22
 
 # Set the working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json first (for caching)
-COPY package*.json ./
+# Copy package.json, package-lock.json, and tsconfig.json for better caching
+COPY package*.json tsconfig.json ./
 
-# Install dependencies with verbose logging
-RUN set -x && \
-    node --version && \
-    npm --version && \
-    npm install --omit=dev
+# Install dependencies (only production)
+RUN npm install --omit=dev
 
-# Copy the rest of the app
+# Copy the entire project
 COPY . .
+
+# Compile TypeScript
+RUN npm run build
 
 # Expose the port
 EXPOSE 4000
 
-# Run the app
-CMD ["npm", "start"]
+# Start the app with module alias support
+CMD ["node", "-r", "module-alias/register", "dist/index.js"]
