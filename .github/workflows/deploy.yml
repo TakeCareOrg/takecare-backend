@@ -1,0 +1,49 @@
+name: Deploy to VPS
+
+on:
+    push:
+        branches: [main]
+    pull_request:
+        branches: [main]
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
+
+            - name: Build and push Docker image
+              run: |
+                  docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.GH_PAT }} 
+                  IMAGE_NAME=${{ secrets.DOCKER_USERNAME }}/takecare-api-beta:${{ github.ref_name }}
+                  docker build -t $IMAGE_NAME .
+                  docker push $IMAGE_NAME
+
+            - name: Deploy to VPS
+              uses: appleboy/ssh-action@master
+              with:
+                  host: ${{ secrets.VPS_HOST }}
+                  username: ${{ secrets.VPS_USER }}
+                  key: ${{ secrets.SSH_PRIVATE_KEY }}
+                  port: 22
+                  script: |
+                      cd ~/takecare-api
+                      docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.GH_PAT }} 
+
+                      BRANCH=${{ github.ref_name }}
+                      CONTAINER_NAME="takecare-api-beta"
+                      PORT=3002
+
+                      IMAGE_NAME=${{ secrets.DOCKER_USERNAME }}/takecare-api-beta:$BRANCH
+
+                      # Pull the latest image
+                      docker pull $IMAGE_NAME
+
+                      # Stop and remove the existing container if it exists
+                      docker stop $CONTAINER_NAME || true
+                      docker rm $CONTAINER_NAME || true
+
+                      # Run the new container with the correct port and env file
+                      docker run -d --name $CONTAINER_NAME --env-file .env -p 3002:4000 $IMAGE_NAME
