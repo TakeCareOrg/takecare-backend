@@ -1,5 +1,5 @@
 # Use an official Node.js runtime as a parent image
-FROM node:22
+FROM node:18-slim
 
 # Set the working directory
 WORKDIR /app
@@ -7,7 +7,8 @@ WORKDIR /app
 # Copy package.json, package-lock.json, and tsconfig.json for better caching
 COPY package*.json tsconfig.json ./
 
-# Install dependencies (only production)
+# Install dependencies (only production) and skip Husky scripts
+ENV HUSKY=0
 RUN npm install --omit=dev
 
 # Copy the entire project
