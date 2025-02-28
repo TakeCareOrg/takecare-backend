@@ -1,14 +1,9 @@
-import express, { Request, Response } from "express";
+import { app } from "./app";
 
-const app = express();
-const port: string | number = 3000;
-
-app.get("/", (req: Request, res: Response) => {
-    res.send("Hello World");
-});
+const port: string | number = process.env.PORT || 3000;
 
 const server = app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
 
-export { app, server };
+export { server };
