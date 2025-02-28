@@ -16,8 +16,8 @@ jobs:
 
             - name: Build and push Docker image
               run: |
-                  docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.GH_PAT }} 
-                  IMAGE_NAME=${{ secrets.DOCKER_USERNAME }}/takecare-api-beta:${{ github.ref_name }}
+                  docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.GH_PAT }} ghcr.io
+                  IMAGE_NAME=ghcr.io/${{ secrets.DOCKER_USERNAME }}/takecare-api-beta:${{ github.ref_name }}
                   docker build -t $IMAGE_NAME .
                   docker push $IMAGE_NAME
 
@@ -30,13 +30,13 @@ jobs:
                   port: 22
                   script: |
                       cd ~/takecare-api
-                      docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.GH_PAT }} 
+                      docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.GH_PAT }} ghcr.io
 
                       BRANCH=${{ github.ref_name }}
                       CONTAINER_NAME="takecare-api-beta"
                       PORT=3002
 
-                      IMAGE_NAME=${{ secrets.DOCKER_USERNAME }}/takecare-api-beta:$BRANCH
+                      IMAGE_NAME=ghcr.io/${{ secrets.DOCKER_USERNAME }}/takecare-api-beta:$BRANCH
 
                       # Pull the latest image
                       docker pull $IMAGE_NAME
