@@ -9,7 +9,7 @@ COPY package*.json tsconfig.json ./
 
 # Install dependencies (only production) and skip Husky scripts
 ENV HUSKY=0
-RUN npm install --omit=dev
+RUN npm install
 
 # Copy the entire project
 COPY . .
