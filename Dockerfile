@@ -21,4 +21,4 @@ RUN npm run build
 EXPOSE 4000
 
 # Start the app with module alias support
-CMD ["node", "-r", "module-alias/register", "dist/index.js"]
+CMD ["npm", "start"]
