@@ -13,7 +13,7 @@ const router = Router();
  */
 
 router.get("/", (req: Request, res: Response) => {
-    res.send("Hello World");
+    res.send("Welcome to TakeCare Beta API");
 });
 
 export default router;
