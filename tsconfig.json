@@ -11,7 +11,13 @@
         "paths": {
             "@middlewares/*": ["middlewares/*"],
             "@routes/*": ["routes/*"],
-            "@libs/*": ["libs/*"]
+            "@libs/*": ["libs/*"],
+            "@models/*": ["models/*"],
+            "@services/*": ["services/*"],
+            "@dtypes/*": ["types/*"],
+            "@utils/*": ["utils/*"],
+            "@controllers/*": ["controllers/*"],
+            "@database/*": ["database/*"]
         },
 
         /* Emit */

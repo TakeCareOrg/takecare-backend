@@ -1,15 +1,24 @@
 import express from "express";
 import dotenv from "dotenv";
 import morganMiddleware from "@middlewares/morganMiddleware";
-import indexRouter from "@routes/index";
 import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import helmet from "helmet";
 import cors from "cors";
+import connectToMongoDB from "@database/connect";
+
+// Import the routes
+import indexRouter from "@routes/index";
+import authRouter from "@routes/authRouter";
+import userRouter from "@routes/userRouter";
 
 dotenv.config();
 const app = express();
 
+// parse application/json
+app.use(express.json());
+// parse application/x-www-form-urlencoded
+app.use(express.urlencoded({ extended: true }));
 // Use Helmet to secure Express app by setting various HTTP headers
 app.use(helmet());
 // Enable CORS with various options
@@ -19,6 +28,11 @@ app.use(morganMiddleware);
 
 // Tell the app to use the routes
 app.use("/", indexRouter);
+app.use("/auth", authRouter);
+app.use("/user", userRouter);
+
+// Connect to the database
+connectToMongoDB();
 
 // Swagger
 const swaggerOptions = {
