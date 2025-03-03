@@ -173,7 +173,7 @@ const UserAttributionsDB = mongo.model<IUserAttributionsDocument>(
     userAttributions,
 );
 const UserHealthAttributionsDB = mongo.model<IHealthAttributions>(
-    "User_HealthAttributions",
+    "User_Health_Attributions",
     userHealthAttributions,
 );
 
