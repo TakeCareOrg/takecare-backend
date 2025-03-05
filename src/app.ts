@@ -15,6 +15,9 @@ import userRouter from "@routes/userRouter";
 dotenv.config();
 const app = express();
 
+// Connect to the database
+connectToMongoDB(process.env.TAKECARE_DATABASE_URL);
+
 // parse application/json
 app.use(express.json());
 // parse application/x-www-form-urlencoded
@@ -30,9 +33,6 @@ app.use(morganMiddleware);
 app.use("/", indexRouter);
 app.use("/auth", authRouter);
 app.use("/user", userRouter);
-
-// Connect to the database
-connectToMongoDB();
 
 // Swagger
 const swaggerOptions = {
