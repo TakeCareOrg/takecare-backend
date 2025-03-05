@@ -5,7 +5,13 @@
     "_moduleAliases": {
         "@middlewares": "dist/middlewares",
         "@routes": "dist/routes",
-        "@libs": "dist/libs"
+        "@libs": "dist/libs",
+        "@dtypes": "dist/types",
+        "@utils": "dist/utils",
+        "@services": "dist/services",
+        "@models": "dist/models",
+        "@controllers": "dist/controllers",
+        "@database": "dist/database"
     },
     "scripts": {
         "test": "jest --coverage",
@@ -39,11 +45,15 @@
     "description": "",
     "dependencies": {
         "@types/morgan": "^1.9.9",
+        "bcryptjs": "^3.0.2",
         "cors": "^2.8.5",
+        "crypto": "^1.0.1",
         "dotenv": "^16.4.7",
         "express": "^4.21.2",
         "helmet": "^8.0.0",
+        "jsonwebtoken": "^9.0.2",
         "module-alias": "^2.2.3",
+        "mongoose": "^8.11.0",
         "morgan": "^1.10.0",
         "swagger-jsdoc": "^6.2.8",
         "swagger-ui-express": "^5.0.1",
@@ -52,9 +62,11 @@
     "devDependencies": {
         "@eslint/eslintrc": "^3.3.0",
         "@eslint/js": "^9.21.0",
+        "@types/bcryptjs": "^2.4.6",
         "@types/cors": "^2.8.17",
         "@types/express": "^5.0.0",
         "@types/jest": "^29.5.14",
+        "@types/jsonwebtoken": "^9.0.9",
         "@types/node": "^22.13.5",
         "@types/supertest": "^6.0.2",
         "@types/swagger-jsdoc": "^6.0.4",

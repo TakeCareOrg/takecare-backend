@@ -1,6 +1,6 @@
 import { server } from "../src/index";
 import { app } from "../src/app";
-const request = require("supertest"); // Require import to prevent type error with supertest
+import request from "supertest";
 
 describe("GET /", () => {
     // This block runs after all the tests in this describe block are complete
