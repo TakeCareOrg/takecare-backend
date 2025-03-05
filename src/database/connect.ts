@@ -1,7 +1,7 @@
 import Logger from "@libs/logger";
 import mongoose from "mongoose";
 
-const connectToMongoDB = async (DATABASE_URL: string) => {
+const connectToMongoDB = async (DATABASE_URL: string | undefined) => {
     if (!DATABASE_URL) {
         Logger.error("Database URL is not provided, insert it in .env file");
         throw new Error("Database URL is not provided");
