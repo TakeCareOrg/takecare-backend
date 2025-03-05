@@ -1,7 +1,11 @@
 import { User, UserAttributions, UserHealthAttributions } from "@dtypes/user";
 import mongo, { Schema } from "mongoose";
 
-const userSchema = new Schema<User>({
+interface IUserDocument extends User, Document {}
+interface IUserAttributionsDocument extends UserAttributions, Document {}
+interface IHealthAttributions extends UserHealthAttributions, Document {}
+
+const userSchema = new Schema<IUserDocument>({
     user_id: {
         type: String,
         required: true,
@@ -37,7 +41,7 @@ const userSchema = new Schema<User>({
     },
 });
 
-const userAttributions = new Schema<UserAttributions>({
+const userAttributions = new Schema<IUserAttributionsDocument>({
     user_id: {
         type: String,
         required: true,
@@ -79,7 +83,7 @@ const userAttributions = new Schema<UserAttributions>({
     },
 });
 
-const userHealthAttributions = new Schema<UserHealthAttributions>({
+const userHealthAttributions = new Schema<IHealthAttributions>({
     user_id: {
         type: String,
         required: true,
@@ -163,12 +167,12 @@ const userHealthAttributions = new Schema<UserHealthAttributions>({
     },
 });
 
-const UserDB = mongo.model<User>("User", userSchema);
-const UserAttributionsDB = mongo.model<UserAttributions>(
+const UserDB = mongo.model<IUserDocument>("User", userSchema);
+const UserAttributionsDB = mongo.model<IUserAttributionsDocument>(
     "User_Attributions",
     userAttributions,
 );
-const UserHealthAttributionsDB = mongo.model<UserHealthAttributions>(
+const UserHealthAttributionsDB = mongo.model<IHealthAttributions>(
     "User_Health_Attributions",
     userHealthAttributions,
 );
