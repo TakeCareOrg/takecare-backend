@@ -14,7 +14,6 @@ const userSchema = new Schema<User>({
     },
     appleId: {
         type: String,
-        unique: true,
         required: false,
     },
     social_conn: {

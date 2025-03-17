@@ -1,11 +1,11 @@
 export interface User {
     user_id: string;
     email: string;
-    appleId: string;
-    social_conn: string;
+    appleId?: string;
+    social_conn?: string;
     password: string;
     created_at: Date;
-    resetCode: string;
+    resetCode?: string;
 }
 
 export interface UserAttributions {
