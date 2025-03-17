@@ -1,5 +1,5 @@
 services:
-    takecare-api:
+    takecare-api-beta:
         image: justrunnz/takecare-api-beta:main
         env_file:
             - .env
