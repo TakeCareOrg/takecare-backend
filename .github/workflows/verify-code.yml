@@ -1,0 +1,35 @@
+name: Verify code
+
+on:
+    push:
+        branches:
+            - "*" # all branches
+    pull_request:
+        types:
+            - opened
+            - synchronize
+        branches:
+            - "*"
+
+jobs:
+    verify:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
+
+            - name: Install dependencies
+              run: npm install
+
+            # - name: Run tests
+            #   run: npm test
+
+            - name: Lint code
+              run: npm run lint
+
+            - name: Build code
+              run: npm run build
+
+            # - name: Verify code coverage
+            #   run: npm run coverage
