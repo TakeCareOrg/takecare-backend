@@ -11,6 +11,7 @@ import connectToMongoDB from "@database/connect";
 import indexRouter from "@routes/index";
 import authRouter from "@routes/authRouter";
 import userRouter from "@routes/userRouter";
+import chatRouter from "@routes/chatRouter";
 
 dotenv.config();
 const app = express();
@@ -33,6 +34,7 @@ app.use(morganMiddleware);
 app.use("/", indexRouter);
 app.use("/auth", authRouter);
 app.use("/user", userRouter);
+app.use("/chat", chatRouter);
 
 // Swagger
 const swaggerOptions = {
