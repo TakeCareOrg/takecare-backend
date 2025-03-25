@@ -20,6 +20,7 @@
         "dev": "ts-node-dev --respawn --transpile-only -r tsconfig-paths/register src/index.ts",
         "lint": "eslint 'src/**/*.{ts,tsx}' --fix",
         "format": "prettier --write 'src/**/*.{ts,tsx,js,jsx,json,css,md}'",
+        "format:check": "prettier --check 'src/**/*.{ts,tsx,js,jsx,json,css,md}'",
         "prepare": "husky"
     },
     "lint-staged": {
@@ -57,6 +58,7 @@
         "morgan": "^1.10.0",
         "swagger-jsdoc": "^6.2.8",
         "swagger-ui-express": "^5.0.1",
+        "together-ai": "^0.13.0",
         "winston": "^3.17.0"
     },
     "devDependencies": {
