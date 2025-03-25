@@ -11,13 +11,13 @@ export interface User {
 export interface UserAttributions {
     user_id: string;
     verified: boolean;
-    role: string;
+    role?: "user" | "admin";
     first_name: string;
     last_name: string;
-    quiz_finished: boolean;
+    quiz_finished?: boolean;
     chat_tokens: number;
-    chat_tokens_refreshed_at: Date;
-    avatar: string;
+    chat_tokens_refreshed_at?: Date;
+    avatar?: string;
 }
 
 export interface UserHealthAttributions {
