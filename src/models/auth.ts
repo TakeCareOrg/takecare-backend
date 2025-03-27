@@ -10,12 +10,7 @@ class Auth {
     private async isUniqueUser(email: string) {
         try {
             const user = await UserDB.findOne({ email });
-
-            if (user) {
-                return true;
-            } else {
-                return false;
-            }
+            return !!user;
         } catch {
             throw new Error("AN_ERROR_OCCURRED");
         }

@@ -1,11 +1,11 @@
-import { createNewUser, login } from "../src/controllers/auth";
-import { Auth } from "@models/auth";
-import Logger from "@libs/logger";
+import { createNewUser, login } from "../../src/controllers/auth";
+import { Auth } from "../../src/models/auth";
+import Logger from "../../src/libs/logger";
 import { Request, Response, NextFunction } from "express";
 import { StatusCodes } from "http-status-codes";
 
-jest.mock("@models/auth");
-jest.mock("@libs/logger");
+jest.mock("../../src/models/auth");
+jest.mock("../../src/libs/logger");
 
 describe("User Authentication Tests", () => {
     let req: Partial<Request>;
