@@ -1,7 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
 import morganMiddleware from "@middlewares/morganMiddleware";
-import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import helmet from "helmet";
 import cors from "cors";
@@ -13,6 +12,7 @@ import authRouter from "@routes/authRouter";
 import userRouter from "@routes/userRouter";
 import chatRouter from "@routes/chatRouter";
 import { initMailTransport } from "@services/mail";
+import { swaggerDocs } from "@config/swagger";
 
 dotenv.config();
 const app = express();
@@ -35,22 +35,9 @@ app.use(morganMiddleware);
 // Tell the app to use the routes
 app.use("/", indexRouter);
 app.use("/auth", authRouter);
-app.use("/user", userRouter);
+app.use("/users", userRouter);
 app.use("/chat", chatRouter);
 
-// Swagger
-const swaggerOptions = {
-    swaggerDefinition: {
-        info: {
-            title: "Express API with Swagger",
-            version: "1.0.0",
-            description: "This is a simple API",
-        },
-    },
-    apis: ["./src/routes/*.ts"],
-};
-
-const swaggerDocs = swaggerJSDoc(swaggerOptions);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 export { app };

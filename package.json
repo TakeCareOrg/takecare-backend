@@ -11,7 +11,9 @@
         "@services": "dist/services",
         "@models": "dist/models",
         "@controllers": "dist/controllers",
-        "@database": "dist/database"
+        "@database": "dist/database",
+        "@config": "dist/config",
+        "@docs": "dist/docs"
     },
     "scripts": {
         "test": "jest --coverage",
