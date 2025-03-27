@@ -2,6 +2,14 @@ import { UserDB, UserHealthAttributionsDB } from "@database/models/user";
 import { UserHealthAttributions, UserInfoPayload } from "@dtypes/user";
 import Logger from "@libs/logger";
 
+type UserHealthDataQuiz = Omit<
+    UserHealthAttributions,
+    "user_id" | "created_at"
+> & {
+    first_name: string;
+    last_name: string;
+};
+
 class User {
     user_id: string;
     constructor(user_id: string) {
@@ -21,8 +29,6 @@ class User {
                 throw new Error("AN_ERROR_OCCURRED");
             }
 
-            const email = user.email;
-
             const [userInfo, userHealthInfo] = await Promise.all([
                 UserDB.findOne({ user_id: this.user_id }),
                 UserHealthAttributionsDB.findOne({ user_id: this.user_id }),
@@ -35,7 +41,7 @@ class User {
 
             const userPayload: UserInfoPayload = {
                 user_id: this.user_id,
-                email: email,
+                email: user.email,
                 first_name: userInfo.first_name,
                 last_name: userInfo.last_name,
                 verified: userInfo.verified,
@@ -49,6 +55,50 @@ class User {
 
             return { user: userPayload };
         } catch {
+            throw new Error("AN_ERROR_OCCURRED");
+        }
+    }
+
+    async healthQuiz(healthData: UserHealthDataQuiz) {
+        if (!this.user_id) {
+            throw new Error("AN_ERROR_OCCURRED");
+        }
+
+        if (!healthData) {
+            throw new Error("MISSING_HEALTH_DATA");
+        }
+
+        const { first_name, last_name, ...health_attributions } = healthData;
+
+        try {
+            const user = await UserDB.findOne({ user_id: this.user_id });
+
+            if (!user) {
+                Logger.error("USER_NOT_FOUND_FOR_HEALTH_QUIZ");
+                throw new Error("AN_ERROR_OCCURRED");
+            }
+
+            const userHealthInfo = await UserHealthAttributionsDB.findOne({
+                user_id: this.user_id,
+            });
+
+            if (userHealthInfo) {
+                Logger.error("USER_ALREADY_COMPLETED_QUIZ");
+                throw new Error("AN_ERROR_OCCURRED");
+            }
+
+            await Promise.all([
+                UserDB.updateOne(
+                    { user_id: this.user_id },
+                    { quiz_finished: true, first_name, last_name },
+                ),
+                await UserHealthAttributionsDB.create({
+                    user_id: this.user_id,
+                    ...health_attributions,
+                }),
+            ]);
+        } catch (error) {
+            Logger.error(error);
             throw new Error("AN_ERROR_OCCURRED");
         }
     }
