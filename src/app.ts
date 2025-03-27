@@ -12,7 +12,7 @@ import authRouter from "@routes/authRouter";
 import userRouter from "@routes/userRouter";
 import chatRouter from "@routes/chatRouter";
 import { initMailTransport } from "@services/mail";
-import { swaggerDocs } from "@config/swagger";
+import swaggerDocs from "@config/swagger";
 
 dotenv.config();
 const app = express();
