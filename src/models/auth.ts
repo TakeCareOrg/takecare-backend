@@ -1,8 +1,10 @@
 import { UserDB } from "@database/models/user";
+import { VerificationCodeDB } from "@database/models/verificationCodes";
 import Logger from "@libs/logger";
+import sendVericationEmail from "@services/mail/templates/email-verification";
 import { generateToken } from "@utils/jwt";
 import bcrypt from "bcryptjs";
-import { randomUUID } from "crypto";
+import { randomUUID, randomInt } from "crypto";
 
 class Auth {
     constructor() {}
@@ -23,7 +25,7 @@ class Auth {
 
     async createNewUser(email: string, password: string) {
         if (!email || !password) {
-            throw new Error("AN_ERROR_OCCURRED");
+            throw new Error("MISSING_FIELDS");
         }
 
         try {
@@ -43,27 +45,34 @@ class Auth {
                 created_at: new Date().toISOString(),
             });
 
-            const token = generateToken({
+            const token = generateToken({ user_id: user.user_id });
+
+            // Create a new verification code
+            const verifyCode = new VerificationCodeDB({
                 user_id: user.user_id,
-                email: user.email,
+                code: randomInt(100000, 999999),
             });
 
-            // Save the user
-            await user.save();
+            // Save the user and verification code to the database
+            await Promise.all([
+                user.save(),
+                verifyCode.save(),
+                sendVericationEmail({
+                    code: verifyCode.code.toString(),
+                    to: user.email,
+                }),
+            ]);
 
-            Logger.info(`User created: ${user.email}`);
             return { token };
-        } catch (e) {
-            console.log(e);
-
-            Logger.error("500: Internal server error");
+        } catch (error) {
+            Logger.error(`Error creating new user ${error}`);
             throw new Error("AN_ERROR_OCCURRED");
         }
     }
 
     async login(email: string, password: string) {
         if (!email || !password) {
-            throw new Error("AN_ERROR_OCCURRED");
+            throw new Error("MISSING_FIELDS");
         }
 
         try {
@@ -79,12 +88,41 @@ class Auth {
                 throw new Error("AN_ERROR_OCCURRED");
             }
 
-            const token = generateToken({
-                user_id: user.user_id,
-                email: user.email,
-            });
+            const token = generateToken({ user_id: user.user_id });
 
             return { token };
+        } catch {
+            throw new Error("AN_ERROR_OCCURRED");
+        }
+    }
+
+    async verifyEmail(user_id: string, code: string) {
+        if (!user_id || !code) {
+            throw new Error("MISSING_FIELDS");
+        }
+
+        try {
+            const verificationCode = await VerificationCodeDB.findOne({
+                user_id: user_id,
+                code: Number(code),
+            });
+
+            if (!verificationCode) {
+                return false;
+            }
+
+            const res = await UserDB.updateOne(
+                { user_id: user_id },
+                { verified: true },
+            );
+
+            if (res.matchedCount === 0 || res.modifiedCount === 0) {
+                throw new Error("AN_ERROR_OCCURRED");
+            }
+
+            await verificationCode.deleteOne();
+
+            return true;
         } catch {
             throw new Error("AN_ERROR_OCCURRED");
         }

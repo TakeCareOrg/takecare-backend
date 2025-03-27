@@ -1,0 +1,4 @@
+You're almost there!
+Thank you for signing up for TakeCare. Use the code below to verify your email and start conversing.
+Verification Code: {{code}}
+You received this email because you signed up for a TakeCare account with this email address. If this was a mistake, ignore this email and the account will be deleted.

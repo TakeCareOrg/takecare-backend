@@ -12,12 +12,14 @@ import indexRouter from "@routes/index";
 import authRouter from "@routes/authRouter";
 import userRouter from "@routes/userRouter";
 import chatRouter from "@routes/chatRouter";
+import { initMailTransport } from "@services/mail";
 
 dotenv.config();
 const app = express();
 
 // Connect to the database
 connectToMongoDB(process.env.TAKECARE_DATABASE_URL);
+initMailTransport();
 
 // parse application/json
 app.use(express.json());

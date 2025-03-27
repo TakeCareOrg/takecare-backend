@@ -1,8 +1,4 @@
-import {
-    UserDB,
-    UserAttributionsDB,
-    UserHealthAttributionsDB,
-} from "@database/models/user";
+import { UserDB, UserHealthAttributionsDB } from "@database/models/user";
 import { UserHealthAttributions, UserInfoPayload } from "@dtypes/user";
 import Logger from "@libs/logger";
 
@@ -28,7 +24,7 @@ class User {
             const email = user.email;
 
             const [userInfo, userHealthInfo] = await Promise.all([
-                UserAttributionsDB.findOne({ user_id: this.user_id }),
+                UserDB.findOne({ user_id: this.user_id }),
                 UserHealthAttributionsDB.findOne({ user_id: this.user_id }),
             ]);
 

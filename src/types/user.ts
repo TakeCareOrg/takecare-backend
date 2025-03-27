@@ -1,15 +1,13 @@
-export interface User {
+export interface User extends UserAttributions {
     user_id: string;
     email: string;
     appleId?: string;
     social_conn?: string;
     password: string;
     created_at: Date;
-    resetCode?: string;
 }
 
 export interface UserAttributions {
-    user_id: string;
     verified: boolean;
     role?: "user" | "admin";
     first_name: string;
