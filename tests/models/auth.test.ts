@@ -3,7 +3,6 @@ import { UserDB } from "@database/models/user";
 import Logger from "@libs/logger";
 import { generateToken } from "@utils/jwt";
 import bcrypt from "bcryptjs";
-import { randomUUID } from "crypto";
 
 jest.mock("@database/models/user");
 jest.mock("@libs/logger");
