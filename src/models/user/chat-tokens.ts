@@ -1,4 +1,4 @@
-import { UserAttributionsDB } from "@database/models/user";
+import { UserDB } from "@database/models/user";
 import Logger from "@libs/logger";
 
 class UserChatTokens {
@@ -14,7 +14,7 @@ class UserChatTokens {
 
         try {
             // Decrease tokens
-            const user = await UserAttributionsDB.findOneAndUpdate(
+            const user = await UserDB.findOneAndUpdate(
                 { user_id: this.user_id },
                 {
                     $inc: { chat_tokens: -1 },

@@ -19,7 +19,9 @@
             "@dtypes/*": ["types/*"],
             "@utils/*": ["utils/*"],
             "@controllers/*": ["controllers/*"],
-            "@database/*": ["database/*"]
+            "@database/*": ["database/*"],
+            "@config/*": ["config/*"],
+            "@docs/*": ["docs/*"]
         }
     },
     "include": ["src/**/*", "tests/**/*"],
