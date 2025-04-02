@@ -19,7 +19,8 @@
             "@controllers/*": ["controllers/*"],
             "@database/*": ["database/*"],
             "@config/*": ["config/*"],
-            "@docs/*": ["docs/*"]
+            "@docs/*": ["docs/*"],
+            "@data/*": ["data/*"]
         },
 
         /* Emit */

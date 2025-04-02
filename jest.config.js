@@ -17,6 +17,7 @@ module.exports = {
         "^@database/(.*)$": "<rootDir>/src/database/$1",
         "^@config/(.*)$": "<rootDir>/src/config/$1",
         "^@docs/(.*)$": "<rootDir>/src/docs/$1",
+        "^@data/(.*)$": "<rootDir>/src/data/$1",
     },
     resolver: "jest-ts-webcompat-resolver",
 };

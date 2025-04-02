@@ -21,7 +21,8 @@
             "@controllers/*": ["controllers/*"],
             "@database/*": ["database/*"],
             "@config/*": ["config/*"],
-            "@docs/*": ["docs/*"]
+            "@docs/*": ["docs/*"],
+            "@data/*": ["data/*"]
         }
     },
     "include": ["src/**/*", "tests/**/*"],

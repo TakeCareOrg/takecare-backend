@@ -11,6 +11,8 @@ import indexRouter from "@routes/index";
 import authRouter from "@routes/authRouter";
 import userRouter from "@routes/userRouter";
 import chatRouter from "@routes/chatRouter";
+import quizDataRouter from "@routes/quizRouter";
+
 import { initMailTransport } from "@services/mail";
 import swaggerDocs from "@config/swagger";
 
@@ -37,6 +39,7 @@ app.use("/", indexRouter);
 app.use("/auth", authRouter);
 app.use("/users", userRouter);
 app.use("/chat", chatRouter);
+app.use("/quiz-data", quizDataRouter);
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
