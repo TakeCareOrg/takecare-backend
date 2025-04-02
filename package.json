@@ -13,7 +13,8 @@
         "@controllers": "dist/controllers",
         "@database": "dist/database",
         "@config": "dist/config",
-        "@docs": "dist/docs"
+        "@docs": "dist/docs",
+        "@data": "dist/data"
     },
     "scripts": {
         "test": "jest --coverage",
