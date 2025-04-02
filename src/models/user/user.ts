@@ -61,7 +61,7 @@ class User {
 
     async healthQuiz(healthData: UserHealthDataQuiz) {
         if (!this.user_id) {
-            throw new Error("AN_ERROR_OCCURRED");
+            throw new Error("USER_ID_REQUIRED");
         }
 
         if (!healthData) {
@@ -75,7 +75,7 @@ class User {
 
             if (!user) {
                 Logger.error("USER_NOT_FOUND_FOR_HEALTH_QUIZ");
-                throw new Error("AN_ERROR_OCCURRED");
+                throw new Error("USER_NOT_FOUND_FOR_HEALTH_QUIZ");
             }
 
             const userHealthInfo = await UserHealthAttributionsDB.findOne({
@@ -84,7 +84,7 @@ class User {
 
             if (userHealthInfo) {
                 Logger.error("USER_ALREADY_COMPLETED_QUIZ");
-                throw new Error("AN_ERROR_OCCURRED");
+                throw new Error("USER_ALREADY_COMPLETED_QUIZ");
             }
 
             await Promise.all([

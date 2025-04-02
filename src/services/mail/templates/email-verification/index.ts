@@ -3,7 +3,7 @@ import { sendMail } from "@services/mail";
 import path from "path";
 import fs from "fs";
 
-type VerificationCode = {
+type EmailVerificationCode = {
     code: string;
     to: string;
 };
@@ -20,7 +20,7 @@ const TEXT_TEMPLATE_PATH = path.join(
 const HTML_TEMPLATE = fs.readFileSync(HTML_TEMPLATE_PATH, "utf-8");
 const TEXT_TEMPLATE = fs.readFileSync(TEXT_TEMPLATE_PATH, "utf-8");
 
-async function sendVericationEmail(data: VerificationCode) {
+async function sendVericationEmail(data: EmailVerificationCode) {
     try {
         const html = HTML_TEMPLATE.replace("{{code}}", data.code);
         const text = TEXT_TEMPLATE.replace("{{code}}", data.code);
