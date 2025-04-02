@@ -30,8 +30,8 @@ const getQuizData: RequestMiddleware = async (req, res) => {
 
         res.status(200).json({ [`${req.params.type}`]: data });
     } catch (error) {
-        Logger.error(`Error reading allergies data: ${error}`);
-        throw new Error("Failed to read allergies data");
+        Logger.error(`Error reading ${req.params.type} data: ${error}`);
+        throw new Error(`Error reading ${req.params.type} data: ${error}`);
     }
 };
 
