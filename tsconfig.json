@@ -17,7 +17,10 @@
             "@dtypes/*": ["types/*"],
             "@utils/*": ["utils/*"],
             "@controllers/*": ["controllers/*"],
-            "@database/*": ["database/*"]
+            "@database/*": ["database/*"],
+            "@config/*": ["config/*"],
+            "@docs/*": ["docs/*"],
+            "@data/*": ["data/*"]
         },
 
         /* Emit */

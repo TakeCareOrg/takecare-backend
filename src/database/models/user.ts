@@ -1,4 +1,4 @@
-import { User, UserAttributions, UserHealthAttributions } from "@dtypes/user";
+import { User, UserHealthAttributions } from "@dtypes/user";
 import mongo, { Schema } from "mongoose";
 
 const userSchema = new Schema<User>({
@@ -12,35 +12,11 @@ const userSchema = new Schema<User>({
         required: true,
         unique: true,
     },
-    appleId: {
-        type: String,
-        required: false,
-    },
-    social_conn: {
-        type: String,
-        required: false,
-    },
     password: {
         type: String,
         required: true,
         max: 64,
         min: 6,
-    },
-    created_at: {
-        type: Date,
-        default: Date.now,
-    },
-    resetCode: {
-        type: String,
-        required: false,
-    },
-});
-
-const userAttributions = new Schema<UserAttributions>({
-    user_id: {
-        type: String,
-        required: true,
-        unique: true,
     },
     verified: {
         type: Boolean,
@@ -75,6 +51,18 @@ const userAttributions = new Schema<UserAttributions>({
     avatar: {
         type: String,
         required: false,
+    },
+    appleId: {
+        type: String,
+        required: false,
+    },
+    social_conn: {
+        type: String,
+        required: false,
+    },
+    created_at: {
+        type: Date,
+        default: Date.now,
     },
 });
 
@@ -163,13 +151,9 @@ const userHealthAttributions = new Schema<UserHealthAttributions>({
 });
 
 const UserDB = mongo.model<User>("User", userSchema);
-const UserAttributionsDB = mongo.model<UserAttributions>(
-    "User_Attributions",
-    userAttributions,
-);
 const UserHealthAttributionsDB = mongo.model<UserHealthAttributions>(
     "User_Health_Attributions",
     userHealthAttributions,
 );
 
-export { UserDB, UserAttributionsDB, UserHealthAttributionsDB };
+export { UserDB, UserHealthAttributionsDB };

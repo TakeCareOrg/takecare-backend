@@ -1,9 +1,11 @@
 import { Router } from "express";
-import { getUserInfo } from "@controllers/user";
+import controller from "@controllers/user";
 import { authenticateJWT } from "@middlewares/authMiddleware";
 
 const router = Router();
 
-router.get("/", authenticateJWT, getUserInfo);
+router.get("/me", authenticateJWT, controller.getUserInfo);
+
+router.post("/health-quiz", authenticateJWT, controller.healthQuiz);
 
 export default router;
