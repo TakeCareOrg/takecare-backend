@@ -3,7 +3,7 @@ import Logger from "@libs/logger";
 import { Auth } from "@models/auth";
 import { StatusCodes } from "http-status-codes";
 
-const createNewUser: RequestMiddleware = async (req, res) => {
+export const createNewUser: RequestMiddleware = async (req, res) => {
     const { email, password } = req.body;
 
     // Validate input
@@ -26,7 +26,7 @@ const createNewUser: RequestMiddleware = async (req, res) => {
     }
 };
 
-const login: RequestMiddleware = async (req, res) => {
+export const login: RequestMiddleware = async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {

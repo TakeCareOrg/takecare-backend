@@ -31,11 +31,11 @@ describe("Auth Tests", () => {
     describe("createNewUser", () => {
         it("should throw an error if email or password is missing", async () => {
             await expect(auth.createNewUser("", "password")).rejects.toThrow(
-                "AN_ERROR_OCCURRED",
+                "MISSING_FIELDS",
             );
             await expect(
                 auth.createNewUser("test@example.com", ""),
-            ).rejects.toThrow("AN_ERROR_OCCURRED");
+            ).rejects.toThrow("MISSING_FIELDS");
         });
 
         it("should throw an error if user already exists", async () => {
@@ -78,7 +78,7 @@ describe("Auth Tests", () => {
                 auth.createNewUser("test@example.com", "password"),
             ).rejects.toThrow("AN_ERROR_OCCURRED");
             expect(Logger.error).toHaveBeenCalledWith(
-                "500: Internal server error",
+                "Error creating new user Error: AN_ERROR_OCCURRED",
             );
         });
     });
@@ -86,10 +86,10 @@ describe("Auth Tests", () => {
     describe("login", () => {
         it("should throw an error if email or password is missing", async () => {
             await expect(auth.login("", "password")).rejects.toThrow(
-                "AN_ERROR_OCCURRED",
+                "MISSING_FIELDS",
             );
             await expect(auth.login("test@example.com", "")).rejects.toThrow(
-                "AN_ERROR_OCCURRED",
+                "MISSING_FIELDS",
             );
         });
 

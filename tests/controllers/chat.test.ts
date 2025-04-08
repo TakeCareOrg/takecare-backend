@@ -15,7 +15,7 @@ describe("sendNewMessage", () => {
     beforeEach(() => {
         req = {
             body: {},
-            user: { user_id: "user123", email: "example@admin.com" },
+            user: { user_id: "user123" },
         };
         next = jest.fn();
         res = {

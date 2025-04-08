@@ -9,7 +9,6 @@ describe("JWT Utility Functions", () => {
     const SECRET_KEY = "mysecret";
     const mockUser: UserPayload = {
         user_id: "user123",
-        email: "user@example.com",
     };
 
     beforeEach(() => {
