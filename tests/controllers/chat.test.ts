@@ -2,6 +2,7 @@ import { sendNewMessage } from "../../src/controllers/chat";
 import { NextFunction, Request, Response } from "express";
 import { Chat } from "@models/chat/chat";
 import Logger from "@libs/logger";
+import { StatusCodes } from "http-status-codes";
 
 // Mocking dependencies
 jest.mock("@models/chat/chat");
@@ -28,15 +29,15 @@ describe("sendNewMessage", () => {
         req.user = undefined;
         await sendNewMessage(req as Request, res as Response, next);
 
-        expect(res.status).toHaveBeenCalledWith(401);
+        expect(res.status).toHaveBeenCalledWith(StatusCodes.UNAUTHORIZED);
         expect(res.json).toHaveBeenCalledWith({ message: "UNAUTHORIZED" });
     });
 
     it("should return 400 if messages are missing in the request body", async () => {
-        req.body = {}; // Aucune donnée "messages" dans le corps
+        req.body = {};
         await sendNewMessage(req as Request, res as Response, next);
 
-        expect(res.status).toHaveBeenCalledWith(400);
+        expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
         expect(res.json).toHaveBeenCalledWith({
             message: "Missing required fields",
         });
@@ -56,7 +57,7 @@ describe("sendNewMessage", () => {
             "Hello",
             "World",
         ]);
-        expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
         expect(res.json).toHaveBeenCalledWith({ chat: chatMessage });
     });
 
@@ -71,7 +72,9 @@ describe("sendNewMessage", () => {
         expect(Logger.error).toHaveBeenCalledWith(
             "500: Error: Failed to send message",
         );
-        expect(res.status).toHaveBeenCalledWith(500);
+        expect(res.status).toHaveBeenCalledWith(
+            StatusCodes.INTERNAL_SERVER_ERROR,
+        );
         expect(res.json).toHaveBeenCalledWith({
             message: "INTERNAL_SERVER_ERROR",
         });
