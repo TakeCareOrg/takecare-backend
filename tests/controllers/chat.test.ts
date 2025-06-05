@@ -12,71 +12,191 @@ describe("sendNewMessage", () => {
     let req: Partial<Request>;
     let res: Partial<Response>;
     let next: NextFunction;
+    let mockStatus: jest.Mock;
+    let mockJson: jest.Mock;
 
     beforeEach(() => {
+        // Reset all mocks before each test
+        jest.clearAllMocks();
+
+        mockStatus = jest.fn().mockReturnThis();
+        mockJson = jest.fn();
+
         req = {
             body: {},
             user: { user_id: "user123" },
         };
-        next = jest.fn();
+
         res = {
-            status: jest.fn().mockReturnThis(),
-            json: jest.fn(),
+            status: mockStatus,
+            json: mockJson,
         };
+
+        next = jest.fn();
     });
 
-    it("should return 401 if no user is authenticated", async () => {
-        req.user = undefined;
-        await sendNewMessage(req as Request, res as Response, next);
+    describe("Authentication", () => {
+        it("should return 401 when user is not authenticated", async () => {
+            req.user = undefined;
 
-        expect(res.status).toHaveBeenCalledWith(StatusCodes.UNAUTHORIZED);
-        expect(res.json).toHaveBeenCalledWith({ message: "UNAUTHORIZED" });
-    });
+            await sendNewMessage(req as Request, res as Response, next);
 
-    it("should return 400 if messages are missing in the request body", async () => {
-        req.body = {};
-        await sendNewMessage(req as Request, res as Response, next);
-
-        expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
-        expect(res.json).toHaveBeenCalledWith({
-            message: "Missing required fields",
+            expect(mockStatus).toHaveBeenCalledWith(StatusCodes.UNAUTHORIZED);
+            expect(mockJson).toHaveBeenCalledWith({ message: "UNAUTHORIZED" });
+            expect(next).not.toHaveBeenCalled();
         });
     });
 
-    it("should call Chat.sendMessage and return 200 on success", async () => {
-        req.body = { messages: ["Hello", "World"] };
+    describe("Request validation", () => {
+        it("should return 400 when messages field is missing", async () => {
+            req.body = {};
 
-        const chatMessage = { id: "message1", text: "Hello World" };
-        (Chat.prototype.sendMessage as jest.Mock).mockResolvedValue(
-            chatMessage,
-        );
+            await sendNewMessage(req as Request, res as Response, next);
 
-        await sendNewMessage(req as Request, res as Response, next);
+            expect(mockStatus).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+            expect(mockJson).toHaveBeenCalledWith({
+                message: "Missing required fields",
+            });
+        });
 
-        expect(Chat.prototype.sendMessage).toHaveBeenCalledWith([
-            "Hello",
-            "World",
-        ]);
-        expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
-        expect(res.json).toHaveBeenCalledWith({ chat: chatMessage });
+        it("should return 400 when messages field is null", async () => {
+            req.body = { messages: null };
+
+            await sendNewMessage(req as Request, res as Response, next);
+
+            expect(mockStatus).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+            expect(mockJson).toHaveBeenCalledWith({
+                message: "Missing required fields",
+            });
+        });
+
+        it("should return 400 when messages field is empty array", async () => {
+            req.body = { messages: [] };
+
+            await sendNewMessage(req as Request, res as Response, next);
+
+            expect(mockStatus).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+            expect(mockJson).toHaveBeenCalledWith({
+                message: "Missing required fields",
+            });
+        });
     });
 
-    it("should return 500 if an error occurs in sending the message", async () => {
-        req.body = { messages: ["Hello", "World"] };
+    describe("Successful message sending", () => {
+        it("should successfully send message and return chat data", async () => {
+            const mockMessages = ["Hello", "How are you?"];
+            const mockChatResponse = {
+                id: "chat_123",
+                messages: mockMessages,
+                timestamp: "2024-01-01T00:00:00Z",
+            };
 
-        const error = new Error("Failed to send message");
-        (Chat.prototype.sendMessage as jest.Mock).mockRejectedValue(error);
+            req.body = { messages: mockMessages };
 
-        await sendNewMessage(req as Request, res as Response, next);
+            const mockSendMessage = jest
+                .fn()
+                .mockResolvedValue(mockChatResponse);
+            (Chat as jest.MockedClass<typeof Chat>).mockImplementation(
+                () =>
+                    ({
+                        sendMessage: mockSendMessage,
+                    }) as any,
+            );
 
-        expect(Logger.error).toHaveBeenCalledWith(
-            "500: Error: Failed to send message",
-        );
-        expect(res.status).toHaveBeenCalledWith(
-            StatusCodes.INTERNAL_SERVER_ERROR,
-        );
-        expect(res.json).toHaveBeenCalledWith({
-            message: "INTERNAL_SERVER_ERROR",
+            await sendNewMessage(req as Request, res as Response, next);
+
+            expect(mockSendMessage).toHaveBeenCalledWith(mockMessages);
+            expect(mockStatus).toHaveBeenCalledWith(StatusCodes.OK);
+            expect(mockJson).toHaveBeenCalledWith({ chat: mockChatResponse });
+            expect(next).not.toHaveBeenCalled();
+        });
+    });
+
+    describe("Error handling", () => {
+        it("should handle database connection errors", async () => {
+            const mockMessages = ["Test message"];
+            req.body = { messages: mockMessages };
+
+            const dbError = new Error("Database connection failed");
+            const mockSendMessage = jest.fn().mockRejectedValue(dbError);
+            (Chat as jest.MockedClass<typeof Chat>).mockImplementation(
+                () =>
+                    ({
+                        sendMessage: mockSendMessage,
+                    }) as any,
+            );
+
+            await sendNewMessage(req as Request, res as Response, next);
+
+            expect(Logger.error).toHaveBeenCalledWith(
+                "500: Error: Database connection failed",
+            );
+            expect(mockStatus).toHaveBeenCalledWith(
+                StatusCodes.INTERNAL_SERVER_ERROR,
+            );
+            expect(mockJson).toHaveBeenCalledWith({
+                message: "INTERNAL_SERVER_ERROR",
+            });
+        });
+
+        it("should handle validation errors from Chat service", async () => {
+            const mockMessages = ["Invalid message content"];
+            req.body = { messages: mockMessages };
+
+            const validationError = new Error(
+                "Message content violates policy",
+            );
+            const mockSendMessage = jest
+                .fn()
+                .mockRejectedValue(validationError);
+            (Chat as jest.MockedClass<typeof Chat>).mockImplementation(
+                () =>
+                    ({
+                        sendMessage: mockSendMessage,
+                    }) as any,
+            );
+
+            await sendNewMessage(req as Request, res as Response, next);
+
+            expect(Logger.error).toHaveBeenCalledWith(
+                "500: Error: Message content violates policy",
+            );
+            expect(mockStatus).toHaveBeenCalledWith(
+                StatusCodes.INTERNAL_SERVER_ERROR,
+            );
+            expect(mockJson).toHaveBeenCalledWith({
+                message: "INTERNAL_SERVER_ERROR",
+            });
+        });
+
+        it("should handle unexpected errors gracefully", async () => {
+            const mockMessages = ["Any message"];
+            req.body = { messages: mockMessages };
+
+            const unexpectedError = new TypeError(
+                "Cannot read property 'x' of undefined",
+            );
+            const mockSendMessage = jest
+                .fn()
+                .mockRejectedValue(unexpectedError);
+            (Chat as jest.MockedClass<typeof Chat>).mockImplementation(
+                () =>
+                    ({
+                        sendMessage: mockSendMessage,
+                    }) as any,
+            );
+
+            await sendNewMessage(req as Request, res as Response, next);
+
+            expect(Logger.error).toHaveBeenCalledWith(
+                "500: TypeError: Cannot read property 'x' of undefined",
+            );
+            expect(mockStatus).toHaveBeenCalledWith(
+                StatusCodes.INTERNAL_SERVER_ERROR,
+            );
+            expect(mockJson).toHaveBeenCalledWith({
+                message: "INTERNAL_SERVER_ERROR",
+            });
         });
     });
 });
