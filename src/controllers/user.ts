@@ -1,7 +1,7 @@
 import { RequestMiddleware } from "@dtypes/express";
 import User from "@models/user/user";
 
-const getUserInfo: RequestMiddleware = (req, res) => {
+const getUserInfo: RequestMiddleware = async (req, res) => {
     const user = req.user;
 
     if (!user) {
@@ -9,8 +9,23 @@ const getUserInfo: RequestMiddleware = (req, res) => {
         return;
     }
 
+    if (!user.user_id) {
+        res.status(400).json({ message: "MISSING_USER_ID" });
+        return;
+    }
+
     try {
-        res.json({ user: user });
+        const userInstance = new User(user.user_id);
+        const userInfo = await userInstance.getUserInfo();
+
+        if (!userInfo) {
+            res.status(404).json({ message: "User not found" });
+            return;
+        }
+
+        console.log(`User info retrieved for user_id: ${user}`);
+
+        res.json({ user: userInfo.user });
     } catch {
         res.status(500).json({ message: "Internal server error" });
     }

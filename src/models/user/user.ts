@@ -82,11 +82,15 @@ class User {
                 user_id: this.user_id,
             });
 
+            // Check if the user has already completed the quiz
             if (userHealthInfo) {
                 Logger.error("USER_ALREADY_COMPLETED_QUIZ");
                 throw new Error("USER_ALREADY_COMPLETED_QUIZ");
             }
 
+            // Update user information and create health attributions
+            // Use Promise.all to run both operations in parallel
+            // and wait for both to complete
             await Promise.all([
                 UserDB.updateOne(
                     { user_id: this.user_id },
