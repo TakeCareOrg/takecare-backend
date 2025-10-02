@@ -74,6 +74,7 @@ class Auth {
             const user = await UserDB.findOne({ email });
 
             if (!user) {
+                console.log("no user found");
                 throw new Error("AN_ERROR_OCCURRED");
             }
 

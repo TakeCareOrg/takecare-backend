@@ -12,17 +12,30 @@ import authRouter from "@routes/authRouter";
 import userRouter from "@routes/userRouter";
 import chatRouter from "@routes/chatRouter";
 import quizDataRouter from "@routes/quizRouter";
+import metricsRouter from "@routes/metricsRouter";
 
 import { initMailTransport } from "@services/mail";
 import swaggerDocs from "@config/swagger";
+import promBundle from "express-prom-bundle";
 
 dotenv.config();
 const app = express();
+
+const metricsMiddleware = promBundle({
+    includeMethod: true,
+    includePath: true,
+    normalizePath: (req) => req.route?.path ?? "No",
+    buckets: [
+        0.001, 0.01, 0.1, 1, 2, 3, 5, 7, 10, 15, 20, 25, 30, 35, 40, 50, 70,
+        100, 200,
+    ],
+});
 
 // Connect to the database
 connectToMongoDB(process.env.TAKECARE_DATABASE_URL);
 initMailTransport();
 
+app.use(metricsMiddleware);
 // parse application/json
 app.use(express.json());
 // parse application/x-www-form-urlencoded
@@ -40,7 +53,10 @@ app.use("/auth", authRouter);
 app.use("/users", userRouter);
 app.use("/chat", chatRouter);
 app.use("/quiz-data", quizDataRouter);
+app.use("/metrics", metricsRouter);
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
+console.log("print ddd");
 
 export { app };

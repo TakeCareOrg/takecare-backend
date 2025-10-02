@@ -17,6 +17,9 @@ COPY . .
 # Compile TypeScript
 RUN npm run build
 
+# Copy HTML templates to dist folder (TypeScript doesn't copy non-.ts files)
+RUN cp -r src/services/mail/templates dist/services/mail/ || true
+
 # Expose the port
 EXPOSE 4000
 

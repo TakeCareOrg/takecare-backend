@@ -2,6 +2,7 @@ import { RequestMiddleware } from "@dtypes/express";
 import Logger from "@libs/logger";
 import { Auth } from "@models/auth";
 import { StatusCodes } from "http-status-codes";
+import { userCreatedCounter } from "../config/metrics";
 
 export const createNewUser: RequestMiddleware = async (req, res) => {
     const { email, password } = req.body;
@@ -17,6 +18,7 @@ export const createNewUser: RequestMiddleware = async (req, res) => {
     try {
         const auth = new Auth();
         const data = await auth.createNewUser(email, password);
+        userCreatedCounter.inc();
         res.status(StatusCodes.CREATED).json({ token: data.token });
     } catch (error) {
         Logger.error(`${StatusCodes.INTERNAL_SERVER_ERROR}: ${error}`);
@@ -41,7 +43,7 @@ export const login: RequestMiddleware = async (req, res) => {
         const data = await auth.login(email, password);
 
         res.json({ token: data.token });
-    } catch (error: unknown) {
+    } catch (error) {
         if (error instanceof Error) {
             Logger.error(`${StatusCodes.INTERNAL_SERVER_ERROR}: ${error}`);
 

@@ -1,9 +1,49 @@
 services:
-    takecare-api-beta:
-        image: justrunnz/takecare-api-beta:main
+    # takecare-api-beta:
+    #     image: justrunnz/takecare-api-beta:main
+    #     env_file:
+    #         - .env
+    #     ports:
+    #         - "3002:4000"
+    #     restart: always
+    #     container_name: takecare-api-beta
+
+    express:
+        build: .
+        ports:
+            - 4000:4000
         env_file:
             - .env
+    prometheus:
+        image: prom/prometheus:latest
+        volumes:
+            - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+            - prometheus_data:/prometheus
+        command:
+            - "--config.file=/etc/prometheus/prometheus.yml"
+            - "--storage.tsdb.retention.time=15d"
         ports:
-            - "3002:4000"
-        restart: always
-        container_name: takecare-api-beta
+            - 9090:9090
+        depends_on:
+            - express
+    grafana:
+        image: grafana/grafana
+        volumes:
+            - grafana_data:/var/lib/grafana # Stocke toutes les données Grafana (crucial)
+            - grafana_datasources:/etc/grafana/provisioning/datasources
+            - grafana_dashboards:/etc/grafana/provisioning/dashboards
+        environment:
+            - GF_SECURITY_ADMIN_PASSWORD=admin
+            - GF_USERS_ALLOW_SIGN_UP=false # Désactive l'inscription d'utilisateurs
+        ports:
+            - 7001:3000
+        depends_on:
+            - prometheus
+
+volumes:
+    prometheus:
+    prometheus_data:
+    prometheus_config:
+    grafana_data:
+    grafana_datasources:
+    grafana_dashboards:
