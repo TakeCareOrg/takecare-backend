@@ -3,6 +3,9 @@ import { formatMessages } from "@utils/chat";
 import { ChatMessage } from "@dtypes/chat";
 import Logger from "@libs/logger";
 import TakeCareUserChatTokens from "../user/chat-tokens";
+import fs from "fs";
+import FormData from "form-data";
+import axios from "axios";
 
 const MAX_TOKENS = undefined;
 const TEMPERATURE = 0.7;
@@ -18,18 +21,14 @@ class Chat {
     }
 
     async sendMessage(messages: ChatMessage[]) {
-        if (!this.user_id) {
-            throw new Error("UNAUTHORIZED");
-        }
+        if (!this.user_id) throw new Error("UNAUTHORIZED");
 
         try {
             const together = new Together({
                 apiKey: process.env.TOGETHER_API_KEY,
             });
-            // Format messages
             const formattedMessages = formatMessages(messages);
 
-            // Send message
             const response = await together.chat.completions.create({
                 messages: formattedMessages,
                 model: "Qwen/Qwen2.5-72B-Instruct-Turbo",
@@ -48,13 +47,68 @@ class Chat {
             }
 
             await new TakeCareUserChatTokens(this.user_id).decreaseTokens();
-
             return { role: "assistant", content: fullResponse };
         } catch (error) {
             Logger.error(
                 `Error sending message to Together API - error: ${error}`,
             );
             throw new Error("ERROR_SENDING_CHAT_MESSAGE");
+        }
+    }
+
+    async transcribeAudio(filePath: string): Promise<string> {
+        if (!this.user_id) throw new Error("UNAUTHORIZED");
+
+        try {
+            const transcription = await this.transcribeWithGroq(filePath);
+            return transcription;
+        } finally {
+            if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+        }
+    }
+
+    private async transcribeWithGroq(filePath: string): Promise<string> {
+        try {
+            const form = new FormData();
+            form.append("file", fs.createReadStream(filePath));
+            form.append("model", "whisper-large-v3-turbo");
+            form.append("response_format", "verbose_json");
+            form.append("temperature", "0");
+
+            const response = await axios.post(
+                "https://api.groq.com/openai/v1/audio/transcriptions",
+                form,
+                {
+                    headers: {
+                        ...form.getHeaders(),
+                        Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+                    },
+                    maxBodyLength: Infinity,
+                },
+            );
+
+            const transcription = response.data.text || "";
+
+            const hallucinations = (
+                process.env.GROQ_HALLUCINATIONS || ""
+            ).split(",");
+            const lowerText = transcription.toLowerCase().trim();
+            for (const hallucination of hallucinations) {
+                if (lowerText.includes(hallucination))
+                    throw new Error("NO_SPEECH_DETECTED");
+            }
+
+            if (transcription.trim().length < 3)
+                throw new Error("NO_SPEECH_DETECTED");
+
+            return transcription;
+        } catch (error: unknown) {
+            if (
+                error instanceof Error &&
+                error.message === "NO_SPEECH_DETECTED"
+            )
+                throw error;
+            throw new Error("TRANSCRIPTION_FAILED");
         }
     }
 }

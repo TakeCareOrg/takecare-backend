@@ -13,6 +13,7 @@ import userRouter from "@routes/userRouter";
 import chatRouter from "@routes/chatRouter";
 import quizDataRouter from "@routes/quizRouter";
 import metricsRouter from "@routes/metricsRouter";
+import bodyParser from "body-parser";
 
 import { initMailTransport } from "@services/mail";
 import swaggerDocs from "@config/swagger";
@@ -46,6 +47,10 @@ app.use(helmet());
 app.use(cors());
 // Use Morgan middleware for logging requests
 app.use(morganMiddleware);
+
+// Body parser middleware to handle larger payloads (e.g., vocal messages)
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 
 // Tell the app to use the routes
 app.use("/", indexRouter);
