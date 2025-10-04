@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { sendNewMessage, sendNewVocal } from "@controllers/chat";
+import { sendNewMessage, transcribeAudio } from "@controllers/chat";
 import { authenticateJWT } from "@middlewares/authMiddleware";
 import multer, { FileFilterCallback } from "multer";
 import path from "path";
@@ -43,10 +43,10 @@ const upload = multer({ storage, fileFilter });
 
 router.post("/new-message", authenticateJWT, sendNewMessage);
 router.post(
-    "/new-vocal",
+    "/transcribe",
     authenticateJWT,
     upload.single("audio"),
-    sendNewVocal,
+    transcribeAudio,
 );
 
 export default router;

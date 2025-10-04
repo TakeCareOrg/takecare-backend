@@ -20,7 +20,7 @@ const sendNewMessage: RequestMiddleware = async (req, res) => {
     }
 };
 
-const sendNewVocal: RequestMiddleware = async (req, res) => {
+const transcribeAudio: RequestMiddleware = async (req, res) => {
     const user = req.user;
     if (!user) return res.status(401).json({ message: "UNAUTHORIZED" });
 
@@ -29,27 +29,25 @@ const sendNewVocal: RequestMiddleware = async (req, res) => {
 
     try {
         const chat = new Chat(user.user_id);
-
         const transcription = await chat.transcribeAudio(req.file.path);
 
-        const userMessage = {
-            role: "user" as const,
-            content: transcription,
-            timestamp: new Date(),
-        };
-
-        const chatMessage = await chat.sendMessage([userMessage]);
-
-        res.status(200).json({
-            chat: {
-                ...chatMessage,
-                transcription,
-            },
-        });
+        res.status(200).json({ transcription });
     } catch (error) {
         Logger.error(`500: ${error}`);
+
+        if (error instanceof Error) {
+            if (error.message === "NO_SPEECH_DETECTED") {
+                return res.status(400).json({ message: "NO_SPEECH_DETECTED" });
+            }
+            if (error.message === "TRANSCRIPTION_FAILED") {
+                return res
+                    .status(500)
+                    .json({ message: "ERROR_TRANSCRIBING_AUDIO" });
+            }
+        }
+
         res.status(500).json({ message: "INTERNAL_SERVER_ERROR" });
     }
 };
 
-export { sendNewMessage, sendNewVocal };
+export { sendNewMessage, transcribeAudio };
