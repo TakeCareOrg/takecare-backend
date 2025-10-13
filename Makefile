@@ -41,7 +41,7 @@ test: ## Run Jest tests inside the container
 ## --------------------------------------------------
 ## Dev tools
 ## --------------------------------------------------
-ngrok: up ## Start ngrok, kill previous one if exists, copy URL to clipboard
+ngrok: run ## Start ngrok, kill previous one if exists, copy URL to clipboard
 	@if [ -f $(NGROK_PID_FILE) ]; then \
 		echo "Killing previous ngrok process..."; \
 		kill `cat $(NGROK_PID_FILE)` 2>/dev/null || true; \
@@ -59,7 +59,7 @@ ngrok: up ## Start ngrok, kill previous one if exists, copy URL to clipboard
 		echo "❌ Failed to retrieve ngrok URL"; \
 	fi
 
-ngrok-stop: down ## Stop ngrok if running
+ngrok-stop: teardown ## Stop ngrok if running
 	@if [ -f $(NGROK_PID_FILE) ]; then \
 		echo "Stopping ngrok..."; \
 		kill `cat $(NGROK_PID_FILE)` 2>/dev/null || true; \
