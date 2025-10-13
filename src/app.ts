@@ -13,6 +13,7 @@ import userRouter from "@routes/userRouter";
 import chatRouter from "@routes/chatRouter";
 import quizDataRouter from "@routes/quizRouter";
 import metricsRouter from "@routes/metricsRouter";
+import adminRouter from "@routes/adminRouter";
 
 import { initMailTransport } from "@services/mail";
 import swaggerDocs from "@config/swagger";
@@ -50,6 +51,7 @@ app.use(morganMiddleware);
 // Tell the app to use the routes
 app.use("/", indexRouter);
 app.use("/auth", authRouter);
+app.use("/admin", adminRouter);
 app.use("/users", userRouter);
 app.use("/chat", chatRouter);
 app.use("/quiz-data", quizDataRouter);

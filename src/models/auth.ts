@@ -65,7 +65,7 @@ class Auth {
         }
     }
 
-    async login(email: string, password: string) {
+    async login(email: string, password: string, isAdmin = false) {
         if (!email || !password) {
             throw new Error("MISSING_FIELDS");
         }
@@ -74,7 +74,6 @@ class Auth {
             const user = await UserDB.findOne({ email });
 
             if (!user) {
-                console.log("no user found");
                 throw new Error("AN_ERROR_OCCURRED");
             }
 
@@ -82,6 +81,10 @@ class Auth {
 
             if (!isMatch) {
                 throw new Error("AN_ERROR_OCCURRED");
+            }
+
+            if (isAdmin && !user.role?.includes("admin")) {
+                throw new Error("UNAUTHORIZED");
             }
 
             const token = generateToken({ user_id: user.user_id });
