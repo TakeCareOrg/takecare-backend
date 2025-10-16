@@ -42,7 +42,7 @@ export const login: RequestMiddleware = async (req, res) => {
         const auth = new Auth();
         const data = await auth.login(email, password);
 
-        res.json({ token: data.token });
+        res.status(StatusCodes.OK).json({ token: data.token });
     } catch (error) {
         if (error instanceof Error) {
             Logger.error(`${StatusCodes.INTERNAL_SERVER_ERROR}: ${error}`);

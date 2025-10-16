@@ -59,6 +59,4 @@ app.use("/metrics", metricsRouter);
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
-console.log("print ddd");
-
 export { app };
