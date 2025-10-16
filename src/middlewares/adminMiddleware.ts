@@ -12,7 +12,7 @@ export const isAdminMiddlware = async (
         if (!userId) {
             res.status(401).json({
                 success: false,
-                message: "Authentification requise",
+                message: "Auth Required",
             });
             throw new Error("UNAUTHORIZED");
         }
@@ -27,7 +27,7 @@ export const isAdminMiddlware = async (
             console.log(user.role);
             res.status(403).json({
                 success: false,
-                message: "Accès refusé. Privilèges administrateur requis.",
+                message: "Access refused. Admin only.",
             });
             throw new Error("UNAUTHORIZED");
         }
@@ -36,7 +36,7 @@ export const isAdminMiddlware = async (
     } catch {
         res.status(500).json({
             success: false,
-            message: "Erreur lors de la vérification des permissions",
+            message: "Error checking admin permissions",
         });
         throw new Error("AN_ERROR_OCCURRED");
     }
