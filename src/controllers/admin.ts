@@ -1,3 +1,4 @@
+import { UserDB } from "@database/models/user";
 import { RequestMiddleware } from "@dtypes/express";
 import Logger from "@libs/logger";
 import { Auth } from "@models/auth";
@@ -60,4 +61,16 @@ export const me: RequestMiddleware = async (req, res) => {
     }
 };
 
-export default { loginAdmin, me };
+export const getUsers: RequestMiddleware = async (req, res) => {
+    try {
+        const users = await UserDB.find().select("-password -_id -__v");
+        res.json({ users });
+    } catch (error) {
+        Logger.error(`${StatusCodes.INTERNAL_SERVER_ERROR}: ${error}`);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: "Internal server error",
+        });
+    }
+};
+
+export default { loginAdmin, me, getUsers };
