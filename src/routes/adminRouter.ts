@@ -11,4 +11,7 @@ router.post("/login", controller.loginAdmin);
 // GET -> /admin/me
 router.get("/me", authenticateJWT, isAdminMiddlware, controller.me);
 
+//GET -> /admin/users
+router.get("/users", authenticateJWT, isAdminMiddlware, controller.getUsers);
+
 export default router;
