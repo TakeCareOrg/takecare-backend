@@ -15,15 +15,23 @@ let transporter: nodemailer.Transporter;
  * Initialize the mail transporter
  */
 export function initMailTransport(): void {
+    if (!process.env.EMAIL_HOST || !process.env.EMAIL_PORT) {
+        Logger.warn(
+            "Email host or port not set, skipping mail transporter init",
+        );
+        return;
+    }
+
     try {
         transporter = nodemailer.createTransport({
-            host: process.env.EMAIL_HOST || "smtp.sendgrid.net",
+            host: process.env.EMAIL_HOST,
             port: Number(process.env.EMAIL_PORT) || 587,
-            secure: false,
+            secure: true,
             auth: {
-                user: process.env.EMAIL_USER || "",
-                pass: process.env.EMAIL_PASSWORD || "",
+                user: process.env.GOOGLE_APP_EMAIL || "",
+                pass: process.env.GOOGLE_APP_PASSWORD || "",
             },
+            service: "gmail",
         });
 
         Logger.info("Mail transporter initialized successfully");

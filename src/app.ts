@@ -14,6 +14,7 @@ import chatRouter from "@routes/chatRouter";
 import quizDataRouter from "@routes/quizRouter";
 import metricsRouter from "@routes/metricsRouter";
 import bodyParser from "body-parser";
+import adminRouter from "@routes/adminRouter";
 
 import { initMailTransport } from "@services/mail";
 import swaggerDocs from "@config/swagger";
@@ -55,13 +56,12 @@ app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 // Tell the app to use the routes
 app.use("/", indexRouter);
 app.use("/auth", authRouter);
+app.use("/admin", adminRouter);
 app.use("/users", userRouter);
 app.use("/chat", chatRouter);
 app.use("/quiz-data", quizDataRouter);
 app.use("/metrics", metricsRouter);
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
-
-console.log("print ddd");
 
 export { app };
