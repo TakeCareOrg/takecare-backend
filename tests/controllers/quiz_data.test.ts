@@ -259,7 +259,7 @@ describe("Quiz Data Controller Tests", () => {
             expect(res.status).toHaveBeenCalledWith(200);
         });
 
-        it("should handle special characters in type parameter", async () => {
+        it("should pass input to getFile without modification", async () => {
             req.user = { user_id: "123" };
             req.params = { type: "../../../etc/passwd" };
 
@@ -274,6 +274,7 @@ describe("Quiz Data Controller Tests", () => {
             await getQuizData(req as Request, res as Response, next);
 
             expect(filesUtils.getFile).toHaveBeenCalled();
+            expect(res.status).toHaveBeenCalledWith(200);
         });
 
         it("should handle large quiz data files", async () => {

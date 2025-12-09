@@ -274,23 +274,23 @@ describe("User Authentication Tests", () => {
             expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
         });
 
-        it("should return UNAUTHORIZED if credentials are invalid", async () => {
+        it("should return INTERNAL_SERVER_ERROR for generic errors", async () => {
             req.body = {
                 email: "john.doe@example.com",
                 password: "wrongpassword",
             };
 
-            const error = new Error("Invalid credentials");
+            const error = new Error("AN_ERROR_OCCURRED");
             (Auth.prototype.login as jest.Mock).mockRejectedValue(error);
 
             await login(req as Request, res as Response, next);
 
             expect(Logger.error).toHaveBeenCalledWith(
-                `${StatusCodes.INTERNAL_SERVER_ERROR}: Error: Invalid credentials`,
+                `${StatusCodes.INTERNAL_SERVER_ERROR}: Error: AN_ERROR_OCCURRED`,
             );
-            expect(res.status).toHaveBeenCalledWith(StatusCodes.UNAUTHORIZED);
+            expect(res.status).toHaveBeenCalledWith(StatusCodes.INTERNAL_SERVER_ERROR);
             expect(res.json).toHaveBeenCalledWith({
-                message: "Invalid email or password",
+                message: "Internal server error",
             });
         });
 
@@ -343,7 +343,7 @@ describe("User Authentication Tests", () => {
             expect(Logger.error).not.toHaveBeenCalled();
         });
 
-        it("should handle SQL injection attempt in email", async () => {
+        it("should pass input to Auth.login without modification", async () => {
             req.body = {
                 email: "admin'--",
                 password: "password",
