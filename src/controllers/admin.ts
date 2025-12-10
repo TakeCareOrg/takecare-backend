@@ -1,4 +1,4 @@
-import { UserDB } from "@database/models/user";
+import { UserDB, UserHealthAttributionsDB } from "@database/models/user";
 import { RequestMiddleware } from "@dtypes/express";
 import Logger from "@libs/logger";
 import { Auth } from "@models/auth";
@@ -73,4 +73,51 @@ export const getUsers: RequestMiddleware = async (req, res) => {
     }
 };
 
-export default { loginAdmin, me, getUsers };
+export const getHealthData: RequestMiddleware = async (req, res) => {
+    try {
+        const healthData = await UserHealthAttributionsDB.find({
+            user_id: req.params.userId,
+        }).select("-_id -__v -user_id -created_at");
+        res.json(healthData[0]);
+    } catch (error) {
+        Logger.error(`${StatusCodes.INTERNAL_SERVER_ERROR}: ${error}`);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: "Internal server error",
+        });
+    }
+};
+
+export const editUser: RequestMiddleware = async (req, res) => {
+    const { userId } = req.params;
+    const healthData = req.body.health;
+    try {
+        const userInstance = await UserDB.findOne({ user_id: userId });
+        const userHealthInfo = await UserHealthAttributionsDB.findOne({
+            user_id: userId,
+        });
+
+        if (!userInstance) {
+            res.status(StatusCodes.NOT_FOUND).json({
+                message: "User not found",
+            });
+            return;
+        }
+        if (!userHealthInfo) {
+            res.status(StatusCodes.NOT_FOUND).json({
+                message: "User health info not found",
+            });
+            return;
+        }
+        Promise.all([
+            UserDB.updateOne({ user_id: userId }, req.body),
+            UserHealthAttributionsDB.updateOne({ user_id: userId }, healthData),
+        ]);
+    } catch (error) {
+        Logger.error(`${StatusCodes.INTERNAL_SERVER_ERROR}: ${error}`);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: "Internal server error",
+        });
+    }
+};
+
+export default { loginAdmin, me, getUsers, editUser, getHealthData };

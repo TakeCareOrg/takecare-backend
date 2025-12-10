@@ -14,4 +14,20 @@ router.get("/me", authenticateJWT, isAdminMiddlware, controller.me);
 //GET -> /admin/users
 router.get("/users", authenticateJWT, isAdminMiddlware, controller.getUsers);
 
+// GET -> /admin/user/health/:userId
+router.get(
+    "/user/health/:userId",
+    authenticateJWT,
+    isAdminMiddlware,
+    controller.getHealthData,
+);
+
+// PUT -> /admin/users/:userId
+router.put(
+    "/users/:userId",
+    authenticateJWT,
+    isAdminMiddlware,
+    controller.editUser,
+);
+
 export default router;
