@@ -3,7 +3,7 @@ import Logger from "@libs/logger";
 import { getFile } from "@utils/files";
 import path from "path";
 
-const getQuizData: RequestMiddleware = async (req, res) => {
+export const getQuizData: RequestMiddleware = async (req, res) => {
     const user = req.user;
 
     if (!user) {

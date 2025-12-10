@@ -60,7 +60,7 @@ export const login: RequestMiddleware = async (req, res) => {
     }
 };
 
-const verifyEmail: RequestMiddleware = async (req, res) => {
+export const verifyEmail: RequestMiddleware = async (req, res) => {
     const user = req.user;
 
     if (!user) {

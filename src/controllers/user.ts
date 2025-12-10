@@ -1,7 +1,7 @@
 import { RequestMiddleware } from "@dtypes/express";
 import User from "@models/user/user";
 
-const getUserInfo: RequestMiddleware = async (req, res) => {
+export const getUserInfo: RequestMiddleware = async (req, res) => {
     const user = req.user;
 
     if (!user) {
@@ -31,7 +31,7 @@ const getUserInfo: RequestMiddleware = async (req, res) => {
     }
 };
 
-const healthQuiz: RequestMiddleware = async (req, res) => {
+export const healthQuiz: RequestMiddleware = async (req, res) => {
     const user = req.user;
 
     if (!user) {
