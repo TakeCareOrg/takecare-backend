@@ -112,6 +112,7 @@ export const editUser: RequestMiddleware = async (req, res) => {
             UserDB.updateOne({ user_id: userId }, req.body),
             UserHealthAttributionsDB.updateOne({ user_id: userId }, healthData),
         ]);
+        res.json({ success: true });
     } catch (error) {
         Logger.error(`${StatusCodes.INTERNAL_SERVER_ERROR}: ${error}`);
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
