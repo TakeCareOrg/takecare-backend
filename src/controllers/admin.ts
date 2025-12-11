@@ -73,4 +73,7 @@ export const getUsers: RequestMiddleware = async (req, res) => {
     }
 };
 
-export default { loginAdmin, me, getUsers };
+export const verify: RequestMiddleware = async (req, res) => {
+    res.json({ success: true });
+};
+export default { loginAdmin, me, getUsers, verify };

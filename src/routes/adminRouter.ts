@@ -14,4 +14,7 @@ router.get("/me", authenticateJWT, isAdminMiddlware, controller.me);
 //GET -> /admin/users
 router.get("/users", authenticateJWT, isAdminMiddlware, controller.getUsers);
 
+// GET -> /admin/verify
+router.get("/verify", authenticateJWT, controller.verify);
+
 export default router;
