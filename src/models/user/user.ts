@@ -31,7 +31,9 @@ class User {
 
             const [userInfo, userHealthInfo] = await Promise.all([
                 UserDB.findOne({ user_id: this.user_id }),
-                UserHealthAttributionsDB.findOne({ user_id: this.user_id }),
+                UserHealthAttributionsDB.findOne({
+                    user_id: this.user_id,
+                }).select("-_id -__v"),
             ]);
 
             if (!userInfo) {
