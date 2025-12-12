@@ -1,4 +1,4 @@
-import { UserDB, UserHealthAttributionsDB } from "@database/models/user";
+import { UserDB } from "@database/models/user";
 import { RequestMiddleware } from "@dtypes/express";
 import Logger from "@libs/logger";
 import { Auth } from "@models/auth";
@@ -75,10 +75,16 @@ export const getUsers: RequestMiddleware = async (req, res) => {
 
 export const getHealthData: RequestMiddleware = async (req, res) => {
     try {
-        const healthData = await UserHealthAttributionsDB.find({
-            user_id: req.params.userId,
-        }).select("-_id -__v -user_id -created_at");
-        res.json(healthData[0]);
+        const userInstance = new User(req.params.userId);
+
+        const healthData = await userInstance.getHealthData();
+        if (!healthData) {
+            res.status(StatusCodes.NOT_FOUND).json({
+                message: "health data not found",
+            });
+            return;
+        }
+        res.json(healthData);
     } catch (error) {
         Logger.error(`${StatusCodes.INTERNAL_SERVER_ERROR}: ${error}`);
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -89,12 +95,9 @@ export const getHealthData: RequestMiddleware = async (req, res) => {
 
 export const editUser: RequestMiddleware = async (req, res) => {
     const { userId } = req.params;
-    const healthData = req.body.health;
+    const modifiedUser = req.body;
     try {
-        const userInstance = await UserDB.findOne({ user_id: userId });
-        const userHealthInfo = await UserHealthAttributionsDB.findOne({
-            user_id: userId,
-        });
+        const userInstance = new User(userId);
 
         if (!userInstance) {
             res.status(StatusCodes.NOT_FOUND).json({
@@ -102,16 +105,19 @@ export const editUser: RequestMiddleware = async (req, res) => {
             });
             return;
         }
-        if (!userHealthInfo) {
-            res.status(StatusCodes.NOT_FOUND).json({
-                message: "User health info not found",
+        if (!modifiedUser) {
+            res.status(StatusCodes.BAD_REQUEST).json({
+                message: "Missing user in request",
             });
             return;
         }
-        Promise.all([
-            UserDB.updateOne({ user_id: userId }, req.body),
-            UserHealthAttributionsDB.updateOne({ user_id: userId }, healthData),
-        ]);
+        const response = await userInstance.updateUser(modifiedUser);
+        if (!response.success) {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                message: "Internal server error",
+            });
+            return;
+        }
         res.json({ success: true });
     } catch (error) {
         Logger.error(`${StatusCodes.INTERNAL_SERVER_ERROR}: ${error}`);

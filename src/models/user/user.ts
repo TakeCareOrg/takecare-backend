@@ -1,5 +1,9 @@
 import { UserDB, UserHealthAttributionsDB } from "@database/models/user";
-import { UserHealthAttributions, UserInfoPayload } from "@dtypes/user";
+import {
+    UserComplete,
+    UserHealthAttributions,
+    UserInfoPayload,
+} from "@dtypes/user";
 import Logger from "@libs/logger";
 
 type UserHealthDataQuiz = Omit<
@@ -105,6 +109,39 @@ class User {
             ]);
         } catch (error) {
             Logger.error(error);
+            throw new Error("AN_ERROR_OCCURRED");
+        }
+    }
+
+    async updateUser(user: UserComplete) {
+        if (!user || !this.user_id) {
+            throw new Error("AN_ERROR_OCCURRED");
+        }
+        try {
+            const { health, ...userWitoutHealth } = user;
+            await Promise.all([
+                UserDB.updateOne({ user_id: this.user_id }, userWitoutHealth),
+                UserHealthAttributionsDB.updateOne(
+                    { user_id: this.user_id },
+                    health,
+                ),
+            ]);
+            return { success: true };
+        } catch {
+            throw new Error("AN_ERROR_OCCURRED");
+        }
+    }
+
+    async getHealthData() {
+        if (!this.user_id) {
+            throw new Error("AN_ERROR_OCCURRED");
+        }
+        try {
+            const healthData = await UserHealthAttributionsDB.find({
+                user_id: this.user_id,
+            }).select("-_id -__v -user_id -created_at");
+            return healthData[0];
+        } catch {
             throw new Error("AN_ERROR_OCCURRED");
         }
     }

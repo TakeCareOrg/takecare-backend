@@ -47,4 +47,8 @@ export interface UserInfoPayload extends UserAttributions {
     health: UserHealthAttributions;
 }
 
+export interface UserComplete extends User {
+    health: UserHealthAttributions;
+}
+
 export const users: User[] = [];
