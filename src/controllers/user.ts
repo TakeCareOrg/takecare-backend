@@ -49,7 +49,7 @@ export const healthQuiz: RequestMiddleware = async (req, res) => {
         const userInstance = new User(user.user_id);
         await userInstance.healthQuiz(healthData);
 
-        res.status(200).json({ message: "Health quiz completed" });
+        res.status(200).end();
     } catch {
         res.status(500).json({ message: "Internal server error" });
     }

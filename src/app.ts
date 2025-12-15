@@ -54,7 +54,7 @@ app.use("/auth", authRouter);
 app.use("/admin", adminRouter);
 app.use("/users", userRouter);
 app.use("/chat", chatRouter);
-app.use("/quiz-data", quizDataRouter);
+app.use("/quiz", quizDataRouter);
 app.use("/metrics", metricsRouter);
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));

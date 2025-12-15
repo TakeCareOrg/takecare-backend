@@ -74,13 +74,13 @@ class Auth {
             const user = await UserDB.findOne({ email });
 
             if (!user) {
-                throw new Error("AN_ERROR_OCCURRED");
+                throw new Error("AN_ERROR_OCCURRED_USER_NOT_FOUND");
             }
 
             const isMatch = await bcrypt.compare(password, user.password);
 
             if (!isMatch) {
-                throw new Error("AN_ERROR_OCCURRED");
+                throw new Error("AN_ERROR_OCCURRED_IS_NOT_MATCH");
             }
 
             if (isAdmin && !user.role?.includes("admin")) {
@@ -90,8 +90,8 @@ class Auth {
             const token = generateToken({ user_id: user.user_id });
 
             return { token };
-        } catch {
-            throw new Error("AN_ERROR_OCCURRED");
+        } catch (e) {
+            throw new Error(`${e}`);
         }
     }
 

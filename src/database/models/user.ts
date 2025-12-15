@@ -113,7 +113,7 @@ const userHealthAttributions = new Schema<UserHealthAttributions>({
         required: false,
     },
     medication_treatment: {
-        type: String,
+        type: Array,
         required: false,
     },
     medical_treatments: {

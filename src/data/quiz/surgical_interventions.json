@@ -1,178 +1,694 @@
 {
     "en": [
-        "Appendectomy",
-        "Cholecystectomy",
-        "Herniorrhaphy",
-        "Gastrectomy",
-        "Colectomy",
-        "Intestinal Resection",
-        "Exploratory Laparotomy",
-        "Hemorrhoid Surgery",
-        "Splenectomy",
-        "Partial Hepatectomy",
-        "Arthroscopy",
-        "Hip Replacement",
-        "Knee Replacement",
-        "Fracture Repair",
-        "Ligament Reconstruction",
-        "Spinal Fusion",
-        "Nerve Decompression",
-        "Osteotomy",
-        "Rotator Cuff Repair",
-        "Synovectomy",
-        "Coronary Artery Bypass Grafting",
-        "Heart Valve Replacement",
-        "Pacemaker Implantation",
-        "Aortic Aneurysm Surgery",
-        "Heart Transplant",
-        "Catheter Ablation",
-        "Septal Repair Surgery",
-        "Craniotomy",
-        "Epilepsy Surgery",
-        "Microvascular Decompression",
-        "Laminectomy",
-        "Cerebral Aneurysm Repair",
-        "Neurostimulation",
-        "Brain Tumor Resection",
-        "Prostatectomy",
-        "Nephrectomy",
-        "Cystectomy",
-        "Hypospadias Repair",
-        "Kidney Transplant",
-        "Lithotripsy",
-        "Urethroplasty",
-        "Transurethral Resection of the Prostate (TURP)",
-        "Hysterectomy",
-        "Salpingo-Oophorectomy",
-        "Myomectomy",
-        "Laparoscopic Surgery for Endometriosis",
-        "Diagnostic Laparoscopy",
-        "Ovarian Cyst Removal",
-        "Tubal Ligation",
-        "Mammoplasty",
-        "Rhinoplasty",
-        "Facelift",
-        "Breast Reconstruction Surgery",
-        "Burn Surgery",
-        "Cleft Lip and Palate Repair",
-        "Abdominoplasty",
-        "Otoplasty",
-        "Scar Repair",
-        "Tonsillectomy",
-        "Adenoidectomy",
-        "Sinus Surgery",
-        "Tympanoplasty",
-        "Laryngectomy",
-        "Septoplasty",
-        "Turbinate Reduction",
-        "Cataract Extraction",
-        "Refractive Surgery",
-        "Vitrectomy",
-        "Retinal Detachment Surgery",
-        "Corneal Transplant",
-        "Trabeculectomy",
-        "Eyelid Repair",
-        "Lung Lobectomy",
-        "Pneumonectomy",
-        "Esophageal Surgery",
-        "Chest Wall Repair",
-        "Thymus Surgery",
-        "Mediastinoscopy",
-        "Pulmonary Nodule Resection",
-        "Arterial Bypass",
-        "Carotid Endarterectomy",
-        "Aortic Aneurysm Repair",
-        "Arteriovenous Fistula for Hemodialysis",
-        "Angioplasty and Stenting",
-        "Thrombectomy",
-        "Varicose Vein Surgery"
+        {
+            "label": "Appendectomy",
+            "value": "appendectomy"
+        },
+        {
+            "label": "Cholecystectomy",
+            "value": "cholecystectomy"
+        },
+        {
+            "label": "Herniorrhaphy",
+            "value": "herniorrhaphy"
+        },
+        {
+            "label": "Gastrectomy",
+            "value": "gastrectomy"
+        },
+        {
+            "label": "Colectomy",
+            "value": "colectomy"
+        },
+        {
+            "label": "Intestinal Resection",
+            "value": "intestinal_resection"
+        },
+        {
+            "label": "Exploratory Laparotomy",
+            "value": "exploratory_laparotomy"
+        },
+        {
+            "label": "Hemorrhoid Surgery",
+            "value": "hemorrhoid_surgery"
+        },
+        {
+            "label": "Splenectomy",
+            "value": "splenectomy"
+        },
+        {
+            "label": "Partial Hepatectomy",
+            "value": "partial_hepatectomy"
+        },
+        {
+            "label": "Arthroscopy",
+            "value": "arthroscopy"
+        },
+        {
+            "label": "Hip Replacement",
+            "value": "hip_replacement"
+        },
+        {
+            "label": "Knee Replacement",
+            "value": "knee_replacement"
+        },
+        {
+            "label": "Fracture Repair",
+            "value": "fracture_repair"
+        },
+        {
+            "label": "Ligament Reconstruction",
+            "value": "ligament_reconstruction"
+        },
+        {
+            "label": "Spinal Fusion",
+            "value": "spinal_fusion"
+        },
+        {
+            "label": "Nerve Decompression",
+            "value": "nerve_decompression"
+        },
+        {
+            "label": "Osteotomy",
+            "value": "osteotomy"
+        },
+        {
+            "label": "Rotator Cuff Repair",
+            "value": "rotator_cuff_repair"
+        },
+        {
+            "label": "Synovectomy",
+            "value": "synovectomy"
+        },
+        {
+            "label": "Coronary Artery Bypass Grafting",
+            "value": "coronary_artery_bypass_grafting"
+        },
+        {
+            "label": "Heart Valve Replacement",
+            "value": "heart_valve_replacement"
+        },
+        {
+            "label": "Pacemaker Implantation",
+            "value": "pacemaker_implantation"
+        },
+        {
+            "label": "Aortic Aneurysm Surgery",
+            "value": "aortic_aneurysm_surgery"
+        },
+        {
+            "label": "Heart Transplant",
+            "value": "heart_transplant"
+        },
+        {
+            "label": "Catheter Ablation",
+            "value": "catheter_ablation"
+        },
+        {
+            "label": "Septal Repair Surgery",
+            "value": "septal_repair_surgery"
+        },
+        {
+            "label": "Craniotomy",
+            "value": "craniotomy"
+        },
+        {
+            "label": "Epilepsy Surgery",
+            "value": "epilepsy_surgery"
+        },
+        {
+            "label": "Microvascular Decompression",
+            "value": "microvascular_decompression"
+        },
+        {
+            "label": "Laminectomy",
+            "value": "laminectomy"
+        },
+        {
+            "label": "Cerebral Aneurysm Repair",
+            "value": "cerebral_aneurysm_repair"
+        },
+        {
+            "label": "Neurostimulation",
+            "value": "neurostimulation"
+        },
+        {
+            "label": "Brain Tumor Resection",
+            "value": "brain_tumor_resection"
+        },
+        {
+            "label": "Prostatectomy",
+            "value": "prostatectomy"
+        },
+        {
+            "label": "Nephrectomy",
+            "value": "nephrectomy"
+        },
+        {
+            "label": "Cystectomy",
+            "value": "cystectomy"
+        },
+        {
+            "label": "Hypospadias Repair",
+            "value": "hypospadias_repair"
+        },
+        {
+            "label": "Kidney Transplant",
+            "value": "kidney_transplant"
+        },
+        {
+            "label": "Lithotripsy",
+            "value": "lithotripsy"
+        },
+        {
+            "label": "Urethroplasty",
+            "value": "urethroplasty"
+        },
+        {
+            "label": "Transurethral Resection of the Prostate (TURP)",
+            "value": "transurethral_resection_of_the_prostate_turp"
+        },
+        {
+            "label": "Hysterectomy",
+            "value": "hysterectomy"
+        },
+        {
+            "label": "Salpingo-Oophorectomy",
+            "value": "salpingo_oophorectomy"
+        },
+        {
+            "label": "Myomectomy",
+            "value": "myomectomy"
+        },
+        {
+            "label": "Laparoscopic Surgery for Endometriosis",
+            "value": "laparoscopic_surgery_for_endometriosis"
+        },
+        {
+            "label": "Diagnostic Laparoscopy",
+            "value": "diagnostic_laparoscopy"
+        },
+        {
+            "label": "Ovarian Cyst Removal",
+            "value": "ovarian_cyst_removal"
+        },
+        {
+            "label": "Tubal Ligation",
+            "value": "tubal_ligation"
+        },
+        {
+            "label": "Mammoplasty",
+            "value": "mammoplasty"
+        },
+        {
+            "label": "Rhinoplasty",
+            "value": "rhinoplasty"
+        },
+        {
+            "label": "Facelift",
+            "value": "facelift"
+        },
+        {
+            "label": "Breast Reconstruction Surgery",
+            "value": "breast_reconstruction_surgery"
+        },
+        {
+            "label": "Burn Surgery",
+            "value": "burn_surgery"
+        },
+        {
+            "label": "Cleft Lip and Palate Repair",
+            "value": "cleft_lip_and_palate_repair"
+        },
+        {
+            "label": "Abdominoplasty",
+            "value": "abdominoplasty"
+        },
+        {
+            "label": "Otoplasty",
+            "value": "otoplasty"
+        },
+        {
+            "label": "Scar Repair",
+            "value": "scar_repair"
+        },
+        {
+            "label": "Tonsillectomy",
+            "value": "tonsillectomy"
+        },
+        {
+            "label": "Adenoidectomy",
+            "value": "adenoidectomy"
+        },
+        {
+            "label": "Sinus Surgery",
+            "value": "sinus_surgery"
+        },
+        {
+            "label": "Tympanoplasty",
+            "value": "tympanoplasty"
+        },
+        {
+            "label": "Laryngectomy",
+            "value": "laryngectomy"
+        },
+        {
+            "label": "Septoplasty",
+            "value": "septoplasty"
+        },
+        {
+            "label": "Turbinate Reduction",
+            "value": "turbinate_reduction"
+        },
+        {
+            "label": "Cataract Extraction",
+            "value": "cataract_extraction"
+        },
+        {
+            "label": "Refractive Surgery",
+            "value": "refractive_surgery"
+        },
+        {
+            "label": "Vitrectomy",
+            "value": "vitrectomy"
+        },
+        {
+            "label": "Retinal Detachment Surgery",
+            "value": "retinal_detachment_surgery"
+        },
+        {
+            "label": "Corneal Transplant",
+            "value": "corneal_transplant"
+        },
+        {
+            "label": "Trabeculectomy",
+            "value": "trabeculectomy"
+        },
+        {
+            "label": "Eyelid Repair",
+            "value": "eyelid_repair"
+        },
+        {
+            "label": "Lung Lobectomy",
+            "value": "lung_lobectomy"
+        },
+        {
+            "label": "Pneumonectomy",
+            "value": "pneumonectomy"
+        },
+        {
+            "label": "Esophageal Surgery",
+            "value": "esophageal_surgery"
+        },
+        {
+            "label": "Chest Wall Repair",
+            "value": "chest_wall_repair"
+        },
+        {
+            "label": "Thymus Surgery",
+            "value": "thymus_surgery"
+        },
+        {
+            "label": "Mediastinoscopy",
+            "value": "mediastinoscopy"
+        },
+        {
+            "label": "Pulmonary Nodule Resection",
+            "value": "pulmonary_nodule_resection"
+        },
+        {
+            "label": "Arterial Bypass",
+            "value": "arterial_bypass"
+        },
+        {
+            "label": "Carotid Endarterectomy",
+            "value": "carotid_endarterectomy"
+        },
+        {
+            "label": "Aortic Aneurysm Repair",
+            "value": "aortic_aneurysm_repair"
+        },
+        {
+            "label": "Arteriovenous Fistula for Hemodialysis",
+            "value": "arteriovenous_fistula_for_hemodialysis"
+        },
+        {
+            "label": "Angioplasty and Stenting",
+            "value": "angioplasty_and_stenting"
+        },
+        {
+            "label": "Thrombectomy",
+            "value": "thrombectomy"
+        },
+        {
+            "label": "Varicose Vein Surgery",
+            "value": "varicose_vein_surgery"
+        }
     ],
     "fr": [
-        "Appendicectomie",
-        "Cholécystectomie",
-        "Herniorraphie",
-        "Gastrectomie",
-        "Colectomie",
-        "Résection intestinale",
-        "Laparotomie exploratrice",
-        "Chirurgie des hémorroïdes",
-        "Splénectomie",
-        "Hépatectomie partielle",
-        "Arthroscopie",
-        "Remplacement de la hanche",
-        "Remplacement du genou",
-        "Réparation de fracture",
-        "Reconstruction ligamentaire",
-        "Fusion vertébrale",
-        "Décompression nerveuse",
-        "Ostéotomie",
-        "Réparation de la coiffe des rotateurs",
-        "Synovectomie",
-        "Pontage aorto-coronarien",
-        "Remplacement de valve cardiaque",
-        "Implantation de stimulateur cardiaque",
-        "Chirurgie de l'anévrisme aortique",
-        "Transplantation cardiaque",
-        "Ablation par cathéter",
-        "Chirurgie de réparation septale",
-        "Craniotomie",
-        "Chirurgie de l'épilepsie",
-        "Décompression microvasculaire",
-        "Laminectomie",
-        "Réparation d'anévrisme cérébral",
-        "Neurostimulation",
-        "Résection de tumeur cérébrale",
-        "Prostatectomie",
-        "Néphrectomie",
-        "Cystectomie",
-        "Réparation de l'hypospadias",
-        "Transplantation rénale",
-        "Lithotritie",
-        "Urétroplastie",
-        "Résection transurétrale de la prostate (RTUP)",
-        "Hystérectomie",
-        "Salpingo-ovariectomie",
-        "Myomectomie",
-        "Chirurgie laparoscopique pour l'endométriose",
-        "Laparoscopie diagnostique",
-        "Ablation de kyste ovarien",
-        "Ligature des trompes",
-        "Mammoplastie",
-        "Rhinoplastie",
-        "Lifting du visage",
-        "Chirurgie de reconstruction mammaire",
-        "Chirurgie des brûlures",
-        "Réparation des fentes labiales et palatines",
-        "Abdominoplastie",
-        "Otoplastie",
-        "Réparation de cicatrices",
-        "Amygdalectomie",
-        "Adénoïdectomie",
-        "Chirurgie des sinus",
-        "Tympanoplastie",
-        "Laryngectomie",
-        "Septoplastie",
-        "Réduction des cornets",
-        "Extraction de la cataracte",
-        "Chirurgie réfractive",
-        "Vitrectomie",
-        "Chirurgie du décollement de rétine",
-        "Greffe de cornée",
-        "Trabéculectomie",
-        "Réparation des paupières",
-        "Lobectomie pulmonaire",
-        "Pneumonectomie",
-        "Chirurgie de l'œsophage",
-        "Réparation de la paroi thoracique",
-        "Chirurgie du thymus",
-        "Médiastinoscopie",
-        "Résection de nodule pulmonaire",
-        "Pontage artériel",
-        "Endartériectomie carotidienne",
-        "Réparation d'anévrisme aortique",
-        "Fistule artério-veineuse pour hémodialyse",
-        "Angioplastie et pose de stent",
-        "Thrombectomie",
-        "Chirurgie des varices"
+        {
+            "label": "Appendicectomie",
+            "value": "appendectomy"
+        },
+        {
+            "label": "Cholécystectomie",
+            "value": "cholecystectomy"
+        },
+        {
+            "label": "Herniorraphie",
+            "value": "herniorrhaphy"
+        },
+        {
+            "label": "Gastrectomie",
+            "value": "gastrectomy"
+        },
+        {
+            "label": "Colectomie",
+            "value": "colectomy"
+        },
+        {
+            "label": "Résection intestinale",
+            "value": "intestinal_resection"
+        },
+        {
+            "label": "Laparotomie exploratrice",
+            "value": "exploratory_laparotomy"
+        },
+        {
+            "label": "Chirurgie des hémorroïdes",
+            "value": "hemorrhoid_surgery"
+        },
+        {
+            "label": "Splénectomie",
+            "value": "splenectomy"
+        },
+        {
+            "label": "Hépatectomie partielle",
+            "value": "partial_hepatectomy"
+        },
+        {
+            "label": "Arthroscopie",
+            "value": "arthroscopy"
+        },
+        {
+            "label": "Remplacement de la hanche",
+            "value": "hip_replacement"
+        },
+        {
+            "label": "Remplacement du genou",
+            "value": "knee_replacement"
+        },
+        {
+            "label": "Réparation de fracture",
+            "value": "fracture_repair"
+        },
+        {
+            "label": "Reconstruction ligamentaire",
+            "value": "ligament_reconstruction"
+        },
+        {
+            "label": "Fusion vertébrale",
+            "value": "spinal_fusion"
+        },
+        {
+            "label": "Décompression nerveuse",
+            "value": "nerve_decompression"
+        },
+        {
+            "label": "Ostéotomie",
+            "value": "osteotomy"
+        },
+        {
+            "label": "Réparation de la coiffe des rotateurs",
+            "value": "rotator_cuff_repair"
+        },
+        {
+            "label": "Synovectomie",
+            "value": "synovectomy"
+        },
+        {
+            "label": "Pontage aorto-coronarien",
+            "value": "coronary_artery_bypass_grafting"
+        },
+        {
+            "label": "Remplacement de valve cardiaque",
+            "value": "heart_valve_replacement"
+        },
+        {
+            "label": "Implantation de stimulateur cardiaque",
+            "value": "pacemaker_implantation"
+        },
+        {
+            "label": "Chirurgie de l'anévrisme aortique",
+            "value": "aortic_aneurysm_surgery"
+        },
+        {
+            "label": "Transplantation cardiaque",
+            "value": "heart_transplant"
+        },
+        {
+            "label": "Ablation par cathéter",
+            "value": "catheter_ablation"
+        },
+        {
+            "label": "Chirurgie de réparation septale",
+            "value": "septal_repair_surgery"
+        },
+        {
+            "label": "Craniotomie",
+            "value": "craniotomy"
+        },
+        {
+            "label": "Chirurgie de l'épilepsie",
+            "value": "epilepsy_surgery"
+        },
+        {
+            "label": "Décompression microvasculaire",
+            "value": "microvascular_decompression"
+        },
+        {
+            "label": "Laminectomie",
+            "value": "laminectomy"
+        },
+        {
+            "label": "Réparation d'anévrisme cérébral",
+            "value": "cerebral_aneurysm_repair"
+        },
+        {
+            "label": "Neurostimulation",
+            "value": "neurostimulation"
+        },
+        {
+            "label": "Résection de tumeur cérébrale",
+            "value": "brain_tumor_resection"
+        },
+        {
+            "label": "Prostatectomie",
+            "value": "prostatectomy"
+        },
+        {
+            "label": "Néphrectomie",
+            "value": "nephrectomy"
+        },
+        {
+            "label": "Cystectomie",
+            "value": "cystectomy"
+        },
+        {
+            "label": "Réparation de l'hypospadias",
+            "value": "hypospadias_repair"
+        },
+        {
+            "label": "Transplantation rénale",
+            "value": "kidney_transplant"
+        },
+        {
+            "label": "Lithotritie",
+            "value": "lithotripsy"
+        },
+        {
+            "label": "Urétroplastie",
+            "value": "urethroplasty"
+        },
+        {
+            "label": "Résection transurétrale de la prostate (RTUP)",
+            "value": "transurethral_resection_of_the_prostate_turp"
+        },
+        {
+            "label": "Hystérectomie",
+            "value": "hysterectomy"
+        },
+        {
+            "label": "Salpingo-ovariectomie",
+            "value": "salpingo_oophorectomy"
+        },
+        {
+            "label": "Myomectomie",
+            "value": "myomectomy"
+        },
+        {
+            "label": "Chirurgie laparoscopique pour l'endométriose",
+            "value": "laparoscopic_surgery_for_endometriosis"
+        },
+        {
+            "label": "Laparoscopie diagnostique",
+            "value": "diagnostic_laparoscopy"
+        },
+        {
+            "label": "Ablation de kyste ovarien",
+            "value": "ovarian_cyst_removal"
+        },
+        {
+            "label": "Ligature des trompes",
+            "value": "tubal_ligation"
+        },
+        {
+            "label": "Mammoplastie",
+            "value": "mammoplasty"
+        },
+        {
+            "label": "Rhinoplastie",
+            "value": "rhinoplasty"
+        },
+        {
+            "label": "Lifting du visage",
+            "value": "facelift"
+        },
+        {
+            "label": "Chirurgie de reconstruction mammaire",
+            "value": "breast_reconstruction_surgery"
+        },
+        {
+            "label": "Chirurgie des brûlures",
+            "value": "burn_surgery"
+        },
+        {
+            "label": "Réparation des fentes labiales et palatines",
+            "value": "cleft_lip_and_palate_repair"
+        },
+        {
+            "label": "Abdominoplastie",
+            "value": "abdominoplasty"
+        },
+        {
+            "label": "Otoplastie",
+            "value": "otoplasty"
+        },
+        {
+            "label": "Réparation de cicatrices",
+            "value": "scar_repair"
+        },
+        {
+            "label": "Amygdalectomie",
+            "value": "tonsillectomy"
+        },
+        {
+            "label": "Adénoïdectomie",
+            "value": "adenoidectomy"
+        },
+        {
+            "label": "Chirurgie des sinus",
+            "value": "sinus_surgery"
+        },
+        {
+            "label": "Tympanoplastie",
+            "value": "tympanoplasty"
+        },
+        {
+            "label": "Laryngectomie",
+            "value": "laryngectomy"
+        },
+        {
+            "label": "Septoplastie",
+            "value": "septoplasty"
+        },
+        {
+            "label": "Réduction des cornets",
+            "value": "turbinate_reduction"
+        },
+        {
+            "label": "Extraction de la cataracte",
+            "value": "cataract_extraction"
+        },
+        {
+            "label": "Chirurgie réfractive",
+            "value": "refractive_surgery"
+        },
+        {
+            "label": "Vitrectomie",
+            "value": "vitrectomy"
+        },
+        {
+            "label": "Chirurgie du décollement de rétine",
+            "value": "retinal_detachment_surgery"
+        },
+        {
+            "label": "Greffe de cornée",
+            "value": "corneal_transplant"
+        },
+        {
+            "label": "Trabéculectomie",
+            "value": "trabeculectomy"
+        },
+        {
+            "label": "Réparation des paupières",
+            "value": "eyelid_repair"
+        },
+        {
+            "label": "Lobectomie pulmonaire",
+            "value": "lung_lobectomy"
+        },
+        {
+            "label": "Pneumonectomie",
+            "value": "pneumonectomy"
+        },
+        {
+            "label": "Chirurgie de l'œsophage",
+            "value": "esophageal_surgery"
+        },
+        {
+            "label": "Réparation de la paroi thoracique",
+            "value": "chest_wall_repair"
+        },
+        {
+            "label": "Chirurgie du thymus",
+            "value": "thymus_surgery"
+        },
+        {
+            "label": "Médiastinoscopie",
+            "value": "mediastinoscopy"
+        },
+        {
+            "label": "Résection de nodule pulmonaire",
+            "value": "pulmonary_nodule_resection"
+        },
+        {
+            "label": "Pontage artériel",
+            "value": "arterial_bypass"
+        },
+        {
+            "label": "Endartériectomie carotidienne",
+            "value": "carotid_endarterectomy"
+        },
+        {
+            "label": "Réparation d'anévrisme aortique",
+            "value": "aortic_aneurysm_repair"
+        },
+        {
+            "label": "Fistule artério-veineuse pour hémodialyse",
+            "value": "arteriovenous_fistula_for_hemodialysis"
+        },
+        {
+            "label": "Angioplastie et pose de stent",
+            "value": "angioplasty_and_stenting"
+        },
+        {
+            "label": "Thrombectomie",
+            "value": "thrombectomy"
+        },
+        {
+            "label": "Chirurgie des varices",
+            "value": "varicose_vein_surgery"
+        }
     ]
 }
