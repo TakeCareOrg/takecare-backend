@@ -27,12 +27,64 @@ class VaultService {
 
     async init() {
         try {
+            // Check seal status
+            const sealStatus = await this.client.status();
+
+            // If sealed, try to unseal
+            if (sealStatus.sealed) {
+                Logger.warn("🔒 Vault is sealed, attempting to unseal...");
+
+                for (let i = 1; i <= 5; i++) {
+                    const key = process.env[`VAULT_UNSEAL_KEY_${i}`];
+                    if (key) {
+                        await this.unsealVault(key);
+                    }
+                }
+            }
+
             // Vérifier la connexion
             const health = await this.client.health();
             Logger.debug("Connected to Vault", health);
             this.isInitialized = true;
         } catch (error) {
             Logger.error("Failed to connect to Vault", error);
+            throw error;
+        }
+    }
+
+    // Unseal the vault
+    private async unsealVault(key: string): Promise<void> {
+        try {
+            const result = await this.client.unseal({
+                secret_shares: 1,
+                key: key,
+            });
+
+            if (!result.sealed) {
+                Logger.info("✅ Vault unsealed successfully");
+                return;
+            }
+        } catch (error) {
+            Logger.error("Failed to unseal Vault", error);
+            throw error;
+        }
+    }
+
+    // Check seal status
+    async getSealStatus(): Promise<{
+        sealed: boolean;
+        progress: number;
+        threshold: number;
+    }> {
+        try {
+            const status = await this.client.status();
+            return {
+                sealed: status.sealed,
+                progress: status.progress,
+                threshold: status.t,
+            };
+        } catch (error) {
+            Logger.error("Failed to get seal status", error);
             throw error;
         }
     }
@@ -45,7 +97,6 @@ class VaultService {
 
         try {
             const result = await this.client.read(path);
-            console.log(result.data.data);
             return result.data.data as T; // KV v2 engine
         } catch (error) {
             Logger.error(`Failed to read secret from ${path}`, error);
