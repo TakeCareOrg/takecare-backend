@@ -1,3 +1,8 @@
+import dotenv from "dotenv";
+
+// Load environment variables FIRST before any other imports
+dotenv.config();
+
 import { Server } from "http";
 import { app } from "./app";
 import Logger from "@libs/logger";

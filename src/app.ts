@@ -1,5 +1,4 @@
 import express from "express";
-import dotenv from "dotenv";
 import morganMiddleware from "@middlewares/morganMiddleware";
 import swaggerUi from "swagger-ui-express";
 import helmet from "helmet";
@@ -19,7 +18,6 @@ import { initMailTransport } from "@services/mail";
 import swaggerDocs from "@config/swagger";
 import promBundle from "express-prom-bundle";
 
-dotenv.config();
 const app = express();
 
 const metricsMiddleware = promBundle({

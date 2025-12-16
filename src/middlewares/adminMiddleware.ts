@@ -24,7 +24,6 @@ export const isAdminMiddlware = async (
         }
 
         if (!user.role?.includes("admin")) {
-            console.log(user.role);
             res.status(403).json({
                 success: false,
                 message: "Access refused. Admin only.",
