@@ -27,10 +27,8 @@ class VaultService {
 
     async init() {
         try {
-            // Check seal status
             const sealStatus = await this.client.status();
 
-            // If sealed, try to unseal
             if (sealStatus.sealed) {
                 Logger.warn("🔒 Vault is sealed, attempting to unseal...");
 
@@ -42,7 +40,6 @@ class VaultService {
                 }
             }
 
-            // Vérifier la connexion
             const health = await this.client.health();
             Logger.debug("Connected to Vault", health);
             this.isInitialized = true;
@@ -52,7 +49,12 @@ class VaultService {
         }
     }
 
-    // Unseal the vault
+    private async ensureInitialized(): Promise<void> {
+        if (!this.isInitialized) {
+            await this.init();
+        }
+    }
+
     private async unsealVault(key: string): Promise<void> {
         try {
             const result = await this.client.unseal({
@@ -62,7 +64,6 @@ class VaultService {
 
             if (!result.sealed) {
                 Logger.info("✅ Vault unsealed successfully");
-                return;
             }
         } catch (error) {
             Logger.error("Failed to unseal Vault", error);
@@ -70,7 +71,14 @@ class VaultService {
         }
     }
 
-    // Check seal status
+    private toBase64(value: string): string {
+        return Buffer.from(value).toString("base64");
+    }
+
+    private fromBase64(value: string): string {
+        return Buffer.from(value, "base64").toString("utf-8");
+    }
+
     async getSealStatus(): Promise<{
         sealed: boolean;
         progress: number;
@@ -89,30 +97,22 @@ class VaultService {
         }
     }
 
-    // Lire un secret
     async getSecret<T = Record<string, unknown>>(path: string): Promise<T> {
-        if (!this.isInitialized) {
-            await this.init();
-        }
-
+        await this.ensureInitialized();
         try {
             const result = await this.client.read(path);
-            return result.data.data as T; // KV v2 engine
+            return result.data.data as T;
         } catch (error) {
             Logger.error(`Failed to read secret from ${path}`, error);
             throw error;
         }
     }
 
-    // Écrire un secret
     async setSecret(
         path: string,
         data: Record<string, unknown>,
     ): Promise<NodeVault.client["write"]> {
-        if (!this.isInitialized) {
-            await this.init();
-        }
-
+        await this.ensureInitialized();
         try {
             const result = await this.client.write(path, { data });
             Logger.info(`Secret written to ${path}`);
@@ -123,12 +123,8 @@ class VaultService {
         }
     }
 
-    // Supprimer un secret
     async deleteSecret(path: string): Promise<void> {
-        if (!this.isInitialized) {
-            await this.init();
-        }
-
+        await this.ensureInitialized();
         try {
             await this.client.delete(path);
             Logger.info(`Secret deleted from ${path}`);
@@ -138,12 +134,8 @@ class VaultService {
         }
     }
 
-    // Lister les secrets
     async listSecrets(path: string): Promise<string[]> {
-        if (!this.isInitialized) {
-            await this.init();
-        }
-
+        await this.ensureInitialized();
         try {
             const result = await this.client.list(path);
             return result.data.keys;
@@ -158,10 +150,7 @@ class VaultService {
         type: string = "kv",
         config: Record<string, unknown> = {},
     ): Promise<void> {
-        if (!this.isInitialized) {
-            await this.init();
-        }
-
+        await this.ensureInitialized();
         try {
             await this.client.mount({
                 mount_point: mountPoint,
@@ -175,14 +164,9 @@ class VaultService {
         }
     }
 
-    // Enable Transit engine
     async enableTransitEngine(mountPoint: string = "transit"): Promise<void> {
-        if (!this.isInitialized) {
-            await this.init();
-        }
-
+        await this.ensureInitialized();
         try {
-            // Check if transit engine is already enabled
             const mounts = await this.client.mounts();
             const transitPath = `${mountPoint}/`;
 
@@ -191,7 +175,6 @@ class VaultService {
                 return;
             }
 
-            // Enable transit engine
             await this.createNewEngine(mountPoint, "transit");
             Logger.info(`✅ Transit engine enabled at ${mountPoint}`);
         } catch (error) {
@@ -200,31 +183,25 @@ class VaultService {
         }
     }
 
-    // Create encryption key for Transit engine
     async createEncryptionKey(
         keyName: string,
         mountPoint: string = "transit",
         options: {
-            type?: string; // aes256-gcm96, chacha20-poly1305, etc.
+            type?: string;
             convergent_encryption?: boolean;
             derived?: boolean;
         } = {},
     ): Promise<void> {
-        if (!this.isInitialized) {
-            await this.init();
-        }
-
+        await this.ensureInitialized();
         try {
-            // Check if key already exists
             try {
                 await this.client.read(`${mountPoint}/keys/${keyName}`);
                 Logger.info(`Encryption key '${keyName}' already exists`);
                 return;
             } catch {
-                // Key doesn't exist, continue to create it
+                // Key doesn't exist, continue
             }
 
-            // Create the key with options
             await this.client.write(`${mountPoint}/keys/${keyName}`, options);
             Logger.info(
                 `✅ Encryption key '${keyName}' created at ${mountPoint}`,
@@ -235,25 +212,18 @@ class VaultService {
         }
     }
 
-    // Setup Transit engine with default key (convenience method)
     async setupTransit(
         mountPoint: string = "transit",
         defaultKeyName: string = "user-data",
     ): Promise<void> {
-        if (!this.isInitialized) {
-            await this.init();
-        }
-
+        await this.ensureInitialized();
         try {
             Logger.info("🔧 Setting up Transit engine...");
 
-            // Enable transit engine
             await this.enableTransitEngine(mountPoint);
-
-            // Create default encryption key
             await this.createEncryptionKey(defaultKeyName, mountPoint, {
                 type: "aes256-gcm96",
-                derived: true, // Allows context-based encryption
+                derived: true,
             });
 
             Logger.info("✅ Transit engine setup complete!");
@@ -276,23 +246,14 @@ class VaultService {
         context?: string;
         mountPoint?: string;
     }): Promise<string> {
-        if (!this.isInitialized) {
-            await this.init();
-        }
-
+        await this.ensureInitialized();
         try {
-            // Vault expects base64 encoded plaintext
-            const base64Plaintext = Buffer.from(plaintext.toString()).toString(
-                "base64",
-            );
-
-            const payload: Record<string, unknown> = {
-                plaintext: base64Plaintext,
+            const payload: Record<string, string> = {
+                plaintext: this.toBase64(plaintext),
             };
 
-            // Si un contexte est fourni, l'encoder en base64
             if (context) {
-                payload.context = Buffer.from(context).toString("base64");
+                payload.context = this.toBase64(context);
             }
 
             const result = await this.client.write(
@@ -307,25 +268,23 @@ class VaultService {
         }
     }
 
-    // Déchiffrer avec contexte utilisateur
-    async decrypt(
-        keyName: string,
-        ciphertext: string,
-        context?: string, // Ajout du paramètre context
-        mountPoint: string = "transit",
-    ): Promise<string> {
-        if (!this.isInitialized) {
-            await this.init();
-        }
-
+    async decrypt({
+        keyName,
+        ciphertext,
+        context,
+        mountPoint = "transit",
+    }: {
+        keyName: string;
+        ciphertext: string;
+        context?: string;
+        mountPoint?: string;
+    }): Promise<string> {
+        await this.ensureInitialized();
         try {
-            const payload: Record<string, unknown> = {
-                ciphertext: ciphertext,
-            };
+            const payload: Record<string, string> = { ciphertext };
 
-            // Si un contexte est fourni, l'encoder en base64
             if (context) {
-                payload.context = Buffer.from(context).toString("base64");
+                payload.context = this.toBase64(context);
             }
 
             const result = await this.client.write(
@@ -333,13 +292,7 @@ class VaultService {
                 payload,
             );
 
-            // Decode from base64
-            const decrypted = Buffer.from(
-                result.data.plaintext,
-                "base64",
-            ).toString("utf-8");
-
-            return decrypted;
+            return this.fromBase64(result.data.plaintext);
         } catch (error) {
             Logger.error(`Failed to decrypt data with key ${keyName}`, error);
             throw error;
@@ -357,13 +310,10 @@ class VaultService {
         context?: string;
         mountPoint?: string;
     }): Promise<Record<string, unknown>> {
-        if (!this.isInitialized) {
-            await this.init();
-        }
+        await this.ensureInitialized();
 
         const encryptedData: Record<string, unknown> = {};
 
-        // Chiffrer chaque valeur individuellement
         for (const [key, value] of Object.entries(data)) {
             if (value === null || value === undefined) {
                 encryptedData[key] = value;
@@ -371,7 +321,6 @@ class VaultService {
             }
 
             try {
-                // Convertir la valeur en string pour le chiffrement
                 const stringValue =
                     typeof value === "string" ? value : JSON.stringify(value);
 
@@ -390,7 +339,6 @@ class VaultService {
         return encryptedData;
     }
 
-    // Déchiffrer plusieurs champs individuellement
     async decryptFields<T = Record<string, unknown>>({
         keyName,
         encryptedData,
@@ -402,9 +350,7 @@ class VaultService {
         context?: string;
         mountPoint?: string;
     }): Promise<T> {
-        if (!this.isInitialized) {
-            await this.init();
-        }
+        await this.ensureInitialized();
 
         const decryptedData: Record<string, unknown> = {};
 
@@ -415,24 +361,20 @@ class VaultService {
             }
 
             try {
-                // Déchiffrer seulement si la valeur commence par "vault:"
                 if (typeof value === "string" && value.startsWith("vault:")) {
-                    const decrypted = await this.decrypt(
+                    const decrypted = await this.decrypt({
                         keyName,
-                        value,
+                        ciphertext: value,
                         context,
                         mountPoint,
-                    );
+                    });
 
-                    // Essayer de parser le JSON si c'était un objet/array
                     try {
                         decryptedData[key] = JSON.parse(decrypted);
                     } catch {
-                        // Si ce n'est pas du JSON, garder la string
                         decryptedData[key] = decrypted;
                     }
                 } else {
-                    // Champ non chiffré
                     decryptedData[key] = value;
                 }
             } catch (error) {
