@@ -12,7 +12,7 @@ import {
     HEALTH_GOALS_OPTIONS,
     HEIGHT_UNITS,
     WEIGHT_UNITS,
-} from "constants/health";
+} from "@constants/health";
 import { z } from "zod";
 
 type UserHealthDataQuiz = Omit<

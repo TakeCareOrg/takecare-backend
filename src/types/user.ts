@@ -1,4 +1,4 @@
-import { USER_DATA_UPDATES_TYPES } from "constants/data-updates";
+import { USER_DATA_UPDATES_TYPES } from "@constants/data-updates";
 
 export interface User extends UserAttributions {
     user_id: string;

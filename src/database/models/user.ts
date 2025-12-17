@@ -1,5 +1,5 @@
 import { User, UserHealthAttributions, UserUpdates } from "@dtypes/user";
-import { USER_DATA_UPDATES_TYPES } from "constants/data-updates";
+import { USER_DATA_UPDATES_TYPES } from "@constants/data-updates";
 import mongo, { Schema } from "mongoose";
 
 const userSchema = new Schema<User>({
