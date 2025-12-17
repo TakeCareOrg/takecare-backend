@@ -1,4 +1,5 @@
-import { User, UserHealthAttributions } from "@dtypes/user";
+import { User, UserHealthAttributions, UserUpdates } from "@dtypes/user";
+import { USER_DATA_UPDATES_TYPES } from "constants/data-updates";
 import mongo, { Schema } from "mongoose";
 
 const userSchema = new Schema<User>({
@@ -76,7 +77,7 @@ const userHealthAttributions = new Schema<UserHealthAttributions>({
         type: String,
         required: false,
     },
-    age: {
+    birth_date: {
         type: String, // Changed to String to store encrypted data
         required: false,
     },
@@ -150,10 +151,33 @@ const userHealthAttributions = new Schema<UserHealthAttributions>({
     },
 });
 
+const userUpdatesSchema = new Schema<UserUpdates>({
+    user_id: {
+        type: String,
+        required: true,
+        index: true,
+    },
+    type: {
+        type: String,
+        enum: USER_DATA_UPDATES_TYPES,
+        required: true,
+        index: true,
+    },
+    updated_at: {
+        type: Date,
+        default: Date.now,
+        required: true,
+    },
+});
+
 const UserDB = mongo.model<User>("User", userSchema);
 const UserHealthAttributionsDB = mongo.model<UserHealthAttributions>(
     "User_Health_Attributions",
     userHealthAttributions,
 );
+const UserUpdatesDB = mongo.model<UserUpdates>(
+    "User_Updates",
+    userUpdatesSchema,
+);
 
-export { UserDB, UserHealthAttributionsDB };
+export { UserDB, UserHealthAttributionsDB, UserUpdatesDB };

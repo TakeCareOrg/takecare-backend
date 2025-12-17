@@ -67,7 +67,8 @@
         "swagger-jsdoc": "^6.2.8",
         "swagger-ui-express": "^5.0.1",
         "together-ai": "^0.13.0",
-        "winston": "^3.17.0"
+        "winston": "^3.17.0",
+        "zod": "^4.2.1"
     },
     "devDependencies": {
         "@eslint/eslintrc": "^3.3.0",

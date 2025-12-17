@@ -1,3 +1,5 @@
+import { USER_DATA_UPDATES_TYPES } from "constants/data-updates";
+
 export interface User extends UserAttributions {
     user_id: string;
     email: string;
@@ -20,15 +22,22 @@ export interface UserAttributions {
 
 export interface UserHealthAttributions {
     user_id: string;
-    gender?: string;
-    age?: number;
+    gender?: "male" | "female" | "other";
+    birth_date?: Date;
     weight?: number;
-    weight_unit?: string;
+    weight_unit?: "kg" | "lbs";
     height?: number;
-    height_unit?: string;
-    alcohol?: string;
-    smoking?: string;
-    health_goal?: string[];
+    height_unit?: "cm" | "ft";
+    alcohol?: "never" | "occasionally" | "cautiously" | "sometimes" | "often";
+    smoking?: "never" | "occasionally" | "cautiously" | "sometimes" | "often";
+    health_goal?: (
+        | "stress_reduction"
+        | "feel_better"
+        | "health_improvement"
+        | "physical_activity"
+        | "sleep_quality"
+        | "health_advices"
+    )[];
     professional_help?: string[];
     medication_treatment?: string;
     medical_treatments?: string[];
@@ -39,6 +48,7 @@ export interface UserHealthAttributions {
     stress_level?: number;
     summary_message?: string;
     created_at: Date;
+    updated_at?: Date;
 }
 
 export interface UserInfoPayload extends UserAttributions {
@@ -47,4 +57,8 @@ export interface UserInfoPayload extends UserAttributions {
     health: UserHealthAttributions;
 }
 
-export const users: User[] = [];
+export interface UserUpdates {
+    user_id: string;
+    type: (typeof USER_DATA_UPDATES_TYPES)[number];
+    updated_at: Date;
+}

@@ -8,4 +8,6 @@ router.get("/me", authenticateJWT, controller.getUserInfo);
 
 router.post("/health-quiz", authenticateJWT, controller.healthQuiz);
 
+router.patch("/health-data", authenticateJWT, controller.updateHealthData);
+
 export default router;
