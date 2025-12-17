@@ -91,7 +91,8 @@ class Auth {
 
             return { token };
         } catch (e) {
-            throw new Error(`${e}`);
+            Logger.error(`Login error: ${e}`);
+            throw new Error("AN_ERROR_OCCURRED");
         }
     }
 

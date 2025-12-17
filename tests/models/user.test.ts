@@ -4,9 +4,11 @@ import {
     UserHealthAttributionsDB,
 } from "../../src/database/models/user";
 import Logger from "../../src/libs/logger";
+import VaultService from "../../src/services/vault";
 
 jest.mock("../../src/database/models/user");
 jest.mock("../../src/libs/logger");
+jest.mock("../../src/services/vault");
 
 describe("User Model Tests", () => {
     let user: User;
@@ -15,6 +17,10 @@ describe("User Model Tests", () => {
     beforeEach(() => {
         user = new User(mockUserId);
         jest.clearAllMocks();
+
+        // Default VaultService mocks
+        (VaultService.encryptFields as jest.Mock).mockResolvedValue({});
+        (VaultService.decryptFields as jest.Mock).mockResolvedValue({});
     });
 
     describe("Constructor", () => {
@@ -40,15 +46,31 @@ describe("User Model Tests", () => {
             };
 
             const mockHealth = {
+                user_id: mockUserId,
                 weight: 70,
                 height: 175,
-                age: 30,
+                birth_date: "1995-01-01T00:00:00.000Z",
+                created_at: new Date("2025-01-01"),
+                toObject: jest.fn().mockReturnValue({
+                    weight: 70,
+                    height: 175,
+                    birth_date: "1995-01-01T00:00:00.000Z",
+                }),
+            };
+
+            const mockDecryptedHealth = {
+                weight: 70,
+                height: 175,
+                birth_date: "1995-01-01T00:00:00.000Z",
             };
 
             UserDB.findOne = jest.fn().mockResolvedValue(mockUser);
             UserHealthAttributionsDB.findOne = jest
                 .fn()
                 .mockResolvedValue(mockHealth);
+            (VaultService.decryptFields as jest.Mock).mockResolvedValue(
+                mockDecryptedHealth,
+            );
 
             const result = await user.getUserInfo();
 
@@ -64,7 +86,13 @@ describe("User Model Tests", () => {
                     chat_tokens: 1000,
                     chat_tokens_refreshed_at: "2025-01-01",
                     avatar: "avatar.jpg",
-                    health: mockHealth,
+                    health: {
+                        weight: 70,
+                        height: 175,
+                        birth_date: "1995-01-01T00:00:00.000Z",
+                        user_id: mockUserId,
+                        created_at: mockHealth.created_at,
+                    },
                 },
             });
         });
@@ -111,24 +139,29 @@ describe("User Model Tests", () => {
             expect(Logger.error).toHaveBeenCalledWith("User not found");
         });
 
-        it("should throw AN_ERROR_OCCURRED when userInfo not found in Promise.all", async () => {
+        it("should return user info with empty health when userHealthInfo is null", async () => {
             const mockUser = {
                 user_id: mockUserId,
                 email: "test@example.com",
+                first_name: "Jane",
+                last_name: "Smith",
+                verified: false,
+                role: ["user"],
+                quiz_finished: false,
+                chat_tokens: 100,
+                chat_tokens_refreshed_at: null,
+                avatar: null,
             };
 
-            UserDB.findOne = jest
-                .fn()
-                .mockResolvedValueOnce(mockUser)
-                .mockResolvedValueOnce(null);
+            UserDB.findOne = jest.fn().mockResolvedValue(mockUser);
             UserHealthAttributionsDB.findOne = jest
                 .fn()
                 .mockResolvedValue(null);
 
-            await expect(user.getUserInfo()).rejects.toThrow(
-                "AN_ERROR_OCCURRED",
-            );
-            expect(Logger.error).toHaveBeenCalledWith("User info not found");
+            const result = await user.getUserInfo();
+
+            expect(result.user.health).toEqual({});
+            expect(result.user.email).toBe("test@example.com");
         });
 
         it("should throw AN_ERROR_OCCURRED when database query fails", async () => {
@@ -164,14 +197,21 @@ describe("User Model Tests", () => {
             last_name: "Doe",
             weight: 70,
             height: 175,
-            age: 30,
-            activity_level: "moderate",
+            birth_date: new Date("1995-01-01T00:00:00.000Z"),
+            gender: "male" as const,
         };
 
         it("should complete health quiz successfully", async () => {
             const mockUser = {
                 user_id: mockUserId,
                 email: "test@example.com",
+            };
+
+            const mockEncryptedData = {
+                weight: "vault:v1:encrypted_weight",
+                height: "vault:v1:encrypted_height",
+                birth_date: "vault:v1:encrypted_birth_date",
+                gender: "vault:v1:encrypted_gender",
             };
 
             UserDB.findOne = jest.fn().mockResolvedValue(mockUser);
@@ -187,6 +227,9 @@ describe("User Model Tests", () => {
                 user_id: mockUserId,
                 weight: 70,
             });
+            (VaultService.encryptFields as jest.Mock).mockResolvedValue(
+                mockEncryptedData,
+            );
 
             await user.healthQuiz(mockHealthData);
 
@@ -194,6 +237,7 @@ describe("User Model Tests", () => {
             expect(UserHealthAttributionsDB.findOne).toHaveBeenCalled();
             expect(UserDB.updateOne).toHaveBeenCalled();
             expect(UserHealthAttributionsDB.create).toHaveBeenCalled();
+            expect(VaultService.encryptFields).toHaveBeenCalled();
         });
 
         it("should throw USER_ID_REQUIRED when user_id is empty", async () => {
