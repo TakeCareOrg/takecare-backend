@@ -13,17 +13,9 @@ async function setupTransit() {
 
         // Initialize Vault connection
         await vaultService.init();
-
         // Setup Transit engine with default configuration
         await vaultService.setupTransit("transit", "user-data");
-
         Logger.info("✅ Transit engine setup complete!");
-        Logger.info("");
-        Logger.info("You can now use encryption methods:");
-        Logger.info("  - vaultService.encrypt()");
-        Logger.info("  - vaultService.decrypt()");
-        Logger.info("  - vaultService.encryptFields()");
-        Logger.info("  - vaultService.decryptFields()");
 
         process.exit(0);
     } catch (error) {

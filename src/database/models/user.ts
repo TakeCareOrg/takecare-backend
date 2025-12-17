@@ -78,11 +78,11 @@ const userHealthAttributions = new Schema<UserHealthAttributions>({
         required: false,
     },
     birth_date: {
-        type: String, // Changed to String to store encrypted data
+        type: String,
         required: false,
     },
     weight: {
-        type: String, // Changed to String to store encrypted data
+        type: String,
         required: false,
     },
     weight_unit: {
@@ -90,7 +90,7 @@ const userHealthAttributions = new Schema<UserHealthAttributions>({
         required: false,
     },
     height: {
-        type: String, // Changed to String to store encrypted data
+        type: String,
         required: false,
     },
     height_unit: {
@@ -106,39 +106,39 @@ const userHealthAttributions = new Schema<UserHealthAttributions>({
         required: false,
     },
     health_goal: {
-        type: String, // Changed to String to store encrypted array as JSON
+        type: String,
         required: false,
     },
     professional_help: {
-        type: String, // Changed to String to store encrypted array as JSON
+        type: String,
         required: false,
     },
     medication_treatment: {
-        type: String, // Changed to String to store encrypted array as JSON
+        type: String,
         required: false,
     },
     medical_treatments: {
-        type: String, // Changed to String to store encrypted array as JSON
+        type: String,
         required: false,
     },
     surgery_before: {
-        type: String, // Changed to String to store encrypted array as JSON
+        type: String,
         required: false,
     },
     chronic_illness: {
-        type: String, // Changed to String to store encrypted array as JSON
+        type: String,
         required: false,
     },
     allergies: {
-        type: String, // Changed to String to store encrypted array as JSON
+        type: String,
         required: false,
     },
     practice_sports: {
-        type: String, // Changed to String to store encrypted array as JSON
+        type: String,
         required: false,
     },
     stress_level: {
-        type: String, // Changed to String to store encrypted data
+        type: String,
         required: false,
     },
     summary_message: {
