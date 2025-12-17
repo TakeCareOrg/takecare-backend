@@ -288,7 +288,9 @@ describe("User Authentication Tests", () => {
             expect(Logger.error).toHaveBeenCalledWith(
                 `${StatusCodes.INTERNAL_SERVER_ERROR}: Error: AN_ERROR_OCCURRED`,
             );
-            expect(res.status).toHaveBeenCalledWith(StatusCodes.INTERNAL_SERVER_ERROR);
+            expect(res.status).toHaveBeenCalledWith(
+                StatusCodes.INTERNAL_SERVER_ERROR,
+            );
             expect(res.json).toHaveBeenCalledWith({
                 message: "Internal server error",
             });

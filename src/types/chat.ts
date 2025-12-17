@@ -1,3 +1,4 @@
-import { CompletionCreateParams } from "together-ai/resources/chat/completions";
-
-export type ChatMessage = CompletionCreateParams.Message;
+export type ChatMessage = {
+    role: "system" | "user" | "assistant";
+    content: string;
+};

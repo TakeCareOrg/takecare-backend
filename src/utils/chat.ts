@@ -5,8 +5,10 @@ export function formatMessages(messages: ChatMessage[]): ChatMessage[] {
         throw new Error("CHAT_START_MESSAGE is not defined");
     }
 
-    return [
-        { role: "system", content: process.env.CHAT_START_MESSAGE },
-        ...messages.map(({ role, content }) => ({ role, content })),
-    ];
+    const systemMessage: ChatMessage = {
+        role: "system",
+        content: process.env.CHAT_START_MESSAGE,
+    };
+
+    return [systemMessage, ...messages];
 }

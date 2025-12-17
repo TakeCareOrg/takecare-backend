@@ -9,7 +9,6 @@ const TEMPERATURE = 0.7;
 const TOP_P = 0.7;
 const TOP_K = 50;
 const REPETITION_PENALTY = 1;
-const STOP = ["<|im_end|>"];
 
 class Chat {
     user_id: string;
@@ -32,24 +31,27 @@ class Chat {
             // Send message
             const response = await together.chat.completions.create({
                 messages: formattedMessages,
-                model: "Qwen/Qwen2.5-72B-Instruct-Turbo",
+                model: "google/gemma-3n-E4B-it",
                 max_tokens: MAX_TOKENS,
                 temperature: TEMPERATURE,
                 top_p: TOP_P,
                 top_k: TOP_K,
                 repetition_penalty: REPETITION_PENALTY,
-                stop: STOP,
                 stream: true,
+                reasoning_effort: "medium",
             });
 
             let fullResponse = "";
-            for await (const token of response) {
-                fullResponse += token.choices[0]?.delta?.content || "";
+            for await (const chunk of response) {
+                const content = chunk.choices[0]?.delta?.content;
+                if (content) {
+                    fullResponse += content;
+                }
             }
 
             await new TakeCareUserChatTokens(this.user_id).decreaseTokens();
 
-            return { role: "assistant", content: fullResponse };
+            return { role: "assistant" as const, content: fullResponse };
         } catch (error) {
             Logger.error(
                 `Error sending message to Together API - error: ${error}`,
