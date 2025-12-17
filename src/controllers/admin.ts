@@ -78,12 +78,6 @@ export const getHealthData: RequestMiddleware = async (req, res) => {
         const userInstance = new User(req.params.userId);
 
         const healthData = await userInstance.getHealthData();
-        if (!healthData) {
-            res.status(StatusCodes.NOT_FOUND).json({
-                message: "health data not found",
-            });
-            return;
-        }
         res.json(healthData);
     } catch (error) {
         Logger.error(`${StatusCodes.INTERNAL_SERVER_ERROR}: ${error}`);
@@ -111,13 +105,7 @@ export const editUser: RequestMiddleware = async (req, res) => {
             });
             return;
         }
-        const response = await userInstance.updateUser(modifiedUser);
-        if (!response.success) {
-            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                message: "Internal server error",
-            });
-            return;
-        }
+        await userInstance.updateUser(modifiedUser);
         res.json({ success: true });
     } catch (error) {
         Logger.error(`${StatusCodes.INTERNAL_SERVER_ERROR}: ${error}`);

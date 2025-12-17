@@ -140,6 +140,9 @@ class User {
             const healthData = await UserHealthAttributionsDB.find({
                 user_id: this.user_id,
             }).select("-_id -__v -user_id -created_at");
+            if (!healthData) {
+                throw new Error("AN_ERROR_OCCURRED");
+            }
             return healthData[0];
         } catch {
             throw new Error("AN_ERROR_OCCURRED");
