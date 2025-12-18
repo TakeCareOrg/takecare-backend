@@ -14,7 +14,8 @@
         "@database": "dist/database",
         "@config": "dist/config",
         "@docs": "dist/docs",
-        "@data": "dist/data"
+        "@data": "dist/data",
+        "@constants": "dist/constants"
     },
     "scripts": {
         "test": "jest --coverage",
