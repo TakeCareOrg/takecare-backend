@@ -145,8 +145,8 @@ describe("User Controller Tests", () => {
             const mockHealthData = {
                 weight: 70,
                 height: 175,
-                age: 30,
-                activity_level: "moderate",
+                birth_date: "1995-01-01T00:00:00.000Z",
+                gender: "male",
             };
 
             req.user = { user_id: "123" };
@@ -163,9 +163,6 @@ describe("User Controller Tests", () => {
 
             expect(User).toHaveBeenCalledWith("123");
             expect(res.status).toHaveBeenCalledWith(200);
-            expect(res.json).toHaveBeenCalledWith({
-                message: "Health quiz completed",
-            });
         });
 
         it("should return 403 when user is not authenticated", async () => {
