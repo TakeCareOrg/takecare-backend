@@ -1,144 +1,558 @@
 {
     "en": [
-        "Coronary Artery Disease",
-        "Hypertension (High Blood Pressure)",
-        "Heart Failure",
-        "Arrhythmias",
-        "Stroke",
-        "Angina",
-        "Heart Attack",
-        "Lung Cancer",
-        "Breast Cancer",
-        "Prostate Cancer",
-        "Colorectal Cancer",
-        "Skin Cancer",
-        "Cervical Cancer",
-        "Childhood Cancer",
-        "Chronic Obstructive Pulmonary Disease (COPD)",
-        "Asthma",
-        "Pulmonary Hypertension",
-        "Cystic Fibrosis",
-        "Interstitial Lung Disease",
-        "Sleep Apnea",
-        "Type 1 Diabetes",
-        "Type 2 Diabetes",
-        "Gestational Diabetes",
-        "Prediabetes",
-        "Alzheimer's Disease",
-        "Parkinson's Disease",
-        "Multiple Sclerosis",
-        "Epilepsy",
-        "Amyotrophic Lateral Sclerosis (ALS)",
-        "Bipolar Disorder",
-        "Depression",
-        "Osteoarthritis",
-        "Rheumatoid Arthritis",
-        "Osteoporosis",
-        "Fibromyalgia",
-        "Spondylitis",
-        "Crohn's Disease",
-        "Ulcerative Colitis",
-        "Irritable Bowel Syndrome (IBS)",
-        "Chronic Hepatitis",
-        "Celiac Disease",
-        "Inflammatory Bowel Diseases",
-        "Generalized Anxiety Disorder",
-        "Post-Traumatic Stress Disorder (PTSD)",
-        "Schizophrenia",
-        "Lupus",
-        "Sjögren's Syndrome",
-        "Psoriasis",
-        "Hashimoto's Thyroiditis",
-        "Graves' Disease",
-        "Chronic Fatigue Syndrome",
-        "Complex Regional Pain Syndrome (CRPS)",
-        "Migraine",
-        "Endometriosis",
-        "Interstitial Cystitis",
-        "Obesity",
-        "Hyperlipidemia",
-        "Metabolic Syndrome",
-        "Hypothyroidism",
-        "Hyperthyroidism",
-        "Polycystic Ovary Syndrome (PCOS)",
-        "Chronic Kidney Disease",
-        "Glomerulonephritis",
-        "Polycystic Kidney Disease",
-        "Sickle Cell Disease",
-        "Hemophilia",
-        "Thalassemia",
-        "Eczema",
-        "Vitiligo"
+        {
+            "label": "Coronary Artery Disease",
+            "value": "coronary_artery_disease"
+        },
+        {
+            "label": "Hypertension (High Blood Pressure)",
+            "value": "hypertension_high_blood_pressure"
+        },
+        {
+            "label": "Heart Failure",
+            "value": "heart_failure"
+        },
+        {
+            "label": "Arrhythmias",
+            "value": "arrhythmias"
+        },
+        {
+            "label": "Stroke",
+            "value": "stroke"
+        },
+        {
+            "label": "Angina",
+            "value": "angina"
+        },
+        {
+            "label": "Heart Attack",
+            "value": "heart_attack"
+        },
+        {
+            "label": "Lung Cancer",
+            "value": "lung_cancer"
+        },
+        {
+            "label": "Breast Cancer",
+            "value": "breast_cancer"
+        },
+        {
+            "label": "Prostate Cancer",
+            "value": "prostate_cancer"
+        },
+        {
+            "label": "Colorectal Cancer",
+            "value": "colorectal_cancer"
+        },
+        {
+            "label": "Skin Cancer",
+            "value": "skin_cancer"
+        },
+        {
+            "label": "Cervical Cancer",
+            "value": "cervical_cancer"
+        },
+        {
+            "label": "Childhood Cancer",
+            "value": "childhood_cancer"
+        },
+        {
+            "label": "Chronic Obstructive Pulmonary Disease (COPD)",
+            "value": "chronic_obstructive_pulmonary_disease_copd"
+        },
+        {
+            "label": "Asthma",
+            "value": "asthma"
+        },
+        {
+            "label": "Pulmonary Hypertension",
+            "value": "pulmonary_hypertension"
+        },
+        {
+            "label": "Cystic Fibrosis",
+            "value": "cystic_fibrosis"
+        },
+        {
+            "label": "Interstitial Lung Disease",
+            "value": "interstitial_lung_disease"
+        },
+        {
+            "label": "Sleep Apnea",
+            "value": "sleep_apnea"
+        },
+        {
+            "label": "Type 1 Diabetes",
+            "value": "type_1_diabetes"
+        },
+        {
+            "label": "Type 2 Diabetes",
+            "value": "type_2_diabetes"
+        },
+        {
+            "label": "Gestational Diabetes",
+            "value": "gestational_diabetes"
+        },
+        {
+            "label": "Prediabetes",
+            "value": "prediabetes"
+        },
+        {
+            "label": "Alzheimer's Disease",
+            "value": "alzheimer_s_disease"
+        },
+        {
+            "label": "Parkinson's Disease",
+            "value": "parkinson_s_disease"
+        },
+        {
+            "label": "Multiple Sclerosis",
+            "value": "multiple_sclerosis"
+        },
+        {
+            "label": "Epilepsy",
+            "value": "epilepsy"
+        },
+        {
+            "label": "Amyotrophic Lateral Sclerosis (ALS)",
+            "value": "amyotrophic_lateral_sclerosis_als"
+        },
+        {
+            "label": "Bipolar Disorder",
+            "value": "bipolar_disorder"
+        },
+        {
+            "label": "Depression",
+            "value": "depression"
+        },
+        {
+            "label": "Osteoarthritis",
+            "value": "osteoarthritis"
+        },
+        {
+            "label": "Rheumatoid Arthritis",
+            "value": "rheumatoid_arthritis"
+        },
+        {
+            "label": "Osteoporosis",
+            "value": "osteoporosis"
+        },
+        {
+            "label": "Fibromyalgia",
+            "value": "fibromyalgia"
+        },
+        {
+            "label": "Spondylitis",
+            "value": "spondylitis"
+        },
+        {
+            "label": "Crohn's Disease",
+            "value": "crohn_s_disease"
+        },
+        {
+            "label": "Ulcerative Colitis",
+            "value": "ulcerative_colitis"
+        },
+        {
+            "label": "Irritable Bowel Syndrome (IBS)",
+            "value": "irritable_bowel_syndrome_ibs"
+        },
+        {
+            "label": "Chronic Hepatitis",
+            "value": "chronic_hepatitis"
+        },
+        {
+            "label": "Celiac Disease",
+            "value": "celiac_disease"
+        },
+        {
+            "label": "Inflammatory Bowel Diseases",
+            "value": "inflammatory_bowel_diseases"
+        },
+        {
+            "label": "Generalized Anxiety Disorder",
+            "value": "generalized_anxiety_disorder"
+        },
+        {
+            "label": "Post-Traumatic Stress Disorder (PTSD)",
+            "value": "post_traumatic_stress_disorder_ptsd"
+        },
+        {
+            "label": "Schizophrenia",
+            "value": "schizophrenia"
+        },
+        {
+            "label": "Lupus",
+            "value": "lupus"
+        },
+        {
+            "label": "Sjögren's Syndrome",
+            "value": "sjogren_s_syndrome"
+        },
+        {
+            "label": "Psoriasis",
+            "value": "psoriasis"
+        },
+        {
+            "label": "Hashimoto's Thyroiditis",
+            "value": "hashimoto_s_thyroiditis"
+        },
+        {
+            "label": "Graves' Disease",
+            "value": "graves_disease"
+        },
+        {
+            "label": "Chronic Fatigue Syndrome",
+            "value": "chronic_fatigue_syndrome"
+        },
+        {
+            "label": "Complex Regional Pain Syndrome (CRPS)",
+            "value": "complex_regional_pain_syndrome_crps"
+        },
+        {
+            "label": "Migraine",
+            "value": "migraine"
+        },
+        {
+            "label": "Endometriosis",
+            "value": "endometriosis"
+        },
+        {
+            "label": "Interstitial Cystitis",
+            "value": "interstitial_cystitis"
+        },
+        {
+            "label": "Obesity",
+            "value": "obesity"
+        },
+        {
+            "label": "Hyperlipidemia",
+            "value": "hyperlipidemia"
+        },
+        {
+            "label": "Metabolic Syndrome",
+            "value": "metabolic_syndrome"
+        },
+        {
+            "label": "Hypothyroidism",
+            "value": "hypothyroidism"
+        },
+        {
+            "label": "Hyperthyroidism",
+            "value": "hyperthyroidism"
+        },
+        {
+            "label": "Polycystic Ovary Syndrome (PCOS)",
+            "value": "polycystic_ovary_syndrome_pcos"
+        },
+        {
+            "label": "Chronic Kidney Disease",
+            "value": "chronic_kidney_disease"
+        },
+        {
+            "label": "Glomerulonephritis",
+            "value": "glomerulonephritis"
+        },
+        {
+            "label": "Polycystic Kidney Disease",
+            "value": "polycystic_kidney_disease"
+        },
+        {
+            "label": "Sickle Cell Disease",
+            "value": "sickle_cell_disease"
+        },
+        {
+            "label": "Hemophilia",
+            "value": "hemophilia"
+        },
+        {
+            "label": "Thalassemia",
+            "value": "thalassemia"
+        },
+        {
+            "label": "Eczema",
+            "value": "eczema"
+        },
+        {
+            "label": "Vitiligo",
+            "value": "vitiligo"
+        }
     ],
     "fr": [
-        "Maladie coronarienne",
-        "Hypertension (Haute pression artérielle)",
-        "Insuffisance cardiaque",
-        "Arythmies",
-        "AVC (Accident vasculaire cérébral)",
-        "Angine",
-        "Crise cardiaque",
-        "Cancer du poumon",
-        "Cancer du sein",
-        "Cancer de la prostate",
-        "Cancer colorectal",
-        "Cancer de la peau",
-        "Cancer du col de l'utérus",
-        "Cancer infantile",
-        "Maladie pulmonaire obstructive chronique (MPOC)",
-        "Asthme",
-        "Hypertension pulmonaire",
-        "Fibrose kystique",
-        "Maladie pulmonaire interstitielle",
-        "Apnée du sommeil",
-        "Diabète de type 1",
-        "Diabète de type 2",
-        "Diabète gestationnel",
-        "Prédiabète",
-        "Maladie d'Alzheimer",
-        "Maladie de Parkinson",
-        "Sclérose en plaques",
-        "Épilepsie",
-        "Sclérose latérale amyotrophique (SLA)",
-        "Trouble bipolaire",
-        "Dépression",
-        "Arthrose",
-        "Polyarthrite rhumatoïde",
-        "Ostéoporose",
-        "Fibromyalgie",
-        "Spondylite",
-        "Maladie de Crohn",
-        "Rectocolite hémorragique",
-        "Syndrome du côlon irritable (SCI)",
-        "Hépatite chronique",
-        "Maladie cœliaque",
-        "Maladies inflammatoires de l'intestin",
-        "Trouble d'anxiété généralisée",
-        "Trouble de stress post-traumatique (TSPT)",
-        "Schizophrénie",
-        "Lupus",
-        "Syndrome de Sjögren",
-        "Psoriasis",
-        "Thyroïdite de Hashimoto",
-        "Maladie de Basedow",
-        "Syndrome de fatigue chronique",
-        "Syndrome douloureux régional complexe (SDRC)",
-        "Migraine",
-        "Endométriose",
-        "Cystite interstitielle",
-        "Obésité",
-        "Hyperlipidémie",
-        "Syndrome métabolique",
-        "Hypothyroïdie",
-        "Hyperthyroïdie",
-        "Syndrome des ovaires polykystiques (SOPK)",
-        "Maladie rénale chronique",
-        "Glomérulonéphrite",
-        "Maladie polykystique des reins",
-        "Drépanocytose",
-        "Hémophilie",
-        "Thalassémie",
-        "Eczéma",
-        "Vitiligo"
+        {
+            "label": "Maladie coronarienne",
+            "value": "coronary_artery_disease"
+        },
+        {
+            "label": "Hypertension (Haute pression artérielle)",
+            "value": "hypertension_high_blood_pressure"
+        },
+        {
+            "label": "Insuffisance cardiaque",
+            "value": "heart_failure"
+        },
+        {
+            "label": "Arythmies",
+            "value": "arrhythmias"
+        },
+        {
+            "label": "AVC (Accident vasculaire cérébral)",
+            "value": "stroke"
+        },
+        {
+            "label": "Angine",
+            "value": "angina"
+        },
+        {
+            "label": "Crise cardiaque",
+            "value": "heart_attack"
+        },
+        {
+            "label": "Cancer du poumon",
+            "value": "lung_cancer"
+        },
+        {
+            "label": "Cancer du sein",
+            "value": "breast_cancer"
+        },
+        {
+            "label": "Cancer de la prostate",
+            "value": "prostate_cancer"
+        },
+        {
+            "label": "Cancer colorectal",
+            "value": "colorectal_cancer"
+        },
+        {
+            "label": "Cancer de la peau",
+            "value": "skin_cancer"
+        },
+        {
+            "label": "Cancer du col de l'utérus",
+            "value": "cervical_cancer"
+        },
+        {
+            "label": "Cancer infantile",
+            "value": "childhood_cancer"
+        },
+        {
+            "label": "Maladie pulmonaire obstructive chronique (MPOC)",
+            "value": "chronic_obstructive_pulmonary_disease_copd"
+        },
+        {
+            "label": "Asthme",
+            "value": "asthma"
+        },
+        {
+            "label": "Hypertension pulmonaire",
+            "value": "pulmonary_hypertension"
+        },
+        {
+            "label": "Fibrose kystique",
+            "value": "cystic_fibrosis"
+        },
+        {
+            "label": "Maladie pulmonaire interstitielle",
+            "value": "interstitial_lung_disease"
+        },
+        {
+            "label": "Apnée du sommeil",
+            "value": "sleep_apnea"
+        },
+        {
+            "label": "Diabète de type 1",
+            "value": "type_1_diabetes"
+        },
+        {
+            "label": "Diabète de type 2",
+            "value": "type_2_diabetes"
+        },
+        {
+            "label": "Diabète gestationnel",
+            "value": "gestational_diabetes"
+        },
+        {
+            "label": "Prédiabète",
+            "value": "prediabetes"
+        },
+        {
+            "label": "Maladie d'Alzheimer",
+            "value": "alzheimer_s_disease"
+        },
+        {
+            "label": "Maladie de Parkinson",
+            "value": "parkinson_s_disease"
+        },
+        {
+            "label": "Sclérose en plaques",
+            "value": "multiple_sclerosis"
+        },
+        {
+            "label": "Épilepsie",
+            "value": "epilepsy"
+        },
+        {
+            "label": "Sclérose latérale amyotrophique (SLA)",
+            "value": "amyotrophic_lateral_sclerosis_als"
+        },
+        {
+            "label": "Trouble bipolaire",
+            "value": "bipolar_disorder"
+        },
+        {
+            "label": "Dépression",
+            "value": "depression"
+        },
+        {
+            "label": "Arthrose",
+            "value": "osteoarthritis"
+        },
+        {
+            "label": "Polyarthrite rhumatoïde",
+            "value": "rheumatoid_arthritis"
+        },
+        {
+            "label": "Ostéoporose",
+            "value": "osteoporosis"
+        },
+        {
+            "label": "Fibromyalgie",
+            "value": "fibromyalgia"
+        },
+        {
+            "label": "Spondylite",
+            "value": "spondylitis"
+        },
+        {
+            "label": "Maladie de Crohn",
+            "value": "crohn_s_disease"
+        },
+        {
+            "label": "Rectocolite hémorragique",
+            "value": "ulcerative_colitis"
+        },
+        {
+            "label": "Syndrome du côlon irritable (SCI)",
+            "value": "irritable_bowel_syndrome_ibs"
+        },
+        {
+            "label": "Hépatite chronique",
+            "value": "chronic_hepatitis"
+        },
+        {
+            "label": "Maladie cœliaque",
+            "value": "celiac_disease"
+        },
+        {
+            "label": "Maladies inflammatoires de l'intestin",
+            "value": "inflammatory_bowel_diseases"
+        },
+        {
+            "label": "Trouble d'anxiété généralisée",
+            "value": "generalized_anxiety_disorder"
+        },
+        {
+            "label": "Trouble de stress post-traumatique (TSPT)",
+            "value": "post_traumatic_stress_disorder_ptsd"
+        },
+        {
+            "label": "Schizophrénie",
+            "value": "schizophrenia"
+        },
+        {
+            "label": "Lupus",
+            "value": "lupus"
+        },
+        {
+            "label": "Syndrome de Sjögren",
+            "value": "sjogren_s_syndrome"
+        },
+        {
+            "label": "Psoriasis",
+            "value": "psoriasis"
+        },
+        {
+            "label": "Thyroïdite de Hashimoto",
+            "value": "hashimoto_s_thyroiditis"
+        },
+        {
+            "label": "Maladie de Basedow",
+            "value": "graves_disease"
+        },
+        {
+            "label": "Syndrome de fatigue chronique",
+            "value": "chronic_fatigue_syndrome"
+        },
+        {
+            "label": "Syndrome douloureux régional complexe (SDRC)",
+            "value": "complex_regional_pain_syndrome_crps"
+        },
+        {
+            "label": "Migraine",
+            "value": "migraine"
+        },
+        {
+            "label": "Endométriose",
+            "value": "endometriosis"
+        },
+        {
+            "label": "Cystite interstitielle",
+            "value": "interstitial_cystitis"
+        },
+        {
+            "label": "Obésité",
+            "value": "obesity"
+        },
+        {
+            "label": "Hyperlipidémie",
+            "value": "hyperlipidemia"
+        },
+        {
+            "label": "Syndrome métabolique",
+            "value": "metabolic_syndrome"
+        },
+        {
+            "label": "Hypothyroïdie",
+            "value": "hypothyroidism"
+        },
+        {
+            "label": "Hyperthyroïdie",
+            "value": "hyperthyroidism"
+        },
+        {
+            "label": "Syndrome des ovaires polykystiques (SOPK)",
+            "value": "polycystic_ovary_syndrome_pcos"
+        },
+        {
+            "label": "Maladie rénale chronique",
+            "value": "chronic_kidney_disease"
+        },
+        {
+            "label": "Glomérulonéphrite",
+            "value": "glomerulonephritis"
+        },
+        {
+            "label": "Maladie polykystique des reins",
+            "value": "polycystic_kidney_disease"
+        },
+        {
+            "label": "Drépanocytose",
+            "value": "sickle_cell_disease"
+        },
+        {
+            "label": "Hémophilie",
+            "value": "hemophilia"
+        },
+        {
+            "label": "Thalassémie",
+            "value": "thalassemia"
+        },
+        {
+            "label": "Eczéma",
+            "value": "eczema"
+        },
+        {
+            "label": "Vitiligo",
+            "value": "vitiligo"
+        }
     ]
 }

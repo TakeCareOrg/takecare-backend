@@ -1,26 +1,19 @@
 import { Auth } from "../../src/models/auth";
-import { UserDB } from "@database/models/user";
-import Logger from "@libs/logger";
-import { generateToken } from "@utils/jwt";
+import { UserDB } from "../../src/database/models/user";
+import { VerificationCodeDB } from "../../src/database/models/verificationCodes";
+import Logger from "../../src/libs/logger";
+import { generateToken } from "../../src/utils/jwt";
 import bcrypt from "bcryptjs";
 
-jest.mock("@database/models/user");
-jest.mock("@libs/logger");
-jest.mock("@utils/jwt");
+jest.mock("../../src/database/models/user");
+jest.mock("../../src/database/models/verificationCodes");
+jest.mock("../../src/libs/logger");
+jest.mock("../../src/services/mail/templates/email-verification");
+jest.mock("../../src/utils/jwt");
 jest.mock("bcryptjs");
-jest.mock("crypto", () => ({
-    randomUUID: jest.fn(),
-}));
-jest.mock("mongoose", () => ({
-    Schema: jest.fn(),
-    model: jest.fn().mockReturnValue({
-        findOne: jest.fn(),
-        save: jest.fn(),
-    }),
-    connect: jest.fn(),
-}));
+jest.mock("crypto");
 
-describe("Auth Tests", () => {
+describe("Auth Model Tests", () => {
     let auth: Auth;
 
     beforeEach(() => {
@@ -28,109 +21,361 @@ describe("Auth Tests", () => {
         jest.clearAllMocks();
     });
 
-    describe("createNewUser", () => {
-        it("should throw an error if email or password is missing", async () => {
-            await expect(auth.createNewUser("", "password")).rejects.toThrow(
-                "MISSING_FIELDS",
-            );
-            await expect(
-                auth.createNewUser("test@example.com", ""),
-            ).rejects.toThrow("MISSING_FIELDS");
-        });
+    describe("login", () => {
+        it("should login successfully and return a token", async () => {
+            const mockUser = {
+                user_id: "user-123",
+                email: "test@example.com",
+                password: "hashed-password",
+                role: ["user"],
+            };
 
-        it("should throw an error if user already exists", async () => {
-            (UserDB.findOne as jest.Mock).mockResolvedValue({
+            (UserDB.findOne as jest.Mock).mockResolvedValue(mockUser);
+            (bcrypt.compare as jest.Mock).mockResolvedValue(true);
+            (generateToken as jest.Mock).mockReturnValue("jwt-token");
+
+            const result = await auth.login("test@example.com", "password123");
+
+            expect(UserDB.findOne).toHaveBeenCalledWith({
                 email: "test@example.com",
             });
-            await expect(
-                auth.createNewUser("test@example.com", "password"),
-            ).rejects.toThrow("AN_ERROR_OCCURRED");
+            expect(bcrypt.compare).toHaveBeenCalledWith(
+                "password123",
+                "hashed-password",
+            );
+            expect(generateToken).toHaveBeenCalledWith({ user_id: "user-123" });
+            expect(result).toEqual({ token: "jwt-token" });
         });
 
-        // TODO: Fix this test and create a DB mock to ensure the user is saved in Test DB
-        // it("should create a new user and return a token", async () => {
-        //     (UserDB.findOne as jest.Mock).mockResolvedValue(null);
-        //     (bcrypt.hash as jest.Mock).mockResolvedValue("hashedPassword");
-        //     (randomUUID as jest.Mock).mockReturnValue("mock-uuid");
-        //     (generateToken as jest.Mock).mockReturnValue("mock-token");
-        //
-        //     const result = await auth.createNewUser(
-        //         "hopti@example.com",
-        //         "password",
-        //     );
-        //     expect(result).toEqual({ token: "mock-token" });
-        //     expect(UserDB).toHaveBeenCalledWith({
-        //         user_id: "mock-uuid",
-        //         email: "test@example.com",
-        //         password: "hashedPassword",
-        //         created_at: expect.any(String),
-        //     });
-        //     expect(Logger.info).toHaveBeenCalledWith(
-        //         "User created: test@example.com",
-        //     );
-        // });
+        it("should login admin successfully", async () => {
+            const mockUser = {
+                user_id: "admin-123",
+                email: "admin@example.com",
+                password: "hashed-password",
+                role: ["user", "admin"],
+            };
 
-        it("should throw an error if there is an error creating the user", async () => {
-            (UserDB.findOne as jest.Mock).mockRejectedValue(
-                new Error("Database error"),
+            (UserDB.findOne as jest.Mock).mockResolvedValue(mockUser);
+            (bcrypt.compare as jest.Mock).mockResolvedValue(true);
+            (generateToken as jest.Mock).mockReturnValue("admin-token");
+
+            const result = await auth.login(
+                "admin@example.com",
+                "password",
+                true,
             );
-            await expect(
-                auth.createNewUser("test@example.com", "password"),
-            ).rejects.toThrow("AN_ERROR_OCCURRED");
-            expect(Logger.error).toHaveBeenCalledWith(
-                "Error creating new user Error: AN_ERROR_OCCURRED",
-            );
+
+            expect(result).toEqual({ token: "admin-token" });
         });
-    });
 
-    describe("login", () => {
-        it("should throw an error if email or password is missing", async () => {
+        it("should throw MISSING_FIELDS when email is missing", async () => {
             await expect(auth.login("", "password")).rejects.toThrow(
                 "MISSING_FIELDS",
             );
+            expect(UserDB.findOne).not.toHaveBeenCalled();
+        });
+
+        it("should throw MISSING_FIELDS when password is missing", async () => {
             await expect(auth.login("test@example.com", "")).rejects.toThrow(
                 "MISSING_FIELDS",
             );
+            expect(UserDB.findOne).not.toHaveBeenCalled();
         });
 
-        it("should throw an error if user does not exist", async () => {
+        it("should throw MISSING_FIELDS when both fields are missing", async () => {
+            await expect(auth.login("", "")).rejects.toThrow("MISSING_FIELDS");
+        });
+
+        it("should throw AN_ERROR_OCCURRED when user does not exist", async () => {
             (UserDB.findOne as jest.Mock).mockResolvedValue(null);
+
             await expect(
                 auth.login("test@example.com", "password"),
             ).rejects.toThrow("AN_ERROR_OCCURRED");
         });
 
-        it("should throw an error if password does not match", async () => {
-            (UserDB.findOne as jest.Mock).mockResolvedValue({
-                password: "hashedPassword",
-            });
+        it("should throw AN_ERROR_OCCURRED when password is incorrect", async () => {
+            const mockUser = {
+                user_id: "user-123",
+                email: "test@example.com",
+                password: "hashed-password",
+            };
+
+            (UserDB.findOne as jest.Mock).mockResolvedValue(mockUser);
             (bcrypt.compare as jest.Mock).mockResolvedValue(false);
+
             await expect(
                 auth.login("test@example.com", "wrongpassword"),
             ).rejects.toThrow("AN_ERROR_OCCURRED");
         });
 
-        it("should return a token if login is successful", async () => {
+        it("should throw AN_ERROR_OCCURRED when non-admin tries admin login", async () => {
             const mockUser = {
-                user_id: "mock-uuid",
-                email: "test@example.com",
-                password: "hashedPassword",
+                user_id: "user-123",
+                email: "user@example.com",
+                password: "hashed-password",
+                role: ["user"],
             };
+
             (UserDB.findOne as jest.Mock).mockResolvedValue(mockUser);
             (bcrypt.compare as jest.Mock).mockResolvedValue(true);
-            (generateToken as jest.Mock).mockReturnValue("mock-token");
 
-            const result = await auth.login("test@example.com", "password");
-            expect(result).toEqual({ token: "mock-token" });
+            await expect(
+                auth.login("user@example.com", "password", true),
+            ).rejects.toThrow("AN_ERROR_OCCURRED");
         });
 
-        it("should throw an error if there is an error logging in", async () => {
+        it("should throw AN_ERROR_OCCURRED when user has no role and tries admin login", async () => {
+            const mockUser = {
+                user_id: "user-123",
+                email: "user@example.com",
+                password: "hashed-password",
+                role: undefined,
+            };
+
+            (UserDB.findOne as jest.Mock).mockResolvedValue(mockUser);
+            (bcrypt.compare as jest.Mock).mockResolvedValue(true);
+
+            await expect(
+                auth.login("user@example.com", "password", true),
+            ).rejects.toThrow("AN_ERROR_OCCURRED");
+        });
+
+        it("should throw AN_ERROR_OCCURRED when database query fails", async () => {
             (UserDB.findOne as jest.Mock).mockRejectedValue(
                 new Error("Database error"),
             );
+
             await expect(
                 auth.login("test@example.com", "password"),
             ).rejects.toThrow("AN_ERROR_OCCURRED");
+        });
+
+        it("should throw AN_ERROR_OCCURRED when bcrypt.compare fails", async () => {
+            const mockUser = {
+                user_id: "user-123",
+                email: "test@example.com",
+                password: "hashed-password",
+            };
+
+            (UserDB.findOne as jest.Mock).mockResolvedValue(mockUser);
+            (bcrypt.compare as jest.Mock).mockRejectedValue(
+                new Error("Bcrypt error"),
+            );
+
+            await expect(
+                auth.login("test@example.com", "password"),
+            ).rejects.toThrow("AN_ERROR_OCCURRED");
+        });
+    });
+
+    describe("verifyEmail", () => {
+        it("should verify email successfully", async () => {
+            const mockVerificationCode = {
+                user_id: "user-123",
+                code: 123456,
+                deleteOne: jest.fn().mockResolvedValue(true),
+            };
+
+            (VerificationCodeDB.findOne as jest.Mock).mockResolvedValue(
+                mockVerificationCode,
+            );
+            (UserDB.updateOne as jest.Mock).mockResolvedValue({
+                matchedCount: 1,
+                modifiedCount: 1,
+            });
+
+            const result = await auth.verifyEmail("user-123", "123456");
+
+            expect(VerificationCodeDB.findOne).toHaveBeenCalledWith({
+                user_id: "user-123",
+                code: 123456,
+            });
+            expect(UserDB.updateOne).toHaveBeenCalledWith(
+                { user_id: "user-123" },
+                { verified: true },
+            );
+            expect(mockVerificationCode.deleteOne).toHaveBeenCalled();
+            expect(result).toBe(true);
+        });
+
+        it("should return false when verification code not found", async () => {
+            (VerificationCodeDB.findOne as jest.Mock).mockResolvedValue(null);
+
+            const result = await auth.verifyEmail("user-123", "999999");
+
+            expect(result).toBe(false);
+            expect(UserDB.updateOne).not.toHaveBeenCalled();
+        });
+
+        it("should throw MISSING_FIELDS when user_id is missing", async () => {
+            await expect(auth.verifyEmail("", "123456")).rejects.toThrow(
+                "MISSING_FIELDS",
+            );
+            expect(VerificationCodeDB.findOne).not.toHaveBeenCalled();
+        });
+
+        it("should throw MISSING_FIELDS when code is missing", async () => {
+            await expect(auth.verifyEmail("user-123", "")).rejects.toThrow(
+                "MISSING_FIELDS",
+            );
+            expect(VerificationCodeDB.findOne).not.toHaveBeenCalled();
+        });
+
+        it("should throw MISSING_FIELDS when both fields are missing", async () => {
+            await expect(auth.verifyEmail("", "")).rejects.toThrow(
+                "MISSING_FIELDS",
+            );
+        });
+
+        it("should throw AN_ERROR_OCCURRED when no user matched", async () => {
+            const mockVerificationCode = {
+                user_id: "user-123",
+                code: 123456,
+                deleteOne: jest.fn().mockResolvedValue(true),
+            };
+
+            (VerificationCodeDB.findOne as jest.Mock).mockResolvedValue(
+                mockVerificationCode,
+            );
+            (UserDB.updateOne as jest.Mock).mockResolvedValue({
+                matchedCount: 0,
+                modifiedCount: 0,
+            });
+
+            await expect(
+                auth.verifyEmail("user-123", "123456"),
+            ).rejects.toThrow("AN_ERROR_OCCURRED");
+        });
+
+        it("should throw AN_ERROR_OCCURRED when user matched but not modified", async () => {
+            const mockVerificationCode = {
+                user_id: "user-123",
+                code: 123456,
+                deleteOne: jest.fn().mockResolvedValue(true),
+            };
+
+            (VerificationCodeDB.findOne as jest.Mock).mockResolvedValue(
+                mockVerificationCode,
+            );
+            (UserDB.updateOne as jest.Mock).mockResolvedValue({
+                matchedCount: 1,
+                modifiedCount: 0,
+            });
+
+            await expect(
+                auth.verifyEmail("user-123", "123456"),
+            ).rejects.toThrow("AN_ERROR_OCCURRED");
+        });
+
+        it("should throw AN_ERROR_OCCURRED when deleteOne fails", async () => {
+            const mockVerificationCode = {
+                user_id: "user-123",
+                code: 123456,
+                deleteOne: jest
+                    .fn()
+                    .mockRejectedValue(new Error("Delete failed")),
+            };
+
+            (VerificationCodeDB.findOne as jest.Mock).mockResolvedValue(
+                mockVerificationCode,
+            );
+            (UserDB.updateOne as jest.Mock).mockResolvedValue({
+                matchedCount: 1,
+                modifiedCount: 1,
+            });
+
+            await expect(
+                auth.verifyEmail("user-123", "123456"),
+            ).rejects.toThrow("AN_ERROR_OCCURRED");
+        });
+
+        it("should throw AN_ERROR_OCCURRED when database query fails", async () => {
+            (VerificationCodeDB.findOne as jest.Mock).mockRejectedValue(
+                new Error("Database error"),
+            );
+
+            await expect(
+                auth.verifyEmail("user-123", "123456"),
+            ).rejects.toThrow("AN_ERROR_OCCURRED");
+        });
+
+        it("should handle numeric code conversion", async () => {
+            const mockVerificationCode = {
+                user_id: "user-123",
+                code: 123456,
+                deleteOne: jest.fn().mockResolvedValue(true),
+            };
+
+            (VerificationCodeDB.findOne as jest.Mock).mockResolvedValue(
+                mockVerificationCode,
+            );
+            (UserDB.updateOne as jest.Mock).mockResolvedValue({
+                matchedCount: 1,
+                modifiedCount: 1,
+            });
+
+            await auth.verifyEmail("user-123", "123456");
+
+            expect(VerificationCodeDB.findOne).toHaveBeenCalledWith({
+                user_id: "user-123",
+                code: 123456,
+            });
+        });
+    });
+
+    describe("createNewUser", () => {
+        it("should throw MISSING_FIELDS when email is missing", async () => {
+            await expect(auth.createNewUser("", "password")).rejects.toThrow(
+                "MISSING_FIELDS",
+            );
+        });
+
+        it("should throw MISSING_FIELDS when password is missing", async () => {
+            await expect(
+                auth.createNewUser("test@example.com", ""),
+            ).rejects.toThrow("MISSING_FIELDS");
+        });
+
+        it("should throw MISSING_FIELDS when both fields are missing", async () => {
+            await expect(auth.createNewUser("", "")).rejects.toThrow(
+                "MISSING_FIELDS",
+            );
+        });
+
+        it("should throw AN_ERROR_OCCURRED when user already exists", async () => {
+            (UserDB.findOne as jest.Mock).mockResolvedValue({
+                email: "existing@example.com",
+                user_id: "existing-id",
+            });
+
+            await expect(
+                auth.createNewUser("existing@example.com", "password"),
+            ).rejects.toThrow("AN_ERROR_OCCURRED");
+            expect(Logger.error).toHaveBeenCalled();
+        });
+
+        it("should throw AN_ERROR_OCCURRED when isUniqueUser fails", async () => {
+            (UserDB.findOne as jest.Mock).mockRejectedValue(
+                new Error("Database error"),
+            );
+
+            await expect(
+                auth.createNewUser("test@example.com", "password"),
+            ).rejects.toThrow("AN_ERROR_OCCURRED");
+            expect(Logger.error).toHaveBeenCalled();
+        });
+
+        it("should throw AN_ERROR_OCCURRED when bcrypt.hash fails", async () => {
+            (UserDB.findOne as jest.Mock).mockResolvedValue(null);
+            (bcrypt.hash as jest.Mock).mockRejectedValue(
+                new Error("Hash error"),
+            );
+
+            await expect(
+                auth.createNewUser("test@example.com", "password"),
+            ).rejects.toThrow("AN_ERROR_OCCURRED");
+            expect(Logger.error).toHaveBeenCalled();
         });
     });
 });

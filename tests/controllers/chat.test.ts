@@ -100,7 +100,7 @@ describe("sendNewMessage", () => {
                 () =>
                     ({
                         sendMessage: mockSendMessage,
-                    }) as any,
+                    }) as unknown as Chat,
             );
 
             await sendNewMessage(req as Request, res as Response, next);
@@ -123,7 +123,7 @@ describe("sendNewMessage", () => {
                 () =>
                     ({
                         sendMessage: mockSendMessage,
-                    }) as any,
+                    }) as unknown as Chat,
             );
 
             await sendNewMessage(req as Request, res as Response, next);
@@ -153,7 +153,7 @@ describe("sendNewMessage", () => {
                 () =>
                     ({
                         sendMessage: mockSendMessage,
-                    }) as any,
+                    }) as unknown as Chat,
             );
 
             await sendNewMessage(req as Request, res as Response, next);
@@ -183,7 +183,7 @@ describe("sendNewMessage", () => {
                 () =>
                     ({
                         sendMessage: mockSendMessage,
-                    }) as any,
+                    }) as unknown as Chat,
             );
 
             await sendNewMessage(req as Request, res as Response, next);

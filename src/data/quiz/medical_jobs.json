@@ -1,88 +1,334 @@
 {
     "en": [
-        "General Practitioners (Family Medicine)",
-        "General Surgeons",
-        "Cardiologists",
-        "Dermatologists",
-        "Obstetricians and Gynecologists (OB/GYN)",
-        "Ophthalmologists",
-        "Pediatricians",
-        "Radiologists",
-        "Oncologists",
-        "Neurologists",
-        "Psychiatrists",
-        "Orthopedic Surgeons",
-        "Anesthesiologists",
-        "Urologists",
-        "Otolaryngologists (ENT Specialists)",
-        "Endocrinologists",
-        "Nephrologists",
-        "Rheumatologists",
-        "Gastroenterologists",
-        "Emergency Medicine Physicians",
-        "Occupational Medicine Physicians",
-        "Pulmonologists",
-        "Infectious Disease Specialists",
-        "Allergists and Immunologists",
-        "Geneticists",
-        "Hematologists",
-        "Nutritionists",
-        "Pathologists",
-        "Plastic Surgeons",
-        "Podiatrists",
-        "Geriatricians",
-        "Intensivists (Critical Care Specialists)",
-        "Sports Medicine Specialists",
-        "Pain Management Specialists",
-        "Hepatologists",
-        "Preventive Medicine Specialists",
-        "Sleep Medicine Specialists",
-        "Medical Geneticists",
-        "Clinical Pharmacologists",
-        "Forensic Pathologists",
-        "Vascular Surgeons"
+        {
+            "label": "General Practitioners (Family Medicine)",
+            "value": "general_practitioners_family_medicine"
+        },
+        {
+            "label": "General Surgeons",
+            "value": "general_surgeons"
+        },
+        {
+            "label": "Cardiologists",
+            "value": "cardiologists"
+        },
+        {
+            "label": "Dermatologists",
+            "value": "dermatologists"
+        },
+        {
+            "label": "Obstetricians and Gynecologists (OB/GYN)",
+            "value": "obstetricians_and_gynecologists_ob_gyn"
+        },
+        {
+            "label": "Ophthalmologists",
+            "value": "ophthalmologists"
+        },
+        {
+            "label": "Pediatricians",
+            "value": "pediatricians"
+        },
+        {
+            "label": "Radiologists",
+            "value": "radiologists"
+        },
+        {
+            "label": "Oncologists",
+            "value": "oncologists"
+        },
+        {
+            "label": "Neurologists",
+            "value": "neurologists"
+        },
+        {
+            "label": "Psychiatrists",
+            "value": "psychiatrists"
+        },
+        {
+            "label": "Orthopedic Surgeons",
+            "value": "orthopedic_surgeons"
+        },
+        {
+            "label": "Anesthesiologists",
+            "value": "anesthesiologists"
+        },
+        {
+            "label": "Urologists",
+            "value": "urologists"
+        },
+        {
+            "label": "Otolaryngologists (ENT Specialists)",
+            "value": "otolaryngologists_ent_specialists"
+        },
+        {
+            "label": "Endocrinologists",
+            "value": "endocrinologists"
+        },
+        {
+            "label": "Nephrologists",
+            "value": "nephrologists"
+        },
+        {
+            "label": "Rheumatologists",
+            "value": "rheumatologists"
+        },
+        {
+            "label": "Gastroenterologists",
+            "value": "gastroenterologists"
+        },
+        {
+            "label": "Emergency Medicine Physicians",
+            "value": "emergency_medicine_physicians"
+        },
+        {
+            "label": "Occupational Medicine Physicians",
+            "value": "occupational_medicine_physicians"
+        },
+        {
+            "label": "Pulmonologists",
+            "value": "pulmonologists"
+        },
+        {
+            "label": "Infectious Disease Specialists",
+            "value": "infectious_disease_specialists"
+        },
+        {
+            "label": "Allergists and Immunologists",
+            "value": "allergists_and_immunologists"
+        },
+        {
+            "label": "Geneticists",
+            "value": "geneticists"
+        },
+        {
+            "label": "Hematologists",
+            "value": "hematologists"
+        },
+        {
+            "label": "Nutritionists",
+            "value": "nutritionists"
+        },
+        {
+            "label": "Pathologists",
+            "value": "pathologists"
+        },
+        {
+            "label": "Plastic Surgeons",
+            "value": "plastic_surgeons"
+        },
+        {
+            "label": "Podiatrists",
+            "value": "podiatrists"
+        },
+        {
+            "label": "Geriatricians",
+            "value": "geriatricians"
+        },
+        {
+            "label": "Intensivists (Critical Care Specialists)",
+            "value": "intensivists_critical_care_specialists"
+        },
+        {
+            "label": "Sports Medicine Specialists",
+            "value": "sports_medicine_specialists"
+        },
+        {
+            "label": "Pain Management Specialists",
+            "value": "pain_management_specialists"
+        },
+        {
+            "label": "Hepatologists",
+            "value": "hepatologists"
+        },
+        {
+            "label": "Preventive Medicine Specialists",
+            "value": "preventive_medicine_specialists"
+        },
+        {
+            "label": "Sleep Medicine Specialists",
+            "value": "sleep_medicine_specialists"
+        },
+        {
+            "label": "Medical Geneticists",
+            "value": "medical_geneticists"
+        },
+        {
+            "label": "Clinical Pharmacologists",
+            "value": "clinical_pharmacologists"
+        },
+        {
+            "label": "Forensic Pathologists",
+            "value": "forensic_pathologists"
+        },
+        {
+            "label": "Vascular Surgeons",
+            "value": "vascular_surgeons"
+        }
     ],
     "fr": [
-        "Médecins généralistes",
-        "Chirurgiens généraux",
-        "Cardiologues",
-        "Dermatologues",
-        "Obstétriciens et gynécologues (OB/GYN)",
-        "Ophtalmologistes",
-        "Pédiatres",
-        "Radiologues",
-        "Oncologues",
-        "Neurologues",
-        "Psychiatres",
-        "Chirurgiens orthopédiques",
-        "Anesthésistes",
-        "Urologues",
-        "Oto-rhino-laryngologistes (ORL)",
-        "Endocrinologues",
-        "Néphrologues",
-        "Rhumatologues",
-        "Gastro-entérologues",
-        "Médecins urgentistes",
-        "Médecins du travail",
-        "Pneumologues",
-        "Spécialistes des maladies infectieuses",
-        "Allergologues et immunologistes",
-        "Généticiens",
-        "Hématologues",
-        "Nutritionnistes",
-        "Pathologistes",
-        "Chirurgiens plastiques",
-        "Podiatres",
-        "Gériatres",
-        "Intensivistes (Spécialistes en soins intensifs)",
-        "Spécialistes en médecine du sport",
-        "Spécialistes en gestion de la douleur",
-        "Hépatologues",
-        "Spécialistes en médecine préventive",
-        "Spécialistes en médecine du sommeil",
-        "Généticiens médicaux",
-        "Pharmacologues cliniques",
-        "Pathologistes légistes",
-        "Chirurgiens vasculaires"
+        {
+            "label": "Médecins généralistes",
+            "value": "general_practitioners_family_medicine"
+        },
+        {
+            "label": "Chirurgiens généraux",
+            "value": "general_surgeons"
+        },
+        {
+            "label": "Cardiologues",
+            "value": "cardiologists"
+        },
+        {
+            "label": "Dermatologues",
+            "value": "dermatologists"
+        },
+        {
+            "label": "Obstétriciens et gynécologues (OB/GYN)",
+            "value": "obstetricians_and_gynecologists_ob_gyn"
+        },
+        {
+            "label": "Ophtalmologistes",
+            "value": "ophthalmologists"
+        },
+        {
+            "label": "Pédiatres",
+            "value": "pediatricians"
+        },
+        {
+            "label": "Radiologues",
+            "value": "radiologists"
+        },
+        {
+            "label": "Oncologues",
+            "value": "oncologists"
+        },
+        {
+            "label": "Neurologues",
+            "value": "neurologists"
+        },
+        {
+            "label": "Psychiatres",
+            "value": "psychiatrists"
+        },
+        {
+            "label": "Chirurgiens orthopédiques",
+            "value": "orthopedic_surgeons"
+        },
+        {
+            "label": "Anesthésistes",
+            "value": "anesthesiologists"
+        },
+        {
+            "label": "Urologues",
+            "value": "urologists"
+        },
+        {
+            "label": "Oto-rhino-laryngologistes (ORL)",
+            "value": "otolaryngologists_ent_specialists"
+        },
+        {
+            "label": "Endocrinologues",
+            "value": "endocrinologists"
+        },
+        {
+            "label": "Néphrologues",
+            "value": "nephrologists"
+        },
+        {
+            "label": "Rhumatologues",
+            "value": "rheumatologists"
+        },
+        {
+            "label": "Gastro-entérologues",
+            "value": "gastroenterologists"
+        },
+        {
+            "label": "Médecins urgentistes",
+            "value": "emergency_medicine_physicians"
+        },
+        {
+            "label": "Médecins du travail",
+            "value": "occupational_medicine_physicians"
+        },
+        {
+            "label": "Pneumologues",
+            "value": "pulmonologists"
+        },
+        {
+            "label": "Spécialistes des maladies infectieuses",
+            "value": "infectious_disease_specialists"
+        },
+        {
+            "label": "Allergologues et immunologistes",
+            "value": "allergists_and_immunologists"
+        },
+        {
+            "label": "Généticiens",
+            "value": "geneticists"
+        },
+        {
+            "label": "Hématologues",
+            "value": "hematologists"
+        },
+        {
+            "label": "Nutritionnistes",
+            "value": "nutritionists"
+        },
+        {
+            "label": "Pathologistes",
+            "value": "pathologists"
+        },
+        {
+            "label": "Chirurgiens plastiques",
+            "value": "plastic_surgeons"
+        },
+        {
+            "label": "Podiatres",
+            "value": "podiatrists"
+        },
+        {
+            "label": "Gériatres",
+            "value": "geriatricians"
+        },
+        {
+            "label": "Intensivistes (Spécialistes en soins intensifs)",
+            "value": "intensivists_critical_care_specialists"
+        },
+        {
+            "label": "Spécialistes en médecine du sport",
+            "value": "sports_medicine_specialists"
+        },
+        {
+            "label": "Spécialistes en gestion de la douleur",
+            "value": "pain_management_specialists"
+        },
+        {
+            "label": "Hépatologues",
+            "value": "hepatologists"
+        },
+        {
+            "label": "Spécialistes en médecine préventive",
+            "value": "preventive_medicine_specialists"
+        },
+        {
+            "label": "Spécialistes en médecine du sommeil",
+            "value": "sleep_medicine_specialists"
+        },
+        {
+            "label": "Généticiens médicaux",
+            "value": "medical_geneticists"
+        },
+        {
+            "label": "Pharmacologues cliniques",
+            "value": "clinical_pharmacologists"
+        },
+        {
+            "label": "Pathologistes légistes",
+            "value": "forensic_pathologists"
+        },
+        {
+            "label": "Chirurgiens vasculaires",
+            "value": "vascular_surgeons"
+        }
     ]
 }

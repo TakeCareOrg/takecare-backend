@@ -1,7 +1,7 @@
 import { RequestMiddleware } from "@dtypes/express";
 import User from "@models/user/user";
 
-const getUserInfo: RequestMiddleware = async (req, res) => {
+export const getUserInfo: RequestMiddleware = async (req, res) => {
     const user = req.user;
 
     if (!user) {
@@ -23,15 +23,13 @@ const getUserInfo: RequestMiddleware = async (req, res) => {
             return;
         }
 
-        console.log(`User info retrieved for user_id: ${user}`);
-
         res.json({ user: userInfo.user });
     } catch {
         res.status(500).json({ message: "Internal server error" });
     }
 };
 
-const healthQuiz: RequestMiddleware = async (req, res) => {
+export const healthQuiz: RequestMiddleware = async (req, res) => {
     const user = req.user;
 
     if (!user) {
@@ -49,10 +47,34 @@ const healthQuiz: RequestMiddleware = async (req, res) => {
         const userInstance = new User(user.user_id);
         await userInstance.healthQuiz(healthData);
 
-        res.status(200).json({ message: "Health quiz completed" });
+        res.status(200).end();
     } catch {
         res.status(500).json({ message: "Internal server error" });
     }
 };
 
-export default { getUserInfo, healthQuiz };
+export const updateHealthData: RequestMiddleware = async (req, res) => {
+    const user = req.user;
+    const healthData = req.body;
+
+    if (!user) {
+        res.status(403).json({ message: "Unauthorized" });
+        return;
+    }
+
+    if (!healthData) {
+        res.status(400).json({ message: "MISSING_HEALTH_DATA" });
+        return;
+    }
+
+    try {
+        const userInstance = new User(user.user_id);
+        const userData = await userInstance.updateHealthData(healthData);
+
+        res.status(200).json({ user: userData });
+    } catch {
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+export default { getUserInfo, healthQuiz, updateHealthData };

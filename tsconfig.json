@@ -20,7 +20,8 @@
             "@database/*": ["database/*"],
             "@config/*": ["config/*"],
             "@docs/*": ["docs/*"],
-            "@data/*": ["data/*"]
+            "@data/*": ["data/*"],
+            "@constants/*": ["constants/*"]
         },
 
         /* Emit */
