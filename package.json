@@ -19,10 +19,11 @@
     "scripts": {
         "test": "jest --coverage",
         "build": "npm run clean && tsc && npm run copy-data",
+        "start": "NODE_ENV=production node -r module-alias/register dist/index.js",
+        "dev": "NODE_ENV=development ts-node-dev --respawn --transpile-only -r tsconfig-paths/register src/index.ts",
+        "setup:transit": "NODE_ENV=development ts-node -r tsconfig-paths/register src/scripts/setup-transit.ts",
         "clean": "rm -rf dist || rmdir /s /q dist",
         "copy-data": "copyfiles -u 1 \"src/data/**/*\" dist/",
-        "start": "node -r module-alias/register dist/index.js",
-        "dev": "ts-node-dev --respawn --transpile-only -r tsconfig-paths/register src/index.ts",
         "lint": "eslint 'src/**/*.{ts,tsx}' --fix",
         "format": "prettier --write 'src/**/*.{ts,tsx,js,jsx,json,css,md}'",
         "format:check": "prettier --check 'src/**/*.{ts,tsx,js,jsx,json,css,md}'",
@@ -63,15 +64,18 @@
         "module-alias": "^2.2.3",
         "mongoose": "^8.11.0",
         "morgan": "^1.10.0",
+        "node-vault": "^0.10.9",
         "nodemailer": "^7.0.9",
         "swagger-jsdoc": "^6.2.8",
         "swagger-ui-express": "^5.0.1",
         "together-ai": "^0.33.0",
-        "winston": "^3.17.0"
+        "winston": "^3.17.0",
+        "zod": "^4.2.1"
     },
     "devDependencies": {
         "@eslint/eslintrc": "^3.3.0",
         "@eslint/js": "^9.21.0",
+        "@jest/test-sequencer": "^30.2.0",
         "@types/bcryptjs": "^2.4.6",
         "@types/cors": "^2.8.17",
         "@types/express": "^5.0.0",
