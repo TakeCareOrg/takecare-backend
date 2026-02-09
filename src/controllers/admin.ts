@@ -53,8 +53,6 @@ export const me: RequestMiddleware = async (req, res) => {
             return;
         }
 
-        console.log(`User info retrieved for user_id: ${user}`);
-
         res.json({ user: userInfo.user });
     } catch {
         res.status(500).json({ message: "Internal server error" });
@@ -105,7 +103,7 @@ export const editUser: RequestMiddleware = async (req, res) => {
             });
             return;
         }
-        await userInstance.updateUser(modifiedUser);
+        await userInstance.updateHealthData(modifiedUser);
         res.json({ success: true });
     } catch (error) {
         Logger.error(`${StatusCodes.INTERNAL_SERVER_ERROR}: ${error}`);

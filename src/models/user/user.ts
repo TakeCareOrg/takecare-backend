@@ -3,7 +3,11 @@ import {
     UserHealthAttributionsDB,
     UserUpdatesDB,
 } from "@database/models/user";
-import { UserHealthAttributions, UserInfoPayload } from "@dtypes/user";
+import {
+    UserComplete,
+    UserHealthAttributions,
+    UserInfoPayload,
+} from "@dtypes/user";
 import Logger from "@libs/logger";
 import VaultService from "@services/vault";
 import {
@@ -251,14 +255,14 @@ class User {
         }
         try {
             const { health, ...userWitoutHealth } = user;
-            await Promise.all([
+            const User = await Promise.all([
                 UserDB.updateOne({ user_id: this.user_id }, userWitoutHealth),
                 UserHealthAttributionsDB.updateOne(
                     { user_id: this.user_id },
                     health,
                 ),
             ]);
-            return { success: true };
+            return { user: User };
         } catch {
             throw new Error("AN_ERROR_OCCURRED");
         }
@@ -268,16 +272,49 @@ class User {
         if (!this.user_id) {
             throw new Error("AN_ERROR_OCCURRED");
         }
-        try {
-            const healthData = await UserHealthAttributionsDB.find({
-                user_id: this.user_id,
-            }).select("-_id -__v -user_id -created_at");
-            if (!healthData) {
-                throw new Error("AN_ERROR_OCCURRED");
+        // try {
+        //     const healthData = await UserHealthAttributionsDB.find({
+        //         user_id: this.user_id,
+        //     }).select("-_id -__v -user_id -created_at");
+        //     if (!healthData) {
+        //         throw new Error("AN_ERROR_OCCURRED");
+        //     }
+        //     return healthData[0];
+        // } catch {
+        //     throw new Error("AN_ERROR_OCCURRED");
+        // }
+
+        const userHealthInfo = await UserHealthAttributionsDB.findOne({
+            user_id: this.user_id,
+        });
+
+        let healthData: UserHealthAttributions | Record<string, unknown> = {};
+        if (userHealthInfo) {
+            try {
+                const { ...encryptedFields } = userHealthInfo.toObject({
+                    flattenObjectIds: true,
+                });
+
+                const decrypted =
+                    await VaultService.decryptFields<UserHealthAttributions>({
+                        keyName: "health-data",
+                        encryptedData: encryptedFields,
+                        context: this.user_id,
+                    });
+
+                healthData = {
+                    ...decrypted,
+                    user_id: this.user_id,
+                    created_at: userHealthInfo.created_at,
+                };
+
+                return healthData;
+            } catch (error) {
+                Logger.error(
+                    `Failed to decrypt health data for user ${this.user_id}`,
+                    error,
+                );
             }
-            return healthData[0];
-        } catch {
-            throw new Error("AN_ERROR_OCCURRED");
         }
     }
 }
