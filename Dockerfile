@@ -1,27 +1,20 @@
-# Use an official Node.js runtime as a parent image
-FROM node:18-slim
-
-# Set the working directory
+# ---- Build stage ----
+FROM node:18-slim AS builder
 WORKDIR /app
-
-# Copy package.json, package-lock.json, and tsconfig.json for better caching
-COPY package*.json tsconfig.json ./
-
-# Install dependencies (only production) and skip Husky scripts
 ENV HUSKY=0
-RUN npm install
-
-# Copy the entire project
+COPY package*.json tsconfig.json ./
+RUN npm ci
 COPY . .
-
-# Compile TypeScript
 RUN npm run build
-
-# Copy HTML templates to dist folder (TypeScript doesn't copy non-.ts files)
 RUN cp -r src/services/mail/templates dist/services/mail/ || true
 
-# Expose the port
+# ---- Production stage ----
+FROM node:18-slim
+WORKDIR /app
+ENV NODE_ENV=production
+COPY package*.json ./
+RUN npm ci --omit=dev
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/src/data ./dist/data
 EXPOSE 4000
-
-# Start the app with module alias support
-CMD ["npm", "start"]
+CMD ["node", "-r", "module-alias/register", "dist/index.js"]

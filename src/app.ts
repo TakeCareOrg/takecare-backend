@@ -1,21 +1,20 @@
-import express from "express";
 import morganMiddleware from "@middlewares/morganMiddleware";
-import swaggerUi from "swagger-ui-express";
-import helmet from "helmet";
 import cors from "cors";
-import connectToMongoDB from "@database/connect";
+import express from "express";
+import helmet from "helmet";
+import swaggerUi from "swagger-ui-express";
 
 // Import the routes
-import indexRouter from "@routes/index";
-import authRouter from "@routes/authRouter";
-import userRouter from "@routes/userRouter";
-import chatRouter from "@routes/chatRouter";
-import quizDataRouter from "@routes/quizRouter";
-import metricsRouter from "@routes/metricsRouter";
 import adminRouter from "@routes/adminRouter";
+import authRouter from "@routes/authRouter";
+import chatRouter from "@routes/chatRouter";
+import indexRouter from "@routes/index";
+import metricsRouter from "@routes/metricsRouter";
+import quizDataRouter from "@routes/quizRouter";
+import userRouter from "@routes/userRouter";
 
-import { initMailTransport } from "@services/mail";
 import swaggerDocs from "@config/swagger";
+import { initMailTransport } from "@services/mail";
 import promBundle from "express-prom-bundle";
 
 const app = express();
@@ -30,8 +29,6 @@ const metricsMiddleware = promBundle({
     ],
 });
 
-// Connect to the database
-connectToMongoDB(process.env.TAKECARE_DATABASE_URL);
 initMailTransport();
 
 app.use(metricsMiddleware);

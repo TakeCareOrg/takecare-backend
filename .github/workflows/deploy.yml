@@ -1,37 +1,57 @@
-name: Deploy to VPS
+name: Deploy
 
 on:
     push:
-        branches:
-            - main
-            - develop
+        branches: [main, develop]
 
 concurrency:
     group: deploy-${{ github.ref_name }}
     cancel-in-progress: true
 
 jobs:
-    deploy:
+    test:
         runs-on: ubuntu-latest
-
         steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 18
+                  cache: npm
+            - run: npm ci
+            - run: npm run lint
+            - run: npm test
 
-            - name: Set up Docker Buildx
-              uses: docker/setup-buildx-action@v3
+    deploy:
+        needs: test
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            packages: write
+        steps:
+            - uses: actions/checkout@v4
 
-            - name: Login to GitHub Container Registry
-              run: echo "${{ secrets.GH_PAT }}" | docker login ghcr.io -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+            - name: Set environment variables
+              run: |
+                  if [ "${{ github.ref_name }}" = "main" ]; then
+                    echo "CONTAINER=takecare-api" >> $GITHUB_ENV
+                    echo "PORT=3001" >> $GITHUB_ENV
+                  else
+                    echo "CONTAINER=takecare-api-beta" >> $GITHUB_ENV
+                    echo "PORT=3002" >> $GITHUB_ENV
+                  fi
+                  echo "IMAGE=ghcr.io/${{ github.repository_owner }}/takecare-api:${{ github.ref_name }}" >> $GITHUB_ENV
 
-            - name: Build and push Docker image
+            - name: Login to GHCR
+              run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+            - name: Build and push
               uses: docker/build-push-action@v5
               with:
                   context: .
                   push: true
                   tags: |
-                      ghcr.io/${{ secrets.DOCKER_USERNAME }}/takecare-api-beta:${{ github.ref_name }}
-                      ghcr.io/${{ secrets.DOCKER_USERNAME }}/takecare-api-beta:${{ github.sha }}
+                      ghcr.io/${{ github.repository_owner }}/takecare-api:${{ github.ref_name }}
+                      ghcr.io/${{ github.repository_owner }}/takecare-api:${{ github.sha }}
                   cache-from: type=gha
                   cache-to: type=gha,mode=max
 
@@ -41,42 +61,31 @@ jobs:
                   host: ${{ secrets.VPS_HOST }}
                   username: ${{ secrets.VPS_USER }}
                   key: ${{ secrets.SSH_PRIVATE_KEY }}
-                  port: 22
+                  envs: CONTAINER,PORT,IMAGE
                   script: |
-                      cd ~/takecare-api
                       echo "${{ secrets.GH_PAT }}" | docker login ghcr.io -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
 
-                      BRANCH=${{ github.ref_name }}
+                      docker pull $IMAGE
 
-                      if [ "$BRANCH" = "main" ]; then
-                        CONTAINER_NAME="takecare-api"
-                        PORT=3001
-                      else
-                        CONTAINER_NAME="takecare-api-beta"
-                        PORT=3002
-                      fi
+                      docker stop $CONTAINER 2>/dev/null || true
+                      docker rm $CONTAINER 2>/dev/null || true
 
-                      IMAGE_NAME=ghcr.io/${{ secrets.DOCKER_USERNAME }}/takecare-api-beta:$BRANCH
+                      docker run -d \
+                        --restart unless-stopped \
+                        --name $CONTAINER \
+                        --env-file ~/takecare-api/.env \
+                        --network host \
+                        -e PORT=$PORT \
+                        $IMAGE
 
-                      # Pull the latest image
-                      docker pull $IMAGE_NAME
-
-                      # Stop and remove the existing container if it exists
-                      docker stop $CONTAINER_NAME || true
-                      docker rm $CONTAINER_NAME || true
-
-                      # Run the new container with restart policy
-                      docker run -d --restart unless-stopped --name $CONTAINER_NAME --env-file .env -p $PORT:4000 $IMAGE_NAME
-
-                      # Wait and verify the container is running
+                      # Health check
                       sleep 5
-                      if docker ps --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
-                        echo "Container $CONTAINER_NAME is running successfully."
-                      else
-                        echo "ERROR: Container $CONTAINER_NAME failed to start!"
-                        docker logs $CONTAINER_NAME
+                      if ! docker ps | grep -q $CONTAINER; then
+                        echo "FAILED! Container logs:"
+                        docker logs $CONTAINER
                         exit 1
                       fi
 
-                      # Clean up old unused images
+                      echo "Deployed $CONTAINER on port $PORT"
+
                       docker image prune -f
