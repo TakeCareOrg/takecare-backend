@@ -57,6 +57,10 @@ export interface UserInfoPayload extends UserAttributions {
     health: UserHealthAttributions;
 }
 
+export interface UserComplete extends User {
+    health: UserHealthAttributions;
+}
+
 export interface UserUpdates {
     user_id: string;
     type: (typeof USER_DATA_UPDATES_TYPES)[number];

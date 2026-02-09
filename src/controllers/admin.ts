@@ -53,8 +53,6 @@ export const me: RequestMiddleware = async (req, res) => {
             return;
         }
 
-        console.log(`User info retrieved for user_id: ${user}`);
-
         res.json({ user: userInfo.user });
     } catch {
         res.status(500).json({ message: "Internal server error" });
@@ -73,4 +71,46 @@ export const getUsers: RequestMiddleware = async (req, res) => {
     }
 };
 
-export default { loginAdmin, me, getUsers };
+export const getHealthData: RequestMiddleware = async (req, res) => {
+    try {
+        const userInstance = new User(req.params.userId);
+
+        const healthData = await userInstance.getHealthData();
+        res.json(healthData);
+    } catch (error) {
+        Logger.error(`${StatusCodes.INTERNAL_SERVER_ERROR}: ${error}`);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: "Internal server error",
+        });
+    }
+};
+
+export const editUser: RequestMiddleware = async (req, res) => {
+    const { userId } = req.params;
+    const modifiedUser = req.body;
+    try {
+        const userInstance = new User(userId);
+
+        if (!userInstance) {
+            res.status(StatusCodes.NOT_FOUND).json({
+                message: "User not found",
+            });
+            return;
+        }
+        if (!modifiedUser) {
+            res.status(StatusCodes.BAD_REQUEST).json({
+                message: "Missing user in request",
+            });
+            return;
+        }
+        await userInstance.updateHealthData(modifiedUser);
+        res.json({ success: true });
+    } catch (error) {
+        Logger.error(`${StatusCodes.INTERNAL_SERVER_ERROR}: ${error}`);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: "Internal server error",
+        });
+    }
+};
+
+export default { loginAdmin, me, getUsers, editUser, getHealthData };

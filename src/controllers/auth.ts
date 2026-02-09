@@ -64,14 +64,14 @@ export const verifyEmail: RequestMiddleware = async (req, res) => {
     const user = req.user;
 
     if (!user) {
-        Logger.error(`401: Unauthorized`);
+        Logger.error("401: Unauthorized");
         return res.status(401).json({ message: "Unauthorized" });
     }
 
     const { code } = req.body;
 
     if (!code) {
-        Logger.error(`400: Missing required fields`);
+        Logger.error("400: Missing required fields");
         return res.status(400).json({ message: "Missing required fields" });
     }
 

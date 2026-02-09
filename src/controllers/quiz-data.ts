@@ -26,7 +26,7 @@ export const getQuizData: RequestMiddleware = async (req, res) => {
             return;
         }
 
-        const data = JSON.parse(file.toString())[`${req.query.lang ?? "en"}`];
+        const data = JSON.parse(file.toString())[`${req.query.lang ?? "fr"}`];
 
         res.status(200).json({ [`${req.params.type}`]: data });
     } catch (error) {

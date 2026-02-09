@@ -3,7 +3,11 @@ import {
     UserHealthAttributionsDB,
     UserUpdatesDB,
 } from "@database/models/user";
-import { UserHealthAttributions, UserInfoPayload } from "@dtypes/user";
+import {
+    UserComplete,
+    UserHealthAttributions,
+    UserInfoPayload,
+} from "@dtypes/user";
 import Logger from "@libs/logger";
 import VaultService from "@services/vault";
 import {
@@ -54,6 +58,31 @@ const userHealthDataSchema = z.object({
     practice_sports: z.array(z.string()).optional().nullable(),
     stress_level: z.number().optional().nullable(),
     summary_message: z.string().optional().nullable(),
+});
+
+const userAttributionsSchema = z.object({
+    user_id: z.string(),
+    email: z.string().email(),
+    appleId: z.string().optional(),
+    social_conn: z.string().optional(),
+    password: z.string(),
+    created_at: z.date(),
+    verified: z.boolean(),
+    role: z.enum(["user", "admin"]).optional(),
+    first_name: z.string(),
+    last_name: z.string(),
+    quiz_finished: z.boolean().optional(),
+    chat_tokens: z.number(),
+    chat_tokens_refreshed_at: z.date().optional(),
+    avatar: z.string().optional(),
+});
+
+const userCompleteSchema = userAttributionsSchema.extend({
+    health: userHealthDataSchema.extend({
+        user_id: z.string(),
+        created_at: z.date(),
+        updated_at: z.date().optional(),
+    }),
 });
 
 class User {
@@ -242,6 +271,83 @@ class User {
         } catch (error) {
             Logger.error(error);
             throw new Error("AN_ERROR_OCCURRED");
+        }
+    }
+
+    async updateUser(user: UserComplete) {
+        if (!user || !this.user_id) {
+            throw new Error("AN_ERROR_OCCURRED");
+        }
+
+        // Validate the complete user data with Zod
+        const validatedUser = userCompleteSchema.safeParse(user);
+        if (!validatedUser.success) {
+            Logger.error("User validation failed", validatedUser.error);
+            throw new Error(validatedUser.error.message);
+        }
+
+        try {
+            const { health, ...userWitoutHealth } = validatedUser.data;
+            await Promise.all([
+                UserDB.updateOne({ user_id: this.user_id }, userWitoutHealth),
+                UserHealthAttributionsDB.updateOne(
+                    { user_id: this.user_id },
+                    health,
+                ),
+            ]);
+            return { user: User };
+        } catch {
+            throw new Error("AN_ERROR_OCCURRED");
+        }
+    }
+
+    async getHealthData() {
+        if (!this.user_id) {
+            throw new Error("AN_ERROR_OCCURRED");
+        }
+        // try {
+        //     const healthData = await UserHealthAttributionsDB.find({
+        //         user_id: this.user_id,
+        //     }).select("-_id -__v -user_id -created_at");
+        //     if (!healthData) {
+        //         throw new Error("AN_ERROR_OCCURRED");
+        //     }
+        //     return healthData[0];
+        // } catch {
+        //     throw new Error("AN_ERROR_OCCURRED");
+        // }
+
+        const userHealthInfo = await UserHealthAttributionsDB.findOne({
+            user_id: this.user_id,
+        });
+
+        let healthData: UserHealthAttributions | Record<string, unknown> = {};
+        if (userHealthInfo) {
+            try {
+                const { ...encryptedFields } = userHealthInfo.toObject({
+                    flattenObjectIds: true,
+                });
+
+                const decrypted =
+                    await VaultService.decryptFields<UserHealthAttributions>({
+                        keyName: "health-data",
+                        encryptedData: encryptedFields,
+                        context: this.user_id,
+                    });
+
+                healthData = {
+                    ...decrypted,
+                    user_id: this.user_id,
+                    created_at: userHealthInfo.created_at,
+                };
+
+                return healthData;
+            } catch (error) {
+                Logger.error(
+                    `Failed to decrypt health data for user ${this.user_id}`,
+                    error,
+                );
+            }
         }
     }
 }
