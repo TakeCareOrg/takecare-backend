@@ -60,6 +60,31 @@ const userHealthDataSchema = z.object({
     summary_message: z.string().optional().nullable(),
 });
 
+const userAttributionsSchema = z.object({
+    user_id: z.string(),
+    email: z.string().email(),
+    appleId: z.string().optional(),
+    social_conn: z.string().optional(),
+    password: z.string(),
+    created_at: z.date(),
+    verified: z.boolean(),
+    role: z.enum(["user", "admin"]).optional(),
+    first_name: z.string(),
+    last_name: z.string(),
+    quiz_finished: z.boolean().optional(),
+    chat_tokens: z.number(),
+    chat_tokens_refreshed_at: z.date().optional(),
+    avatar: z.string().optional(),
+});
+
+const userCompleteSchema = userAttributionsSchema.extend({
+    health: userHealthDataSchema.extend({
+        user_id: z.string(),
+        created_at: z.date(),
+        updated_at: z.date().optional(),
+    }),
+});
+
 class User {
     user_id: string;
     constructor(user_id: string) {
@@ -253,9 +278,17 @@ class User {
         if (!user || !this.user_id) {
             throw new Error("AN_ERROR_OCCURRED");
         }
+
+        // Validate the complete user data with Zod
+        const validatedUser = userCompleteSchema.safeParse(user);
+        if (!validatedUser.success) {
+            Logger.error("User validation failed", validatedUser.error);
+            throw new Error(validatedUser.error.message);
+        }
+
         try {
-            const { health, ...userWitoutHealth } = user;
-            const User = await Promise.all([
+            const { health, ...userWitoutHealth } = validatedUser.data;
+            await Promise.all([
                 UserDB.updateOne({ user_id: this.user_id }, userWitoutHealth),
                 UserHealthAttributionsDB.updateOne(
                     { user_id: this.user_id },
