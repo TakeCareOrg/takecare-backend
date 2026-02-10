@@ -12,6 +12,7 @@ import indexRouter from "@routes/index";
 import metricsRouter from "@routes/metricsRouter";
 import quizDataRouter from "@routes/quizRouter";
 import userRouter from "@routes/userRouter";
+import gamificationRouter from "@routes/gamificationRouter";
 
 import swaggerDocs from "@config/swagger";
 import promBundle from "express-prom-bundle";
@@ -47,6 +48,7 @@ app.use("/admin", adminRouter);
 app.use("/users", userRouter);
 app.use("/chat", chatRouter);
 app.use("/quiz", quizDataRouter);
+app.use("/gamification", gamificationRouter);
 app.use("/metrics", metricsRouter);
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
