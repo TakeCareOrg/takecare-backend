@@ -12,6 +12,7 @@ RUN cp -r src/services/mail/templates dist/services/mail/ || true
 FROM node:20-slim
 WORKDIR /app
 ENV NODE_ENV=production
+ENV HUSKY=0
 COPY package*.json ./
 RUN npm ci --omit=dev
 COPY --from=builder /app/dist ./dist
