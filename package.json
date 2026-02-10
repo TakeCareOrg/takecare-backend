@@ -15,7 +15,8 @@
         "@config": "dist/config",
         "@docs": "dist/docs",
         "@data": "dist/data",
-        "@constants": "dist/constants"
+        "@constants": "dist/constants",
+        "@validators": "dist/validators"
     },
     "scripts": {
         "test": "jest --coverage",

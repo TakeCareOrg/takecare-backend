@@ -21,7 +21,8 @@
             "@config/*": ["config/*"],
             "@docs/*": ["docs/*"],
             "@data/*": ["data/*"],
-            "@constants/*": ["constants/*"]
+            "@constants/*": ["constants/*"],
+            "@validators/*": ["validators/*"]
         },
 
         /* Emit */
