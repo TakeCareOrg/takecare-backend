@@ -1,7 +1,7 @@
 // Vault secret types
 
 export interface MongoDbSecrets {
-    DEV_TAKECARE_DATABASE_URL: string;
+    TAKECARE_DATABASE_URL: string;
 }
 
 export interface JwtSecrets {

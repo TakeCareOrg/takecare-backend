@@ -8,7 +8,7 @@ import { app } from "./app";
 import Logger from "@libs/logger";
 import connectToMongoDB from "@database/connect";
 import vaultService from "@services/vault";
-import { setSecrets } from "@config/secrets";
+import { setSecrets, isDev, loadSecretsFromEnv } from "@config/secrets";
 import { initMailTransport } from "@services/mail";
 import type {
     MongoDbSecrets,
@@ -25,32 +25,48 @@ const startServer = async () => {
     try {
         Logger.info("🚀 Starting TakeCare Backend...");
 
-        // Initialize Vault
-        await vaultService.init();
+        let mongoDbUrl: string;
 
-        // Fetch all secrets from Vault
-        const [mongoSecrets, jwtSecrets, mailSecrets, chatSecrets] =
-            await Promise.all([
-                vaultService.getSecret<MongoDbSecrets>(
-                    "takecare/data/mongo_db",
-                ),
-                vaultService.getSecret<JwtSecrets>("takecare/data/jwt"),
-                vaultService.getSecret<MailSecrets>("takecare/data/mail"),
-                vaultService.getSecret<ChatSecrets>("takecare/data/chat"),
-            ]);
+        if (isDev()) {
+            // Development: load secrets from .env
+            Logger.info("🔧 Running in DEVELOPMENT mode — using .env secrets");
 
-        // Store secrets in memory for the app to use
-        setSecrets({
-            jwt: jwtSecrets,
-            mail: mailSecrets,
-            chat: chatSecrets,
-        });
+            const { appSecrets } = loadSecretsFromEnv();
+            setSecrets(appSecrets);
+            mongoDbUrl = appSecrets.mongo.TAKECARE_DATABASE_URL;
+        } else {
+            // Production: load secrets from Vault
+            Logger.info(
+                "🔐 Running in PRODUCTION mode — fetching secrets from Vault",
+            );
+
+            await vaultService.init();
+
+            const [mongoSecrets, jwtSecrets, mailSecrets, chatSecrets] =
+                await Promise.all([
+                    vaultService.getSecret<MongoDbSecrets>(
+                        "takecare/data/mongo_db",
+                    ),
+                    vaultService.getSecret<JwtSecrets>("takecare/data/jwt"),
+                    vaultService.getSecret<MailSecrets>("takecare/data/mail"),
+                    vaultService.getSecret<ChatSecrets>("takecare/data/chat"),
+                ]);
+
+            setSecrets({
+                mongo: mongoSecrets,
+                jwt: jwtSecrets,
+                mail: mailSecrets,
+                chat: chatSecrets,
+            });
+
+            mongoDbUrl = mongoSecrets.TAKECARE_DATABASE_URL;
+        }
 
         // Initialize mail transport (now that we have secrets)
         initMailTransport();
 
         // Connect to MongoDB
-        await connectToMongoDB(mongoSecrets.DEV_TAKECARE_DATABASE_URL);
+        await connectToMongoDB(mongoDbUrl);
 
         server = app.listen(port, () => {
             Logger.info(`✅ Server running on port ${port}`);
