@@ -2,6 +2,49 @@ import { User, UserHealthAttributions, UserUpdates } from "@dtypes/user";
 import { USER_DATA_UPDATES_TYPES } from "@constants/data-updates";
 import mongo, { Schema } from "mongoose";
 
+const achievementResultSchema = new Schema(
+    {
+        achievementId: {
+            type: String,
+            required: true,
+        },
+        pointsEarned: {
+            type: Number,
+            required: true,
+        },
+        completedAt: {
+            type: String,
+            required: true,
+        },
+        metadata: {
+            title: { type: String, required: true },
+            icon: { type: String, required: true },
+            description: { type: String, required: false },
+        },
+    },
+    { _id: false },
+);
+
+const dailyActivitySchema = new Schema(
+    {
+        date: {
+            type: String,
+            required: true,
+        },
+        steps: {
+            type: Number,
+            required: true,
+            default: 0,
+        },
+        completed: {
+            type: Boolean,
+            required: true,
+            default: false,
+        },
+    },
+    { _id: false },
+);
+
 const userSchema = new Schema<User>({
     user_id: {
         type: String,
@@ -60,6 +103,20 @@ const userSchema = new Schema<User>({
     social_conn: {
         type: String,
         required: false,
+    },
+    gamification: {
+        achievements: {
+            type: [achievementResultSchema],
+            default: [],
+        },
+        totalPoints: {
+            type: Number,
+            default: 0,
+        },
+    },
+    dailyActivities: {
+        type: [dailyActivitySchema],
+        default: [],
     },
     created_at: {
         type: Date,
