@@ -77,6 +77,14 @@ const userAttributionsSchema = z.object({
     avatar: z.string().optional(),
 });
 
+const updateUserInfoPayloadSchema = z
+    .object({
+        first_name: z.string().min(1).max(50).optional(),
+        last_name: z.string().min(1).max(50).optional(),
+        avatar: z.string().url().optional(),
+    })
+    .strict();
+
 const userCompleteSchema = userAttributionsSchema.extend({
     health: userHealthDataSchema.extend({
         user_id: z.string(),
@@ -268,6 +276,44 @@ class User {
             }
 
             return validatedHealthData.data;
+        } catch (error) {
+            Logger.error(error);
+            throw new Error("AN_ERROR_OCCURRED");
+        }
+    }
+
+    async updateUserInfo(
+        data: z.infer<typeof updateUserInfoPayloadSchema>,
+    ): Promise<Partial<z.infer<typeof userAttributionsSchema>>> {
+        if (!this.user_id) {
+            throw new Error("USER_ID_REQUIRED");
+        }
+
+        const validatedData = updateUserInfoPayloadSchema.safeParse(data);
+        if (!validatedData.success) {
+            throw new Error(validatedData.error.message);
+        }
+
+        try {
+            const user = await UserDB.findOne({ user_id: this.user_id });
+
+            if (!user) {
+                throw new Error("USER_NOT_FOUND");
+            }
+
+            await Promise.all([
+                UserDB.updateOne(
+                    { user_id: this.user_id },
+                    { $set: validatedData.data },
+                ),
+                UserUpdatesDB.create({
+                    user_id: this.user_id,
+                    type: "user_info",
+                    updated_at: new Date(),
+                }),
+            ]);
+
+            return validatedData.data;
         } catch (error) {
             Logger.error(error);
             throw new Error("AN_ERROR_OCCURRED");

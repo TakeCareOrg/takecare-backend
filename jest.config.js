@@ -19,6 +19,7 @@ module.exports = {
         "^@docs/(.*)$": "<rootDir>/src/docs/$1",
         "^@data/(.*)$": "<rootDir>/src/data/$1",
         "^@constants/(.*)$": "<rootDir>/src/constants/$1",
+        "^@validators/(.*)$": "<rootDir>/src/validators/$1",
     },
     resolver: "jest-ts-webcompat-resolver",
 };
