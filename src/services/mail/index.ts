@@ -1,5 +1,6 @@
 import Logger from "@libs/logger";
 import nodemailer from "nodemailer";
+import { getSecrets } from "@config/secrets";
 
 interface EmailOptions {
     to: string | string[];
@@ -15,7 +16,10 @@ let transporter: nodemailer.Transporter;
  * Initialize the mail transporter
  */
 export function initMailTransport(): void {
-    if (!process.env.EMAIL_HOST || !process.env.EMAIL_PORT) {
+    const { EMAIL_HOST, EMAIL_PORT, GOOGLE_APP_EMAIL, GOOGLE_APP_PASSWORD } =
+        getSecrets().mail;
+
+    if (!EMAIL_HOST || !EMAIL_PORT) {
         Logger.warn(
             "Email host or port not set, skipping mail transporter init",
         );
@@ -24,12 +28,12 @@ export function initMailTransport(): void {
 
     try {
         transporter = nodemailer.createTransport({
-            host: process.env.EMAIL_HOST,
-            port: Number(process.env.EMAIL_PORT) || 587,
+            host: EMAIL_HOST,
+            port: Number(EMAIL_PORT) || 587,
             secure: true,
             auth: {
-                user: process.env.GOOGLE_APP_EMAIL || "",
-                pass: process.env.GOOGLE_APP_PASSWORD || "",
+                user: GOOGLE_APP_EMAIL || "",
+                pass: GOOGLE_APP_PASSWORD || "",
             },
             service: "gmail",
         });

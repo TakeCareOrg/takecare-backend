@@ -14,7 +14,6 @@ import quizDataRouter from "@routes/quizRouter";
 import userRouter from "@routes/userRouter";
 
 import swaggerDocs from "@config/swagger";
-import { initMailTransport } from "@services/mail";
 import promBundle from "express-prom-bundle";
 
 const app = express();
@@ -28,8 +27,6 @@ const metricsMiddleware = promBundle({
         100, 200,
     ],
 });
-
-initMailTransport();
 
 app.use(metricsMiddleware);
 // parse application/json

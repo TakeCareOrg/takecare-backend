@@ -3,6 +3,7 @@ import { formatMessages } from "@utils/chat";
 import { ChatMessage } from "@dtypes/chat";
 import Logger from "@libs/logger";
 import TakeCareUserChatTokens from "../user/chat-tokens";
+import { getSecrets } from "@config/secrets";
 
 const MAX_TOKENS = undefined;
 const TEMPERATURE = 0.7;
@@ -22,8 +23,9 @@ class Chat {
         }
 
         try {
+            const { TOGETHER_API_KEY } = getSecrets().chat;
             const together = new Together({
-                apiKey: process.env.TOGETHER_API_KEY,
+                apiKey: TOGETHER_API_KEY,
             });
             // Format messages
             const formattedMessages = formatMessages(messages);

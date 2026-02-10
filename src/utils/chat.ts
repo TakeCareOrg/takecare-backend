@@ -1,13 +1,16 @@
 import { ChatMessage } from "@dtypes/chat";
+import { getSecrets } from "@config/secrets";
 
 export function formatMessages(messages: ChatMessage[]): ChatMessage[] {
-    if (process.env.CHAT_START_MESSAGE === undefined) {
+    const { CHAT_START_MESSAGE } = getSecrets().chat;
+
+    if (!CHAT_START_MESSAGE) {
         throw new Error("CHAT_START_MESSAGE is not defined");
     }
 
     const systemMessage: ChatMessage = {
         role: "system",
-        content: process.env.CHAT_START_MESSAGE,
+        content: CHAT_START_MESSAGE,
     };
 
     return [systemMessage, ...messages];
