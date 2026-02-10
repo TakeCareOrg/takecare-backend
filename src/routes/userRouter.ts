@@ -4,7 +4,10 @@ import { authenticateJWT } from "@middlewares/authMiddleware";
 
 const router = Router();
 
-router.get("/me", authenticateJWT, controller.getUserInfo);
+router
+    .route("/me")
+    .get(authenticateJWT, controller.getUserInfo)
+    .patch(authenticateJWT, controller.updateUserInfo);
 
 router.post("/health-quiz", authenticateJWT, controller.healthQuiz);
 
