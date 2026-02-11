@@ -72,8 +72,16 @@ export const getUsers: RequestMiddleware = async (req, res) => {
 };
 
 export const getHealthData: RequestMiddleware = async (req, res) => {
+    const { userId } = req.params;
+    if (!userId || typeof userId !== "string") {
+        res.status(StatusCodes.BAD_REQUEST).json({
+            message: "Invalid userId",
+        });
+        return;
+    }
+
     try {
-        const userInstance = new User(req.params.userId);
+        const userInstance = new User(userId);
 
         const healthData = await userInstance.getHealthData();
         res.json(healthData);
@@ -88,6 +96,13 @@ export const getHealthData: RequestMiddleware = async (req, res) => {
 export const editUser: RequestMiddleware = async (req, res) => {
     const { userId } = req.params;
     const modifiedUser = req.body;
+    if (!userId || typeof userId !== "string") {
+        res.status(StatusCodes.BAD_REQUEST).json({
+            message: "Invalid userId",
+        });
+        return;
+    }
+
     try {
         const userInstance = new User(userId);
 
