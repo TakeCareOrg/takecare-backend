@@ -1,23 +1,34 @@
-import express from "express";
-import dotenv from "dotenv";
 import morganMiddleware from "@middlewares/morganMiddleware";
-import swaggerJSDoc from "swagger-jsdoc";
-import swaggerUi from "swagger-ui-express";
-import helmet from "helmet";
 import cors from "cors";
-import connectToMongoDB from "@database/connect";
+import express from "express";
+import helmet from "helmet";
+import swaggerUi from "swagger-ui-express";
 
 // Import the routes
-import indexRouter from "@routes/index";
+import adminRouter from "@routes/adminRouter";
 import authRouter from "@routes/authRouter";
+import chatRouter from "@routes/chatRouter";
+import indexRouter from "@routes/index";
+import metricsRouter from "@routes/metricsRouter";
+import quizDataRouter from "@routes/quizRouter";
 import userRouter from "@routes/userRouter";
 
-dotenv.config();
+import swaggerDocs from "@config/swagger";
+import promBundle from "express-prom-bundle";
+
 const app = express();
 
-// Connect to the database
-connectToMongoDB(process.env.TAKECARE_DATABASE_URL);
+const metricsMiddleware = promBundle({
+    includeMethod: true,
+    includePath: true,
+    normalizePath: (req) => req.route?.path ?? "No",
+    buckets: [
+        0.001, 0.01, 0.1, 1, 2, 3, 5, 7, 10, 15, 20, 25, 30, 35, 40, 50, 70,
+        100, 200,
+    ],
+});
 
+app.use(metricsMiddleware);
 // parse application/json
 app.use(express.json());
 // parse application/x-www-form-urlencoded
@@ -32,21 +43,12 @@ app.use(morganMiddleware);
 // Tell the app to use the routes
 app.use("/", indexRouter);
 app.use("/auth", authRouter);
-app.use("/user", userRouter);
+app.use("/admin", adminRouter);
+app.use("/users", userRouter);
+app.use("/chat", chatRouter);
+app.use("/quiz", quizDataRouter);
+app.use("/metrics", metricsRouter);
 
-// Swagger
-const swaggerOptions = {
-    swaggerDefinition: {
-        info: {
-            title: "Express API with Swagger",
-            version: "1.0.0",
-            description: "This is a simple API",
-        },
-    },
-    apis: ["./src/routes/*.ts"],
-};
-
-const swaggerDocs = swaggerJSDoc(swaggerOptions);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 export { app };

@@ -1,0 +1,614 @@
+{
+    "en": [
+        {
+            "label": "Milk",
+            "value": "milk"
+        },
+        {
+            "label": "Eggs",
+            "value": "eggs"
+        },
+        {
+            "label": "Fish",
+            "value": "fish"
+        },
+        {
+            "label": "Shellfish",
+            "value": "shellfish"
+        },
+        {
+            "label": "Tree nuts",
+            "value": "tree_nuts"
+        },
+        {
+            "label": "Peanuts",
+            "value": "peanuts"
+        },
+        {
+            "label": "Wheat",
+            "value": "wheat"
+        },
+        {
+            "label": "Soybeans",
+            "value": "soybeans"
+        },
+        {
+            "label": "Sesame",
+            "value": "sesame"
+        },
+        {
+            "label": "Sulfites",
+            "value": "sulfites"
+        },
+        {
+            "label": "Tartrazine",
+            "value": "tartrazine"
+        },
+        {
+            "label": "Corn",
+            "value": "corn"
+        },
+        {
+            "label": "Meat",
+            "value": "meat"
+        },
+        {
+            "label": "Rice",
+            "value": "rice"
+        },
+        {
+            "label": "Fruit",
+            "value": "fruit"
+        },
+        {
+            "label": "Vegetables",
+            "value": "vegetables"
+        },
+        {
+            "label": "Latex",
+            "value": "latex"
+        },
+        {
+            "label": "Insect stings",
+            "value": "insect_stings"
+        },
+        {
+            "label": "Mold",
+            "value": "mold"
+        },
+        {
+            "label": "Dust mites",
+            "value": "dust_mites"
+        },
+        {
+            "label": "Pet dander",
+            "value": "pet_dander"
+        },
+        {
+            "label": "Cockroach",
+            "value": "cockroach"
+        },
+        {
+            "label": "Mice",
+            "value": "mice"
+        },
+        {
+            "label": "Pollen",
+            "value": "pollen"
+        },
+        {
+            "label": "Medications",
+            "value": "medications"
+        },
+        {
+            "label": "Nickel",
+            "value": "nickel"
+        },
+        {
+            "label": "Perfumes",
+            "value": "perfumes"
+        },
+        {
+            "label": "Cosmetics",
+            "value": "cosmetics"
+        },
+        {
+            "label": "Detergents",
+            "value": "detergents"
+        },
+        {
+            "label": "Dyes",
+            "value": "dyes"
+        },
+        {
+            "label": "Aspirin",
+            "value": "aspirin"
+        },
+        {
+            "label": "NSAIDs",
+            "value": "nsaids"
+        },
+        {
+            "label": "Penicillin",
+            "value": "penicillin"
+        },
+        {
+            "label": "Other antibiotics",
+            "value": "other_antibiotics"
+        },
+        {
+            "label": "Alpha-gal (red meat)",
+            "value": "alpha_gal_red_meat"
+        },
+        {
+            "label": "Balsam of Peru",
+            "value": "balsam_of_peru"
+        },
+        {
+            "label": "Bee stings",
+            "value": "bee_stings"
+        },
+        {
+            "label": "Wasps",
+            "value": "wasps"
+        },
+        {
+            "label": "Hornets",
+            "value": "hornets"
+        },
+        {
+            "label": "Yellow jackets",
+            "value": "yellow_jackets"
+        },
+        {
+            "label": "Fire ants",
+            "value": "fire_ants"
+        },
+        {
+            "label": "Wool",
+            "value": "wool"
+        },
+        {
+            "label": "Chlorine",
+            "value": "chlorine"
+        },
+        {
+            "label": "Iodine",
+            "value": "iodine"
+        },
+        {
+            "label": "Formaldehyde",
+            "value": "formaldehyde"
+        },
+        {
+            "label": "Gluten",
+            "value": "gluten"
+        },
+        {
+            "label": "Gelatin",
+            "value": "gelatin"
+        },
+        {
+            "label": "Sunlight (Photosensitivity)",
+            "value": "sunlight_photosensitivity"
+        },
+        {
+            "label": "Cold (Cold urticaria)",
+            "value": "cold_cold_urticaria"
+        },
+        {
+            "label": "Heat (Heat urticaria)",
+            "value": "heat_heat_urticaria"
+        },
+        {
+            "label": "Water (Aquagenic urticaria)",
+            "value": "water_aquagenic_urticaria"
+        },
+        {
+            "label": "Vibration",
+            "value": "vibration"
+        },
+        {
+            "label": "Exercise-induced",
+            "value": "exercise_induced"
+        },
+        {
+            "label": "Chronic spontaneous urticaria",
+            "value": "chronic_spontaneous_urticaria"
+        },
+        {
+            "label": "Chemical fumes",
+            "value": "chemical_fumes"
+        },
+        {
+            "label": "Plant pollen",
+            "value": "plant_pollen"
+        },
+        {
+            "label": "Animal saliva",
+            "value": "animal_saliva"
+        },
+        {
+            "label": "Animal urine",
+            "value": "animal_urine"
+        },
+        {
+            "label": "Cockroach droppings",
+            "value": "cockroach_droppings"
+        },
+        {
+            "label": "Mold spores",
+            "value": "mold_spores"
+        },
+        {
+            "label": "Smoke",
+            "value": "smoke"
+        },
+        {
+            "label": "Food additives",
+            "value": "food_additives"
+        },
+        {
+            "label": "Preservatives",
+            "value": "preservatives"
+        },
+        {
+            "label": "Sodium benzoate",
+            "value": "sodium_benzoate"
+        },
+        {
+            "label": "Sorbates",
+            "value": "sorbates"
+        },
+        {
+            "label": "Parabens",
+            "value": "parabens"
+        },
+        {
+            "label": "Erythromycin",
+            "value": "erythromycin"
+        },
+        {
+            "label": "Vancomycin",
+            "value": "vancomycin"
+        },
+        {
+            "label": "Sulfa drugs",
+            "value": "sulfa_drugs"
+        },
+        {
+            "label": "Barbiturates",
+            "value": "barbiturates"
+        },
+        {
+            "label": "Anticonvulsants",
+            "value": "anticonvulsants"
+        },
+        {
+            "label": "Insulin",
+            "value": "insulin"
+        },
+        {
+            "label": "Iodine contrast dye",
+            "value": "iodine_contrast_dye"
+        },
+        {
+            "label": "Thimerosal",
+            "value": "thimerosal"
+        },
+        {
+            "label": "Local anesthetics",
+            "value": "local_anesthetics"
+        },
+        {
+            "label": "Synthetic fragrances",
+            "value": "synthetic_fragrances"
+        }
+    ],
+    "fr": [
+        {
+            "label": "Lait",
+            "value": "milk"
+        },
+        {
+            "label": "Œufs",
+            "value": "eggs"
+        },
+        {
+            "label": "Poisson",
+            "value": "fish"
+        },
+        {
+            "label": "Crustacés",
+            "value": "shellfish"
+        },
+        {
+            "label": "Fruits à coques",
+            "value": "tree_nuts"
+        },
+        {
+            "label": "Arachides",
+            "value": "peanuts"
+        },
+        {
+            "label": "Blé",
+            "value": "wheat"
+        },
+        {
+            "label": "Soja",
+            "value": "soybeans"
+        },
+        {
+            "label": "Sésame",
+            "value": "sesame"
+        },
+        {
+            "label": "Sulfites",
+            "value": "sulfites"
+        },
+        {
+            "label": "Tartrazine",
+            "value": "tartrazine"
+        },
+        {
+            "label": "Maïs",
+            "value": "corn"
+        },
+        {
+            "label": "Viande",
+            "value": "meat"
+        },
+        {
+            "label": "Riz",
+            "value": "rice"
+        },
+        {
+            "label": "Fruits",
+            "value": "fruit"
+        },
+        {
+            "label": "Légumes",
+            "value": "vegetables"
+        },
+        {
+            "label": "Latex",
+            "value": "latex"
+        },
+        {
+            "label": "Piqûres d'insectes",
+            "value": "insect_stings"
+        },
+        {
+            "label": "Moisissures",
+            "value": "mold"
+        },
+        {
+            "label": "Acariens",
+            "value": "dust_mites"
+        },
+        {
+            "label": "Squames d'animaux",
+            "value": "pet_dander"
+        },
+        {
+            "label": "Cafard",
+            "value": "cockroach"
+        },
+        {
+            "label": "Souris",
+            "value": "mice"
+        },
+        {
+            "label": "Pollen",
+            "value": "pollen"
+        },
+        {
+            "label": "Médicaments",
+            "value": "medications"
+        },
+        {
+            "label": "Nickel",
+            "value": "nickel"
+        },
+        {
+            "label": "Parfums",
+            "value": "perfumes"
+        },
+        {
+            "label": "Cosmétiques",
+            "value": "cosmetics"
+        },
+        {
+            "label": "Détergents",
+            "value": "detergents"
+        },
+        {
+            "label": "Colorants",
+            "value": "dyes"
+        },
+        {
+            "label": "Aspirine",
+            "value": "aspirin"
+        },
+        {
+            "label": "AINS (Anti-Inflammatoires Non Stéroïdiens)",
+            "value": "nsaids"
+        },
+        {
+            "label": "Pénicilline",
+            "value": "penicillin"
+        },
+        {
+            "label": "Autres antibiotiques",
+            "value": "other_antibiotics"
+        },
+        {
+            "label": "Alpha-gal (viande rouge)",
+            "value": "alpha_gal_red_meat"
+        },
+        {
+            "label": "Baume du Pérou",
+            "value": "balsam_of_peru"
+        },
+        {
+            "label": "Piqûres d'abeilles",
+            "value": "bee_stings"
+        },
+        {
+            "label": "Guêpes",
+            "value": "wasps"
+        },
+        {
+            "label": "Frelons",
+            "value": "hornets"
+        },
+        {
+            "label": "Frelons à face jaune",
+            "value": "yellow_jackets"
+        },
+        {
+            "label": "Fourmis de feu",
+            "value": "fire_ants"
+        },
+        {
+            "label": "Laine",
+            "value": "wool"
+        },
+        {
+            "label": "Chlore",
+            "value": "chlorine"
+        },
+        {
+            "label": "Iode",
+            "value": "iodine"
+        },
+        {
+            "label": "Formaldéhyde",
+            "value": "formaldehyde"
+        },
+        {
+            "label": "Gluten",
+            "value": "gluten"
+        },
+        {
+            "label": "Gélatine",
+            "value": "gelatin"
+        },
+        {
+            "label": "Lumière du soleil (Photosensibilité)",
+            "value": "sunlight_photosensitivity"
+        },
+        {
+            "label": "Froid (Urticaire due au froid)",
+            "value": "cold_cold_urticaria"
+        },
+        {
+            "label": "Chaleur (Urticaire due à la chaleur)",
+            "value": "heat_heat_urticaria"
+        },
+        {
+            "label": "Eau (Urticaire aquagénique)",
+            "value": "water_aquagenic_urticaria"
+        },
+        {
+            "label": "Vibration",
+            "value": "vibration"
+        },
+        {
+            "label": "Induite par l'exercice",
+            "value": "exercise_induced"
+        },
+        {
+            "label": "Urticaire spontanée chronique",
+            "value": "chronic_spontaneous_urticaria"
+        },
+        {
+            "label": "Fumées chimiques",
+            "value": "chemical_fumes"
+        },
+        {
+            "label": "Pollen de plantes",
+            "value": "plant_pollen"
+        },
+        {
+            "label": "Salive d'animaux",
+            "value": "animal_saliva"
+        },
+        {
+            "label": "Urine d'animaux",
+            "value": "animal_urine"
+        },
+        {
+            "label": "Excréments de cafard",
+            "value": "cockroach_droppings"
+        },
+        {
+            "label": "Spores de moisissures",
+            "value": "mold_spores"
+        },
+        {
+            "label": "Fumée",
+            "value": "smoke"
+        },
+        {
+            "label": "Additifs alimentaires",
+            "value": "food_additives"
+        },
+        {
+            "label": "Conservateurs",
+            "value": "preservatives"
+        },
+        {
+            "label": "Benzoate de sodium",
+            "value": "sodium_benzoate"
+        },
+        {
+            "label": "Sorbates",
+            "value": "sorbates"
+        },
+        {
+            "label": "Parabènes",
+            "value": "parabens"
+        },
+        {
+            "label": "Érythromycine",
+            "value": "erythromycin"
+        },
+        {
+            "label": "Vancomycine",
+            "value": "vancomycin"
+        },
+        {
+            "label": "Médicaments sulfonamides",
+            "value": "sulfa_drugs"
+        },
+        {
+            "label": "Barbituriques",
+            "value": "barbiturates"
+        },
+        {
+            "label": "Anticonvulsivants",
+            "value": "anticonvulsants"
+        },
+        {
+            "label": "Insuline",
+            "value": "insulin"
+        },
+        {
+            "label": "Produit de contraste iodé",
+            "value": "iodine_contrast_dye"
+        },
+        {
+            "label": "Thimérosal",
+            "value": "thimerosal"
+        },
+        {
+            "label": "Anesthésiques locaux",
+            "value": "local_anesthetics"
+        },
+        {
+            "label": "Fragrances synthétiques",
+            "value": "synthetic_fragrances"
+        }
+    ]
+}

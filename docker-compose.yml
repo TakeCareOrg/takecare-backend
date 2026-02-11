@@ -1,9 +1,0 @@
-services:
-    takecare-api-beta:
-        image: justrunnz/takecare-api-beta:main
-        env_file:
-            - .env
-        ports:
-            - "3002:4000"
-        restart: always
-        container_name: takecare-api-beta

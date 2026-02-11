@@ -1,4 +1,5 @@
-import { User, UserAttributions, UserHealthAttributions } from "@dtypes/user";
+import { User, UserHealthAttributions, UserUpdates } from "@dtypes/user";
+import { USER_DATA_UPDATES_TYPES } from "@constants/data-updates";
 import mongo, { Schema } from "mongoose";
 
 const userSchema = new Schema<User>({
@@ -12,35 +13,11 @@ const userSchema = new Schema<User>({
         required: true,
         unique: true,
     },
-    appleId: {
-        type: String,
-        required: false,
-    },
-    social_conn: {
-        type: String,
-        required: false,
-    },
     password: {
         type: String,
         required: true,
         max: 64,
         min: 6,
-    },
-    created_at: {
-        type: Date,
-        default: Date.now,
-    },
-    resetCode: {
-        type: String,
-        required: false,
-    },
-});
-
-const userAttributions = new Schema<UserAttributions>({
-    user_id: {
-        type: String,
-        required: true,
-        unique: true,
     },
     verified: {
         type: Boolean,
@@ -76,6 +53,18 @@ const userAttributions = new Schema<UserAttributions>({
         type: String,
         required: false,
     },
+    appleId: {
+        type: String,
+        required: false,
+    },
+    social_conn: {
+        type: String,
+        required: false,
+    },
+    created_at: {
+        type: Date,
+        default: Date.now,
+    },
 });
 
 const userHealthAttributions = new Schema<UserHealthAttributions>({
@@ -88,12 +77,12 @@ const userHealthAttributions = new Schema<UserHealthAttributions>({
         type: String,
         required: false,
     },
-    age: {
-        type: Number,
+    birth_date: {
+        type: String,
         required: false,
     },
     weight: {
-        type: Number,
+        type: String,
         required: false,
     },
     weight_unit: {
@@ -101,7 +90,7 @@ const userHealthAttributions = new Schema<UserHealthAttributions>({
         required: false,
     },
     height: {
-        type: Number,
+        type: String,
         required: false,
     },
     height_unit: {
@@ -117,11 +106,11 @@ const userHealthAttributions = new Schema<UserHealthAttributions>({
         required: false,
     },
     health_goal: {
-        type: Array,
+        type: String,
         required: false,
     },
     professional_help: {
-        type: Array,
+        type: String,
         required: false,
     },
     medication_treatment: {
@@ -129,27 +118,27 @@ const userHealthAttributions = new Schema<UserHealthAttributions>({
         required: false,
     },
     medical_treatments: {
-        type: Array,
+        type: String,
         required: false,
     },
     surgery_before: {
-        type: Array,
+        type: String,
         required: false,
     },
     chronic_illness: {
-        type: Array,
+        type: String,
         required: false,
     },
     allergies: {
-        type: Array,
+        type: String,
         required: false,
     },
     practice_sports: {
-        type: Array,
+        type: String,
         required: false,
     },
     stress_level: {
-        type: Number,
+        type: String,
         required: false,
     },
     summary_message: {
@@ -162,14 +151,33 @@ const userHealthAttributions = new Schema<UserHealthAttributions>({
     },
 });
 
+const userUpdatesSchema = new Schema<UserUpdates>({
+    user_id: {
+        type: String,
+        required: true,
+        index: true,
+    },
+    type: {
+        type: String,
+        enum: USER_DATA_UPDATES_TYPES,
+        required: true,
+        index: true,
+    },
+    updated_at: {
+        type: Date,
+        default: Date.now,
+        required: true,
+    },
+});
+
 const UserDB = mongo.model<User>("User", userSchema);
-const UserAttributionsDB = mongo.model<UserAttributions>(
-    "User_Attributions",
-    userAttributions,
-);
 const UserHealthAttributionsDB = mongo.model<UserHealthAttributions>(
     "User_Health_Attributions",
     userHealthAttributions,
 );
+const UserUpdatesDB = mongo.model<UserUpdates>(
+    "User_Updates",
+    userUpdatesSchema,
+);
 
-export { UserDB, UserAttributionsDB, UserHealthAttributionsDB };
+export { UserDB, UserHealthAttributionsDB, UserUpdatesDB };

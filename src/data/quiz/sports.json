@@ -1,0 +1,566 @@
+{
+    "en": [
+        {
+            "label": "Archery",
+            "value": "archery"
+        },
+        {
+            "label": "Athletics",
+            "value": "athletics"
+        },
+        {
+            "label": "Auto racing",
+            "value": "auto_racing"
+        },
+        {
+            "label": "Badminton",
+            "value": "badminton"
+        },
+        {
+            "label": "Baseball",
+            "value": "baseball"
+        },
+        {
+            "label": "Basketball",
+            "value": "basketball"
+        },
+        {
+            "label": "Biathlon",
+            "value": "biathlon"
+        },
+        {
+            "label": "Bobsleigh",
+            "value": "bobsleigh"
+        },
+        {
+            "label": "Bowling",
+            "value": "bowling"
+        },
+        {
+            "label": "Boxing",
+            "value": "boxing"
+        },
+        {
+            "label": "Canoeing",
+            "value": "canoeing"
+        },
+        {
+            "label": "Chess",
+            "value": "chess"
+        },
+        {
+            "label": "Climbing",
+            "value": "climbing"
+        },
+        {
+            "label": "Cricket",
+            "value": "cricket"
+        },
+        {
+            "label": "Croquet",
+            "value": "croquet"
+        },
+        {
+            "label": "Cross-country skiing",
+            "value": "cross_country_skiing"
+        },
+        {
+            "label": "Curling",
+            "value": "curling"
+        },
+        {
+            "label": "Cycling",
+            "value": "cycling"
+        },
+        {
+            "label": "Diving",
+            "value": "diving"
+        },
+        {
+            "label": "Equestrianism",
+            "value": "equestrianism"
+        },
+        {
+            "label": "Fencing",
+            "value": "fencing"
+        },
+        {
+            "label": "Figure skating",
+            "value": "figure_skating"
+        },
+        {
+            "label": "Fishing",
+            "value": "fishing"
+        },
+        {
+            "label": "Football",
+            "value": "football"
+        },
+        {
+            "label": "Golf",
+            "value": "golf"
+        },
+        {
+            "label": "Gymnastics",
+            "value": "gymnastics"
+        },
+        {
+            "label": "Handball",
+            "value": "handball"
+        },
+        {
+            "label": "High jump",
+            "value": "high_jump"
+        },
+        {
+            "label": "Hiking",
+            "value": "hiking"
+        },
+        {
+            "label": "Hockey",
+            "value": "hockey"
+        },
+        {
+            "label": "Ice hockey",
+            "value": "ice_hockey"
+        },
+        {
+            "label": "Ice skating",
+            "value": "ice_skating"
+        },
+        {
+            "label": "Judo",
+            "value": "judo"
+        },
+        {
+            "label": "Kabaddi",
+            "value": "kabaddi"
+        },
+        {
+            "label": "Karate",
+            "value": "karate"
+        },
+        {
+            "label": "Luge",
+            "value": "luge"
+        },
+        {
+            "label": "Marathon",
+            "value": "marathon"
+        },
+        {
+            "label": "Martial arts",
+            "value": "martial_arts"
+        },
+        {
+            "label": "Modern pentathlon",
+            "value": "modern_pentathlon"
+        },
+        {
+            "label": "Motorcycling",
+            "value": "motorcycling"
+        },
+        {
+            "label": "Netball",
+            "value": "netball"
+        },
+        {
+            "label": "Parachuting",
+            "value": "parachuting"
+        },
+        {
+            "label": "Polo",
+            "value": "polo"
+        },
+        {
+            "label": "Racquetball",
+            "value": "racquetball"
+        },
+        {
+            "label": "Rock climbing",
+            "value": "rock_climbing"
+        },
+        {
+            "label": "Roller skating",
+            "value": "roller_skating"
+        },
+        {
+            "label": "Rowing",
+            "value": "rowing"
+        },
+        {
+            "label": "Rugby",
+            "value": "rugby"
+        },
+        {
+            "label": "Running",
+            "value": "running"
+        },
+        {
+            "label": "Sailing",
+            "value": "sailing"
+        },
+        {
+            "label": "Shooting",
+            "value": "shooting"
+        },
+        {
+            "label": "Skateboarding",
+            "value": "skateboarding"
+        },
+        {
+            "label": "Ski jumping",
+            "value": "ski_jumping"
+        },
+        {
+            "label": "Skiing",
+            "value": "skiing"
+        },
+        {
+            "label": "Snooker",
+            "value": "snooker"
+        },
+        {
+            "label": "Snowboarding",
+            "value": "snowboarding"
+        },
+        {
+            "label": "Soccer",
+            "value": "soccer"
+        },
+        {
+            "label": "Softball",
+            "value": "softball"
+        },
+        {
+            "label": "Squash",
+            "value": "squash"
+        },
+        {
+            "label": "Sumo wrestling",
+            "value": "sumo_wrestling"
+        },
+        {
+            "label": "Surfing",
+            "value": "surfing"
+        },
+        {
+            "label": "Swimming",
+            "value": "swimming"
+        },
+        {
+            "label": "Table tennis",
+            "value": "table_tennis"
+        },
+        {
+            "label": "Taekwondo",
+            "value": "taekwondo"
+        },
+        {
+            "label": "Tennis",
+            "value": "tennis"
+        },
+        {
+            "label": "Track and field",
+            "value": "track_and_field"
+        },
+        {
+            "label": "Triathlon",
+            "value": "triathlon"
+        },
+        {
+            "label": "Volleyball",
+            "value": "volleyball"
+        },
+        {
+            "label": "Water polo",
+            "value": "water_polo"
+        },
+        {
+            "label": "Weightlifting",
+            "value": "weightlifting"
+        }
+    ],
+    "fr": [
+        {
+            "label": "Tir à l'arc",
+            "value": "archery"
+        },
+        {
+            "label": "Athlétisme",
+            "value": "athletics"
+        },
+        {
+            "label": "Course automobile",
+            "value": "auto_racing"
+        },
+        {
+            "label": "Badminton",
+            "value": "badminton"
+        },
+        {
+            "label": "Baseball",
+            "value": "baseball"
+        },
+        {
+            "label": "Basketball",
+            "value": "basketball"
+        },
+        {
+            "label": "Biathlon",
+            "value": "biathlon"
+        },
+        {
+            "label": "Bobsleigh",
+            "value": "bobsleigh"
+        },
+        {
+            "label": "Bowling",
+            "value": "bowling"
+        },
+        {
+            "label": "Boxe",
+            "value": "boxing"
+        },
+        {
+            "label": "Canoë-kayak",
+            "value": "canoeing"
+        },
+        {
+            "label": "Échecs",
+            "value": "chess"
+        },
+        {
+            "label": "Escalade",
+            "value": "climbing"
+        },
+        {
+            "label": "Cricket",
+            "value": "cricket"
+        },
+        {
+            "label": "Croquet",
+            "value": "croquet"
+        },
+        {
+            "label": "Ski de fond",
+            "value": "cross_country_skiing"
+        },
+        {
+            "label": "Curling",
+            "value": "curling"
+        },
+        {
+            "label": "Cyclisme",
+            "value": "cycling"
+        },
+        {
+            "label": "Plongée",
+            "value": "diving"
+        },
+        {
+            "label": "Équitation",
+            "value": "equestrianism"
+        },
+        {
+            "label": "Escrime",
+            "value": "fencing"
+        },
+        {
+            "label": "Patinage artistique",
+            "value": "figure_skating"
+        },
+        {
+            "label": "Pêche",
+            "value": "fishing"
+        },
+        {
+            "label": "Football",
+            "value": "football"
+        },
+        {
+            "label": "Golf",
+            "value": "golf"
+        },
+        {
+            "label": "Gymnastique",
+            "value": "gymnastics"
+        },
+        {
+            "label": "Handball",
+            "value": "handball"
+        },
+        {
+            "label": "Saut en hauteur",
+            "value": "high_jump"
+        },
+        {
+            "label": "Randonnée",
+            "value": "hiking"
+        },
+        {
+            "label": "Hockey",
+            "value": "hockey"
+        },
+        {
+            "label": "Hockey sur glace",
+            "value": "ice_hockey"
+        },
+        {
+            "label": "Patinage",
+            "value": "ice_skating"
+        },
+        {
+            "label": "Judo",
+            "value": "judo"
+        },
+        {
+            "label": "Kabaddi",
+            "value": "kabaddi"
+        },
+        {
+            "label": "Karate",
+            "value": "karate"
+        },
+        {
+            "label": "Luge",
+            "value": "luge"
+        },
+        {
+            "label": "Marathon",
+            "value": "marathon"
+        },
+        {
+            "label": "Arts martiaux",
+            "value": "martial_arts"
+        },
+        {
+            "label": "Pentathlon moderne",
+            "value": "modern_pentathlon"
+        },
+        {
+            "label": "Motocyclisme",
+            "value": "motorcycling"
+        },
+        {
+            "label": "Netball",
+            "value": "netball"
+        },
+        {
+            "label": "Parachutisme",
+            "value": "parachuting"
+        },
+        {
+            "label": "Polo",
+            "value": "polo"
+        },
+        {
+            "label": "Racquetball",
+            "value": "racquetball"
+        },
+        {
+            "label": "Escalade",
+            "value": "rock_climbing"
+        },
+        {
+            "label": "Roller",
+            "value": "roller_skating"
+        },
+        {
+            "label": "Aviron",
+            "value": "rowing"
+        },
+        {
+            "label": "Rugby",
+            "value": "rugby"
+        },
+        {
+            "label": "Course à pied",
+            "value": "running"
+        },
+        {
+            "label": "Voile",
+            "value": "sailing"
+        },
+        {
+            "label": "Tir",
+            "value": "shooting"
+        },
+        {
+            "label": "Skateboard",
+            "value": "skateboarding"
+        },
+        {
+            "label": "Saut à ski",
+            "value": "ski_jumping"
+        },
+        {
+            "label": "Ski",
+            "value": "skiing"
+        },
+        {
+            "label": "Billard",
+            "value": "snooker"
+        },
+        {
+            "label": "Snowboard",
+            "value": "snowboarding"
+        },
+        {
+            "label": "Football",
+            "value": "soccer"
+        },
+        {
+            "label": "Softball",
+            "value": "softball"
+        },
+        {
+            "label": "Squash",
+            "value": "squash"
+        },
+        {
+            "label": "Sumo",
+            "value": "sumo_wrestling"
+        },
+        {
+            "label": "Surf",
+            "value": "surfing"
+        },
+        {
+            "label": "Natation",
+            "value": "swimming"
+        },
+        {
+            "label": "Tennis de table",
+            "value": "table_tennis"
+        },
+        {
+            "label": "Taekwondo",
+            "value": "taekwondo"
+        },
+        {
+            "label": "Tennis",
+            "value": "tennis"
+        },
+        {
+            "label": "Athlétisme",
+            "value": "track_and_field"
+        },
+        {
+            "label": "Triathlon",
+            "value": "triathlon"
+        },
+        {
+            "label": "Volley-ball",
+            "value": "volleyball"
+        },
+        {
+            "label": "Water-polo",
+            "value": "water_polo"
+        },
+        {
+            "label": "Haltérophilie",
+            "value": "weightlifting"
+        }
+    ]
+}
