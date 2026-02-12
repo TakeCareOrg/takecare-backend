@@ -4,6 +4,7 @@ import userDocs from "@docs/user-docs";
 import authDocs from "@docs/auth-docs";
 import chatDocs from "@docs/chat-docs";
 import quizDocs from "@docs/quiz-data-docs";
+import adminDocs from "@docs/admin-docs";
 
 // Add tags for different route categories
 const tags = [
@@ -11,6 +12,7 @@ const tags = [
     { name: "Users", description: "User endpoints" },
     { name: "Chat", description: "Chat endpoints" },
     { name: "Quiz", description: "Quiz endpoints" },
+    { name: "Admin", description: "Admin endpoints" },
 ];
 
 // Add tag to each path
@@ -49,6 +51,7 @@ const swaggerOptions = {
             ...addTagsToRoutes(authDocs, "Auth"),
             ...addTagsToRoutes(chatDocs, "Chat"),
             ...addTagsToRoutes(quizDocs, "Quiz"),
+            ...addTagsToRoutes(adminDocs, "Admin"),
         },
         servers: [
             {
