@@ -46,26 +46,31 @@ router.post(
     },
 );
 
-router.get("/progress/:userId", async (req: Request, res: Response) => {
-    try {
-        const userData = await fetchUserGamificationData(req.params.userId);
-        const levelInfo = determineLevel(userData.totalPoints);
+router.get(
+    "/progress/:userId",
+    async (req: Request<{ userId: string }>, res: Response) => {
+        try {
+            const { userId } = req.params;
 
-        res.json({
-            success: true,
-            data: {
-                achievements: userData.achievements,
-                totalPoints: userData.totalPoints,
-                levelInfo,
-                dailyActivities: userData.dailyActivities,
-            },
-        });
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            error: (error as Error).message,
-        });
-    }
-});
+            const userData = await fetchUserGamificationData(userId);
+            const levelInfo = determineLevel(userData.totalPoints);
+
+            res.json({
+                success: true,
+                data: {
+                    achievements: userData.achievements,
+                    totalPoints: userData.totalPoints,
+                    levelInfo,
+                    dailyActivities: userData.dailyActivities,
+                },
+            });
+        } catch (error) {
+            res.status(500).json({
+                success: false,
+                error: (error as Error).message,
+            });
+        }
+    },
+);
 
 export default router;
