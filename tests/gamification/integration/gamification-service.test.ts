@@ -57,16 +57,22 @@ describe("gamificationService", () => {
                 gamification: {
                     achievements: [
                         {
+                            achievementId: "daily_steps_1k",
+                            pointsEarned: 3,
+                            completedAt: "2024-02-08T12:00:00Z",
+                            metadata: { title: "Test", icon: "👟" },
+                        },
+                        {
                             achievementId: "daily_steps_2k",
                             pointsEarned: 5,
                             completedAt: "2024-02-08T12:00:00Z",
-                            metadata: { title: "Test", icon: "" },
+                            metadata: { title: "Test", icon: "👟" },
                         },
                         {
                             achievementId: "daily_steps_5k",
                             pointsEarned: 10,
                             completedAt: "2024-02-08T12:00:00Z",
-                            metadata: { title: "Test", icon: "" },
+                            metadata: { title: "Test", icon: "👟" },
                         },
                     ],
                     totalPoints: 10,

@@ -1,6 +1,16 @@
 import { AchievementRules } from "../../types";
 
 export const DAILY_STEPS_RULES: AchievementRules = {
+    DAILY_STEPS_1K: {
+        id: "daily_steps_1k",
+        type: "daily",
+        validator: (data) => data.steps >= 1000,
+        points: 3,
+        metadata: {
+            title: "1000 pas quotidiens",
+            icon: "👟",
+        },
+    },
     DAILY_STEPS_2K: {
         id: "daily_steps_2k",
         type: "daily",
@@ -8,7 +18,7 @@ export const DAILY_STEPS_RULES: AchievementRules = {
         points: 5,
         metadata: {
             title: "2000 pas quotidiens",
-            icon: "",
+            icon: "👟",
         },
     },
     DAILY_STEPS_5K: {
@@ -18,7 +28,7 @@ export const DAILY_STEPS_RULES: AchievementRules = {
         points: 10,
         metadata: {
             title: "5000 pas quotidiens",
-            icon: "",
+            icon: "👟",
         },
     },
     DAILY_STEPS_10K: {
@@ -28,7 +38,7 @@ export const DAILY_STEPS_RULES: AchievementRules = {
         points: 25,
         metadata: {
             title: "10000 pas quotidiens",
-            icon: "",
+            icon: "👟",
         },
     },
     DAILY_STEPS_15K: {
@@ -38,7 +48,7 @@ export const DAILY_STEPS_RULES: AchievementRules = {
         points: 50,
         metadata: {
             title: "15000 pas quotidiens",
-            icon: "",
+            icon: "👟",
         },
     },
 };
