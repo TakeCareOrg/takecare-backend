@@ -1,9 +1,11 @@
 import jwt from "jsonwebtoken";
-import { generateToken, verifyToken, UserPayload } from "../../src/utils/jwt"; // Adapte le chemin si nécessaire
+import { generateToken, verifyToken, UserPayload } from "../../src/utils/jwt";
 import Logger from "@libs/logger";
+import * as secrets from "../../src/config/secrets";
 
 jest.mock("jsonwebtoken");
 jest.mock("@libs/logger");
+jest.mock("../../src/config/secrets");
 
 describe("JWT Utility Functions", () => {
     const SECRET_KEY = "mysecret";
@@ -12,12 +14,13 @@ describe("JWT Utility Functions", () => {
     };
 
     beforeEach(() => {
-        process.env.JWT_SECRET = SECRET_KEY;
-        jest.clearAllMocks();
-    });
+        (secrets.getSecrets as jest.Mock).mockReturnValue({
+            jwt: {
+                JWT_SECRET: SECRET_KEY,
+            },
+        });
 
-    afterEach(() => {
-        delete process.env.JWT_SECRET;
+        jest.clearAllMocks();
     });
 
     describe("generateToken", () => {
@@ -33,7 +36,11 @@ describe("JWT Utility Functions", () => {
         });
 
         it("should throw an error if JWT_SECRET is not defined", () => {
-            delete process.env.JWT_SECRET;
+            (secrets.getSecrets as jest.Mock).mockReturnValue({
+                jwt: {
+                    JWT_SECRET: undefined,
+                },
+            });
 
             expect(() => generateToken(mockUser)).toThrow(
                 "JWT_SECRET is not defined",
@@ -52,7 +59,11 @@ describe("JWT Utility Functions", () => {
         });
 
         it("should throw an error if JWT_SECRET is not defined", () => {
-            delete process.env.JWT_SECRET;
+            (secrets.getSecrets as jest.Mock).mockReturnValue({
+                jwt: {
+                    JWT_SECRET: undefined,
+                },
+            });
 
             expect(() => verifyToken("valid_token")).toThrow(
                 "JWT_SECRET is not defined",

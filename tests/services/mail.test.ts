@@ -1,3 +1,14 @@
+jest.mock("../../src/config/secrets", () => ({
+    getSecrets: jest.fn(() => ({
+        mail: {
+            EMAIL_HOST: "smtp.gmail.com",
+            EMAIL_PORT: "587",
+            GOOGLE_APP_EMAIL: "test@gmail.com",
+            GOOGLE_APP_PASSWORD: "password123",
+        },
+    })),
+}));
+
 import {
     initMailTransport,
     sendMail,
@@ -5,6 +16,7 @@ import {
 } from "../../src/services/mail";
 import Logger from "../../src/libs/logger";
 import nodemailer from "nodemailer";
+import { getSecrets } from "../../src/config/secrets";
 
 jest.mock("../../src/libs/logger");
 jest.mock("nodemailer");
@@ -25,21 +37,16 @@ describe("Mail Service Tests", () => {
             mockTransporter,
         );
 
-        // Reset environment variables
-        process.env.EMAIL_HOST = "smtp.gmail.com";
-        process.env.EMAIL_PORT = "587";
-        process.env.GOOGLE_APP_EMAIL = "test@gmail.com";
-        process.env.GOOGLE_APP_PASSWORD = "password123";
+        (getSecrets as jest.Mock).mockReturnValue({
+            mail: {
+                EMAIL_HOST: "smtp.gmail.com",
+                EMAIL_PORT: "587",
+                GOOGLE_APP_EMAIL: "test@gmail.com",
+                GOOGLE_APP_PASSWORD: "password123",
+            },
+        });
 
         jest.clearAllMocks();
-    });
-
-    afterEach(() => {
-        // Clean up env vars
-        delete process.env.EMAIL_HOST;
-        delete process.env.EMAIL_PORT;
-        delete process.env.GOOGLE_APP_EMAIL;
-        delete process.env.GOOGLE_APP_PASSWORD;
     });
 
     describe("initMailTransport", () => {
@@ -62,7 +69,14 @@ describe("Mail Service Tests", () => {
         });
 
         it("should warn and return when EMAIL_HOST is not set", () => {
-            delete process.env.EMAIL_HOST;
+            (getSecrets as jest.Mock).mockReturnValue({
+                mail: {
+                    EMAIL_HOST: undefined,
+                    EMAIL_PORT: "587",
+                    GOOGLE_APP_EMAIL: "test@gmail.com",
+                    GOOGLE_APP_PASSWORD: "password123",
+                },
+            });
 
             initMailTransport();
 
@@ -73,7 +87,14 @@ describe("Mail Service Tests", () => {
         });
 
         it("should warn and return when EMAIL_PORT is not set", () => {
-            delete process.env.EMAIL_PORT;
+            (getSecrets as jest.Mock).mockReturnValue({
+                mail: {
+                    EMAIL_HOST: "smtp.gmail.com",
+                    EMAIL_PORT: undefined,
+                    GOOGLE_APP_EMAIL: "test@gmail.com",
+                    GOOGLE_APP_PASSWORD: "password123",
+                },
+            });
 
             initMailTransport();
 
@@ -84,7 +105,14 @@ describe("Mail Service Tests", () => {
         });
 
         it("should use default port 587 when EMAIL_PORT is invalid", () => {
-            process.env.EMAIL_PORT = "invalid";
+            (getSecrets as jest.Mock).mockReturnValue({
+                mail: {
+                    EMAIL_HOST: "smtp.gmail.com",
+                    EMAIL_PORT: "invalid",
+                    GOOGLE_APP_EMAIL: "test@gmail.com",
+                    GOOGLE_APP_PASSWORD: "password123",
+                },
+            });
 
             initMailTransport();
 
@@ -96,8 +124,14 @@ describe("Mail Service Tests", () => {
         });
 
         it("should use empty strings when auth credentials are not set", () => {
-            delete process.env.GOOGLE_APP_EMAIL;
-            delete process.env.GOOGLE_APP_PASSWORD;
+            (getSecrets as jest.Mock).mockReturnValue({
+                mail: {
+                    EMAIL_HOST: "smtp.gmail.com",
+                    EMAIL_PORT: "587",
+                    GOOGLE_APP_EMAIL: undefined,
+                    GOOGLE_APP_PASSWORD: undefined,
+                },
+            });
 
             initMailTransport();
 
