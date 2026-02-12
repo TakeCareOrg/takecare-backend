@@ -118,7 +118,7 @@ export const editUser: RequestMiddleware = async (req, res) => {
             });
             return;
         }
-        await userInstance.updateHealthData(modifiedUser);
+        await userInstance.updateHealthData(modifiedUser.health);
         res.json({ success: true });
     } catch (error) {
         Logger.error(`${StatusCodes.INTERNAL_SERVER_ERROR}: ${error}`);
