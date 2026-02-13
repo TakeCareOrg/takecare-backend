@@ -7,7 +7,8 @@ export const WEEKLY_STEPS_RULES: AchievementRules = {
         validator: (data) => data.weeklySteps >= 15000,
         points: 10,
         metadata: {
-            title: "15000 pas hebdomadaires",
+            title: "achievements.weekly.steps_15k.title",
+            description: "achievements.weekly.steps_15k.description",
             icon: "",
         },
     },
@@ -17,7 +18,8 @@ export const WEEKLY_STEPS_RULES: AchievementRules = {
         validator: (data) => data.weeklySteps >= 30000,
         points: 30,
         metadata: {
-            title: "30000 pas hebdomadaires",
+            title: "achievements.weekly.steps_30k.title",
+            description: "achievements.weekly.steps_30k.description",
             icon: "",
         },
     },
@@ -27,7 +29,8 @@ export const WEEKLY_STEPS_RULES: AchievementRules = {
         validator: (data) => data.weeklySteps >= 40000,
         points: 40,
         metadata: {
-            title: "40000 pas hebdomadaires",
+            title: "achievements.weekly.steps_40k.title",
+            description: "achievements.weekly.steps_40k.description",
             icon: "",
         },
     },
@@ -37,7 +40,8 @@ export const WEEKLY_STEPS_RULES: AchievementRules = {
         validator: (data) => data.weeklySteps >= 50000,
         points: 50,
         metadata: {
-            title: "50000 pas hebdomadaires",
+            title: "achievements.weekly.steps_50k.title",
+            description: "achievements.weekly.steps_50k.description",
             icon: "",
         },
     },
@@ -47,7 +51,8 @@ export const WEEKLY_STEPS_RULES: AchievementRules = {
         validator: (data) => data.weeklySteps >= 70000,
         points: 100,
         metadata: {
-            title: "70000 pas hebdomadaires",
+            title: "achievements.weekly.steps_70k.title",
+            description: "achievements.weekly.steps_70k.description",
             icon: "",
         },
     },

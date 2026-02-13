@@ -1,13 +1,17 @@
-// /tests/core/level-system.test.ts
 import {
     determineLevel,
     getLevelConfig,
 } from "../../../src/gamification/core/engine/level-system";
+import { initI18nForTests, t } from "../../setup/i18n-test-helper";
 
 describe("levelSystem", () => {
+    beforeAll(async () => {
+        await initI18nForTests();
+    });
+
     describe("determineLevel", () => {
         it("should return level 0 (Débutant) for 0 points", () => {
-            const result = determineLevel(0);
+            const result = determineLevel(0, t);
             expect(result.level).toBe(0);
             expect(result.title).toBe("Débutant");
             expect(result.currentPoints).toBe(0);
@@ -17,7 +21,7 @@ describe("levelSystem", () => {
         });
 
         it("should return level 0 (Débutant) for 5 points", () => {
-            const result = determineLevel(5);
+            const result = determineLevel(5, t);
             expect(result.level).toBe(0);
             expect(result.title).toBe("Débutant");
             expect(result.pointsForNextLevel).toBe(10);
@@ -25,14 +29,14 @@ describe("levelSystem", () => {
         });
 
         it("should return level 0 (Débutant) for 9 points", () => {
-            const result = determineLevel(9);
+            const result = determineLevel(9, t);
             expect(result.level).toBe(0);
             expect(result.title).toBe("Débutant");
             expect(result.progressToNextLevel).toBe(90);
         });
 
         it("should return level 1 (Novice) for 10 points", () => {
-            const result = determineLevel(10);
+            const result = determineLevel(10, t);
             expect(result.level).toBe(1);
             expect(result.title).toBe("Novice");
             expect(result.pointsForCurrentLevel).toBe(10);
@@ -41,14 +45,14 @@ describe("levelSystem", () => {
         });
 
         it("should return level 1 (Novice) for 15 points", () => {
-            const result = determineLevel(15);
+            const result = determineLevel(15, t);
             expect(result.level).toBe(1);
             expect(result.title).toBe("Novice");
             expect(result.progressToNextLevel).toBe(50);
         });
 
         it("should return level 2 (Intermédiaire) for 20 points", () => {
-            const result = determineLevel(20);
+            const result = determineLevel(20, t);
             expect(result.level).toBe(2);
             expect(result.title).toBe("Intermédiaire");
             expect(result.pointsForCurrentLevel).toBe(20);
@@ -56,13 +60,13 @@ describe("levelSystem", () => {
         });
 
         it("should return level 5 (Maître) for 200 points", () => {
-            const result = determineLevel(200);
+            const result = determineLevel(200, t);
             expect(result.level).toBe(5);
             expect(result.title).toBe("Maître");
         });
 
         it("should return level 8 (Elite) for 1000 points", () => {
-            const result = determineLevel(1000);
+            const result = determineLevel(1000, t);
             expect(result.level).toBe(8);
             expect(result.title).toBe("Elite");
             expect(result.pointsForNextLevel).toBeNull();
@@ -70,7 +74,7 @@ describe("levelSystem", () => {
         });
 
         it("should return level 8 (Elite) for 5000 points", () => {
-            const result = determineLevel(5000);
+            const result = determineLevel(5000, t);
             expect(result.level).toBe(8);
             expect(result.title).toBe("Elite");
             expect(result.pointsForNextLevel).toBeNull();
@@ -78,7 +82,7 @@ describe("levelSystem", () => {
         });
 
         it("should calculate correct progress percentage", () => {
-            const result = determineLevel(15);
+            const result = determineLevel(15, t);
             expect(result.progressToNextLevel).toBe(50);
         });
 
@@ -89,7 +93,7 @@ describe("levelSystem", () => {
         });
 
         it("should return level 0 for NaN (treated as 0)", () => {
-            const result = determineLevel(0);
+            const result = determineLevel(0, t);
             expect(result.level).toBe(0);
         });
 
@@ -118,7 +122,7 @@ describe("levelSystem", () => {
         });
 
         it("should handle decimal points correctly", () => {
-            const result = determineLevel(15.75);
+            const result = determineLevel(15.75, t);
             expect(result.level).toBe(1);
             expect(result.currentPoints).toBe(15.75);
         });
@@ -138,20 +142,29 @@ describe("levelSystem", () => {
             ]);
         });
 
-        it("should return correct titles", () => {
+        it("should return correct title keys", () => {
             const config = getLevelConfig();
             expect(config.titles).toEqual([
-                "Débutant",
-                "Novice",
-                "Intermédiaire",
-                "Confirmé",
-                "Expert",
-                "Maître",
-                "Champion",
-                "Légende",
-                "Elite",
-                "Grand Maître",
+                "levels.titles.0",
+                "levels.titles.1",
+                "levels.titles.2",
+                "levels.titles.3",
+                "levels.titles.4",
+                "levels.titles.5",
+                "levels.titles.6",
+                "levels.titles.7",
+                "levels.titles.8",
+                "levels.titles.9",
             ]);
+        });
+
+        it("should translate title keys correctly", () => {
+            const config = getLevelConfig();
+            expect(t(config.titles[0])).toBe("Débutant");
+            expect(t(config.titles[1])).toBe("Novice");
+            expect(t(config.titles[2])).toBe("Intermédiaire");
+            expect(t(config.titles[5])).toBe("Maître");
+            expect(t(config.titles[8])).toBe("Elite");
         });
     });
 });

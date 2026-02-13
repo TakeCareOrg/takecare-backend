@@ -1,4 +1,5 @@
 import { LevelInfo } from "../types";
+import { TFunction } from "i18next";
 
 interface LevelConfig {
     thresholds: number[];
@@ -8,20 +9,23 @@ interface LevelConfig {
 const LEVEL_CONFIG: LevelConfig = {
     thresholds: [0, 10, 20, 50, 100, 200, 400, 700, 1000],
     titles: [
-        "Débutant",
-        "Novice",
-        "Intermédiaire",
-        "Confirmé",
-        "Expert",
-        "Maître",
-        "Champion",
-        "Légende",
-        "Elite",
-        "Grand Maître",
+        "levels.titles.0",
+        "levels.titles.1",
+        "levels.titles.2",
+        "levels.titles.3",
+        "levels.titles.4",
+        "levels.titles.5",
+        "levels.titles.6",
+        "levels.titles.7",
+        "levels.titles.8",
+        "levels.titles.9",
     ],
 };
 
-export const determineLevel = (totalPoints: number): LevelInfo => {
+export const determineLevel = (
+    totalPoints: number,
+    t?: TFunction,
+): LevelInfo => {
     if (typeof totalPoints !== "number" || totalPoints < 0) {
         throw new Error("Invalid totalPoints: must be a non-negative number");
     }
@@ -40,9 +44,13 @@ export const determineLevel = (totalPoints: number): LevelInfo => {
     const currentThreshold = thresholds[level];
     const nextThreshold = thresholds[nextLevel] ?? null;
 
+    const title = t
+        ? t(titles[level]) || t("levels.titles.unknown", "Unknown")
+        : titles[level] || "levels.titles.unknown";
+
     return {
         level,
-        title: titles[level] || "Inconnu",
+        title,
         currentPoints: totalPoints,
         pointsForCurrentLevel: currentThreshold,
         pointsForNextLevel: nextThreshold,

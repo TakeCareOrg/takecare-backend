@@ -7,7 +7,8 @@ export const MILESTONE_STEPS_RULES: AchievementRules = {
         validator: (data) => data.steps >= 100000,
         points: 500,
         metadata: {
-            title: "100000 pas hebdomadaires",
+            title: "achievements.milestone.steps_100k.title",
+            description: "achievements.milestone.steps_100k.description",
             icon: "",
         },
     },
@@ -17,7 +18,8 @@ export const MILESTONE_STEPS_RULES: AchievementRules = {
         validator: (data) => data.steps >= 200000,
         points: 500,
         metadata: {
-            title: "200000 pas hebdomadaires",
+            title: "achievements.milestone.steps_200k.title",
+            description: "achievements.milestone.steps_200k.description",
             icon: "",
         },
     },
@@ -27,7 +29,8 @@ export const MILESTONE_STEPS_RULES: AchievementRules = {
         validator: (data) => data.steps >= 300000,
         points: 500,
         metadata: {
-            title: "70000 pas hebdomadaires",
+            title: "achievements.milestone.steps_300k.title",
+            description: "achievements.milestone.steps_300k.description",
             icon: "",
         },
     },
@@ -37,7 +40,8 @@ export const MILESTONE_STEPS_RULES: AchievementRules = {
         validator: (data) => data.steps >= 400000,
         points: 500,
         metadata: {
-            title: "70000 pas hebdomadaires",
+            title: "achievements.milestone.steps_400k.title",
+            description: "achievements.milestone.steps_400k.description",
             icon: "",
         },
     },
@@ -47,7 +51,8 @@ export const MILESTONE_STEPS_RULES: AchievementRules = {
         validator: (data) => data.steps >= 500000,
         points: 500,
         metadata: {
-            title: "80000 pas hebdomadaires",
+            title: "achievements.milestone.steps_500k.title",
+            description: "achievements.milestone.steps_500k.description",
             icon: "",
         },
     },
@@ -57,7 +62,8 @@ export const MILESTONE_STEPS_RULES: AchievementRules = {
         validator: (data) => data.steps >= 1000000,
         points: 500,
         metadata: {
-            title: "80000 pas hebdomadaires",
+            title: "achievements.milestone.steps_1m.title",
+            description: "achievements.milestone.steps_1m.description",
             icon: "",
         },
     },

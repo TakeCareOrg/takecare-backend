@@ -15,6 +15,7 @@ import {
     GamificationProcessResult,
     DailyActivity,
 } from "../core/types";
+import { TFunction } from "i18next";
 
 const calculateWeeklySteps = (dailyActivities: DailyActivity[]): number => {
     const weekAgo = new Date();
@@ -28,6 +29,7 @@ const calculateWeeklySteps = (dailyActivities: DailyActivity[]): number => {
 export const processUserSteps = async (
     userId: string,
     stepCount: number,
+    t?: TFunction,
 ): Promise<GamificationProcessResult> => {
     const userData = await dbAdapter.fetchUserGamificationData(userId);
     await dbAdapter.fetchTodayActivity(userId);
@@ -68,7 +70,7 @@ export const processUserSteps = async (
         (userData.totalPoints || 0) + totalNewPoints,
     );
 
-    const levelInfo = determineLevel(updatedTotalPoints);
+    const levelInfo = determineLevel(updatedTotalPoints, t);
 
     return {
         newAchievements,

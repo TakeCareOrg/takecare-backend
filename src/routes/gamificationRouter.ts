@@ -1,76 +1,10 @@
-import express, { Request, Response } from "express";
-import { processUserSteps } from "../gamification/services/gamification-service";
-import { determineLevel } from "../gamification/core/engine/level-system";
-import { fetchUserGamificationData } from "../gamification/adapters/db-adapter";
+import { Router } from "express";
+import controller from "@controllers/gamification";
+import { authenticateJWT } from "@middlewares/authMiddleware";
 
-const router = express.Router();
+const router = Router();
 
-interface StepsRequestBody {
-    userId: string;
-    steps: number;
-}
-
-router.post(
-    "/steps",
-    async (
-        req: Request<object, object, StepsRequestBody>,
-        res: Response,
-    ): Promise<void> => {
-        try {
-            const { userId, steps } = req.body;
-
-            if (!userId || typeof steps !== "number") {
-                res.status(400).json({ error: "Invalid request body" });
-                return;
-            }
-
-            const result = await processUserSteps(userId, steps);
-
-            res.json({
-                success: true,
-                data: {
-                    newAchievements: result.newAchievements,
-                    pointsEarned: result.pointsEarned,
-                    currentStreak: result.currentStreak,
-                    streakBonus: result.streakBonus,
-                    levelInfo: result.levelInfo,
-                    totalPoints: result.totalPoints,
-                },
-            });
-        } catch (error) {
-            res.status(500).json({
-                success: false,
-                error: (error as Error).message,
-            });
-        }
-    },
-);
-
-router.get(
-    "/progress/:userId",
-    async (req: Request<{ userId: string }>, res: Response) => {
-        try {
-            const { userId } = req.params;
-
-            const userData = await fetchUserGamificationData(userId);
-            const levelInfo = determineLevel(userData.totalPoints);
-
-            res.json({
-                success: true,
-                data: {
-                    achievements: userData.achievements,
-                    totalPoints: userData.totalPoints,
-                    levelInfo,
-                    dailyActivities: userData.dailyActivities,
-                },
-            });
-        } catch (error) {
-            res.status(500).json({
-                success: false,
-                error: (error as Error).message,
-            });
-        }
-    },
-);
+router.post("/steps", authenticateJWT, controller.syncSteps);
+router.get("/progress", authenticateJWT, controller.getProgress);
 
 export default router;

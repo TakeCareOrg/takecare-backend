@@ -7,7 +7,8 @@ export const DAILY_STEPS_RULES: AchievementRules = {
         validator: (data) => data.steps >= 1000,
         points: 3,
         metadata: {
-            title: "1000 pas quotidiens",
+            title: "achievements.daily.steps_1k.title",
+            description: "achievements.daily.steps_1k.description",
             icon: "👟",
         },
     },
@@ -17,7 +18,8 @@ export const DAILY_STEPS_RULES: AchievementRules = {
         validator: (data) => data.steps >= 2000,
         points: 5,
         metadata: {
-            title: "2000 pas quotidiens",
+            title: "achievements.daily.steps_2k.title",
+            description: "achievements.daily.steps_2k.description",
             icon: "👟",
         },
     },
@@ -27,7 +29,8 @@ export const DAILY_STEPS_RULES: AchievementRules = {
         validator: (data) => data.steps >= 5000,
         points: 10,
         metadata: {
-            title: "5000 pas quotidiens",
+            title: "achievements.daily.steps_5k.title",
+            description: "achievements.daily.steps_5k.description",
             icon: "👟",
         },
     },
@@ -37,7 +40,8 @@ export const DAILY_STEPS_RULES: AchievementRules = {
         validator: (data) => data.steps >= 10000,
         points: 25,
         metadata: {
-            title: "10000 pas quotidiens",
+            title: "achievements.daily.steps_10k.title",
+            description: "achievements.daily.steps_10k.description",
             icon: "👟",
         },
     },
@@ -47,7 +51,8 @@ export const DAILY_STEPS_RULES: AchievementRules = {
         validator: (data) => data.steps >= 15000,
         points: 50,
         metadata: {
-            title: "15000 pas quotidiens",
+            title: "achievements.daily.steps_15k.title",
+            description: "achievements.daily.steps_15k.description",
             icon: "👟",
         },
     },

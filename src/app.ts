@@ -3,6 +3,8 @@ import cors from "cors";
 import express from "express";
 import helmet from "helmet";
 import swaggerUi from "swagger-ui-express";
+import middleware from "i18next-http-middleware";
+import i18next from "@config/i18n";
 
 // Import the routes
 import adminRouter from "@routes/adminRouter";
@@ -40,6 +42,8 @@ app.use(helmet());
 app.use(cors());
 // Use Morgan middleware for logging requests
 app.use(morganMiddleware);
+// Add translations to back-end
+app.use(middleware.handle(i18next));
 
 // Tell the app to use the routes
 app.use("/", indexRouter);
