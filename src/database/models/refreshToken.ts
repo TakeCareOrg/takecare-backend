@@ -17,7 +17,7 @@ const refreshTokenSchema = new Schema({
     expires_at: {
         type: Date,
         required: true,
-        index: { expires: 0 },
+        expires: 0,
     },
     created_at: {
         type: Date,
