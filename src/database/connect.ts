@@ -7,8 +7,14 @@ const connectToMongoDB = async (DATABASE_URL: string | undefined) => {
         throw new Error("Database URL is not provided");
     }
 
+    const isDev: boolean = process.env.NODE_ENV === "development";
+
+    Logger.info(
+        `Connecting to MongoDB in ${isDev ? "development" : "production"} mode`,
+    );
+
     try {
-        const DB_OPTIONS = { dbName: "dev" };
+        const DB_OPTIONS = isDev ? { dbName: "dev" } : {};
 
         await mongoose.connect(DATABASE_URL, DB_OPTIONS);
         Logger.info("Connected to MongoDB");
