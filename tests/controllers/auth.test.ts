@@ -44,7 +44,8 @@ describe("User Authentication Tests", () => {
                 password: "SecureP@ssw0rd",
             };
             (Auth.prototype.createNewUser as jest.Mock).mockResolvedValue({
-                token: "mock-token-12345",
+                accessToken: "mock-access-token",
+                refreshToken: "mock-refresh-token",
             });
 
             await createNewUser(req as Request, res as Response, next);
@@ -56,7 +57,8 @@ describe("User Authentication Tests", () => {
             expect(userCreatedCounter.inc).toHaveBeenCalled();
             expect(res.status).toHaveBeenCalledWith(StatusCodes.CREATED);
             expect(res.json).toHaveBeenCalledWith({
-                token: "mock-token-12345",
+                accessToken: "mock-access-token",
+                refreshToken: "mock-refresh-token",
             });
         });
 
@@ -166,7 +168,7 @@ describe("User Authentication Tests", () => {
             );
         });
 
-        it("should handle short password (validation should be in Auth model)", async () => {
+        it("should return BAD_REQUEST for short password", async () => {
             req.body = {
                 email: "user@example.com",
                 password: "123",
@@ -178,9 +180,10 @@ describe("User Authentication Tests", () => {
             expect(res.json).toHaveBeenCalledWith({
                 message: "Password must be at least 6 characters",
             });
+            expect(Auth.prototype.createNewUser).not.toHaveBeenCalled();
         });
 
-        it("should handle invalid email format (validation should be in Auth model)", async () => {
+        it("should return BAD_REQUEST for invalid email format", async () => {
             req.body = {
                 email: "not-an-email",
                 password: "password123",
@@ -192,6 +195,7 @@ describe("User Authentication Tests", () => {
             expect(res.json).toHaveBeenCalledWith({
                 message: "Invalid email address",
             });
+            expect(Auth.prototype.createNewUser).not.toHaveBeenCalled();
         });
 
         it("should handle special characters in password", async () => {
@@ -201,7 +205,8 @@ describe("User Authentication Tests", () => {
             };
 
             (Auth.prototype.createNewUser as jest.Mock).mockResolvedValue({
-                token: "mock-token",
+                accessToken: "mock-access",
+                refreshToken: "mock-refresh",
             });
 
             await createNewUser(req as Request, res as Response, next);
@@ -219,7 +224,8 @@ describe("User Authentication Tests", () => {
             };
 
             (Auth.prototype.login as jest.Mock).mockResolvedValue({
-                token: "valid-jwt-token",
+                accessToken: "valid-access-token",
+                refreshToken: "valid-refresh-token",
             });
 
             await login(req as Request, res as Response, next);
@@ -229,7 +235,10 @@ describe("User Authentication Tests", () => {
                 "correctPassword",
             );
             expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
-            expect(res.json).toHaveBeenCalledWith({ token: "valid-jwt-token" });
+            expect(res.json).toHaveBeenCalledWith({
+                accessToken: "valid-access-token",
+                refreshToken: "valid-refresh-token",
+            });
         });
 
         it("should return BAD_REQUEST if email is missing", async () => {
@@ -337,22 +346,16 @@ describe("User Authentication Tests", () => {
             expect(Logger.error).not.toHaveBeenCalled();
         });
 
-        it("should pass input to Auth.login without modification", async () => {
+        it("should reject SQL injection attempts via email validation", async () => {
             req.body = {
-                email: "admin@example.com",
+                email: "admin'--",
                 password: "password",
             };
 
-            (Auth.prototype.login as jest.Mock).mockResolvedValue({
-                token: "token",
-            });
-
             await login(req as Request, res as Response, next);
 
-            expect(Auth.prototype.login).toHaveBeenCalledWith(
-                "admin@example.com",
-                "password",
-            );
+            expect(res.status).toHaveBeenCalledWith(StatusCodes.BAD_REQUEST);
+            expect(Auth.prototype.login).not.toHaveBeenCalled();
         });
 
         it("should handle deactivated account error", async () => {
@@ -428,11 +431,8 @@ describe("User Authentication Tests", () => {
 
             await verifyEmail(req as Request, res as Response, next);
 
-            expect(Logger.error).toHaveBeenCalled();
             expect(res.status).toHaveBeenCalledWith(400);
-            expect(res.json).toHaveBeenCalledWith({
-                message: expect.stringContaining("expected string"),
-            });
+            expect(Logger.error).toHaveBeenCalled();
         });
 
         it("should return 400 when code is empty string", async () => {
@@ -453,9 +453,19 @@ describe("User Authentication Tests", () => {
             expect(res.status).toHaveBeenCalledWith(400);
         });
 
-        it("should return verified false when code is invalid", async () => {
+        it("should return BAD_REQUEST when code format is invalid", async () => {
             req.user = { user_id: "user123" };
-            req.body = { code: "123456" };
+            req.body = { code: "wrong-code" };
+
+            await verifyEmail(req as Request, res as Response, next);
+
+            expect(res.status).toHaveBeenCalledWith(400);
+            expect(Auth.prototype.verifyEmail).not.toHaveBeenCalled();
+        });
+
+        it("should return verified false when code does not match", async () => {
+            req.user = { user_id: "user123" };
+            req.body = { code: "999999" };
 
             (Auth.prototype.verifyEmail as jest.Mock).mockResolvedValue(false);
 
@@ -496,7 +506,7 @@ describe("User Authentication Tests", () => {
 
         it("should handle expired verification code", async () => {
             req.user = { user_id: "user123" };
-            req.body = { code: "123456" };
+            req.body = { code: "111111" };
 
             const error = new Error("Verification code expired");
             (Auth.prototype.verifyEmail as jest.Mock).mockRejectedValue(error);
@@ -507,18 +517,24 @@ describe("User Authentication Tests", () => {
             expect(res.status).toHaveBeenCalledWith(500);
         });
 
-        it("should handle code with special characters", async () => {
+        it("should reject code with special characters", async () => {
             req.user = { user_id: "user123" };
-            req.body = { code: "123456" };
-
-            (Auth.prototype.verifyEmail as jest.Mock).mockResolvedValue(true);
+            req.body = { code: "12-34-56" };
 
             await verifyEmail(req as Request, res as Response, next);
 
-            expect(Auth.prototype.verifyEmail).toHaveBeenCalledWith(
-                "user123",
-                "123456",
-            );
+            expect(res.status).toHaveBeenCalledWith(400);
+            expect(Auth.prototype.verifyEmail).not.toHaveBeenCalled();
+        });
+
+        it("should reject numeric code as number type", async () => {
+            req.user = { user_id: "user123" };
+            req.body = { code: 123456 };
+
+            await verifyEmail(req as Request, res as Response, next);
+
+            expect(res.status).toHaveBeenCalledWith(400);
+            expect(Auth.prototype.verifyEmail).not.toHaveBeenCalled();
         });
     });
 });

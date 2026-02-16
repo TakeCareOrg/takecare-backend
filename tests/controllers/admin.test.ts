@@ -40,9 +40,9 @@ describe("Admin Controller Tests", () => {
                 password: "adminPassword123",
             };
 
-            const mockToken = "admin-jwt-token";
             (Auth.prototype.login as jest.Mock).mockResolvedValue({
-                token: mockToken,
+                accessToken: "admin-access-token",
+                refreshToken: "admin-refresh-token",
             });
 
             await loginAdmin(req as Request, res as Response, next);
@@ -52,7 +52,10 @@ describe("Admin Controller Tests", () => {
                 "adminPassword123",
                 true,
             );
-            expect(res.json).toHaveBeenCalledWith({ token: mockToken });
+            expect(res.json).toHaveBeenCalledWith({
+                accessToken: "admin-access-token",
+                refreshToken: "admin-refresh-token",
+            });
             expect(res.status).not.toHaveBeenCalled();
         });
 

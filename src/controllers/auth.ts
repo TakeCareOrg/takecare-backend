@@ -10,6 +10,7 @@ import {
     forgotPasswordSchema,
     verifyResetCodeSchema,
     resetPasswordSchema,
+    refreshTokenSchema,
 } from "@validators/auth";
 
 export const createNewUser: RequestMiddleware = async (req, res) => {
@@ -27,7 +28,10 @@ export const createNewUser: RequestMiddleware = async (req, res) => {
         const auth = new Auth();
         const data = await auth.createNewUser(email, password);
         userCreatedCounter.inc();
-        res.status(StatusCodes.CREATED).json({ token: data.token });
+        res.status(StatusCodes.CREATED).json({
+            accessToken: data.accessToken,
+            refreshToken: data.refreshToken,
+        });
     } catch (error) {
         Logger.error(`${StatusCodes.INTERNAL_SERVER_ERROR}: ${error}`);
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -54,7 +58,10 @@ export const login: RequestMiddleware = async (req, res) => {
         const auth = new Auth();
         const data = await auth.login(email, password);
 
-        res.status(StatusCodes.OK).json({ token: data.token });
+        res.status(StatusCodes.OK).json({
+            accessToken: data.accessToken,
+            refreshToken: data.refreshToken,
+        });
     } catch (error) {
         if (error instanceof Error) {
             Logger.error(`${StatusCodes.INTERNAL_SERVER_ERROR}: ${error}`);
@@ -214,6 +221,76 @@ export const resetPassword: RequestMiddleware = async (req, res) => {
     }
 };
 
+export const refresh: RequestMiddleware = async (req, res) => {
+    const parsed = refreshTokenSchema.safeParse(req.body);
+
+    if (!parsed.success) {
+        Logger.error(
+            `${StatusCodes.BAD_REQUEST}: ${parsed.error.issues[0].message}`,
+        );
+        return res
+            .status(StatusCodes.BAD_REQUEST)
+            .json({ message: parsed.error.issues[0].message });
+    }
+
+    const { refreshToken } = parsed.data;
+
+    try {
+        const auth = new Auth();
+        const data = await auth.refreshAccessToken(refreshToken);
+
+        res.status(StatusCodes.OK).json({
+            accessToken: data.accessToken,
+            refreshToken: data.refreshToken,
+        });
+    } catch (error) {
+        if (error instanceof Error) {
+            if (
+                error.message === "TOKEN_REVOKED" ||
+                error.message === "INVALID_REFRESH_TOKEN"
+            ) {
+                return res.status(StatusCodes.UNAUTHORIZED).json({
+                    message: "Invalid or expired refresh token",
+                });
+            }
+        }
+
+        Logger.error(`${StatusCodes.INTERNAL_SERVER_ERROR}: ${error}`);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: "Internal server error",
+        });
+    }
+};
+
+export const logout: RequestMiddleware = async (req, res) => {
+    const parsed = refreshTokenSchema.safeParse(req.body);
+
+    if (!parsed.success) {
+        Logger.error(
+            `${StatusCodes.BAD_REQUEST}: ${parsed.error.issues[0].message}`,
+        );
+        return res
+            .status(StatusCodes.BAD_REQUEST)
+            .json({ message: parsed.error.issues[0].message });
+    }
+
+    const { refreshToken } = parsed.data;
+
+    try {
+        const auth = new Auth();
+        await auth.logout(refreshToken);
+
+        res.status(StatusCodes.OK).json({
+            message: "Logged out successfully",
+        });
+    } catch (error) {
+        Logger.error(`${StatusCodes.INTERNAL_SERVER_ERROR}: ${error}`);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: "Internal server error",
+        });
+    }
+};
+
 export default {
     createNewUser,
     login,
@@ -221,4 +298,6 @@ export default {
     forgotPassword,
     verifyResetCode,
     resetPassword,
+    refresh,
+    logout,
 };
