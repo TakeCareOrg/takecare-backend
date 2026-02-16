@@ -288,8 +288,8 @@ class Auth {
         try {
             const payload = verifyRefreshToken(refreshTokenStr);
 
-            // Check that the refresh token exists in the database (not revoked)
-            const storedToken = await RefreshTokenDB.findOne({
+            // Atomically find and delete the refresh token (prevents race conditions)
+            const storedToken = await RefreshTokenDB.findOneAndDelete({
                 token_id: payload.jti,
                 user_id: payload.user_id,
             });
@@ -297,9 +297,6 @@ class Auth {
             if (!storedToken) {
                 throw new Error("TOKEN_REVOKED");
             }
-
-            // Revoke the old refresh token (token rotation)
-            await storedToken.deleteOne();
 
             // Issue new token pair
             const accessToken = generateAccessToken({
