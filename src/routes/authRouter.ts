@@ -22,4 +22,10 @@ router.post("/verify-reset-code", controller.verifyResetCode);
 // POST -> /auth/reset-password  (step 3: set new password — requires token from step 2)
 router.post("/reset-password", authenticateJWT, controller.resetPassword);
 
+// POST -> /auth/refresh  (exchange a valid refresh token for a new token pair)
+router.post("/refresh", controller.refresh);
+
+// POST -> /auth/logout
+router.post("/logout", controller.logout);
+
 export default router;

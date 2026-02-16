@@ -1,12 +1,14 @@
 import { Auth } from "../../src/models/auth";
 import { UserDB } from "../../src/database/models/user";
 import { VerificationCodeDB } from "../../src/database/models/verificationCodes";
+import { RefreshTokenDB } from "../../src/database/models/refreshToken";
 import Logger from "../../src/libs/logger";
-import { generateToken } from "../../src/utils/jwt";
+import { generateAccessToken, generateRefreshToken } from "../../src/utils/jwt";
 import bcrypt from "bcryptjs";
 
 jest.mock("../../src/database/models/user");
 jest.mock("../../src/database/models/verificationCodes");
+jest.mock("../../src/database/models/refreshToken");
 jest.mock("../../src/libs/logger");
 jest.mock("../../src/services/mail/templates/email-verification");
 jest.mock("../../src/utils/jwt");
@@ -22,7 +24,7 @@ describe("Auth Model Tests", () => {
     });
 
     describe("login", () => {
-        it("should login successfully and return a token", async () => {
+        it("should login successfully and return access and refresh tokens", async () => {
             const mockUser = {
                 user_id: "user-123",
                 email: "test@example.com",
@@ -32,7 +34,14 @@ describe("Auth Model Tests", () => {
 
             (UserDB.findOne as jest.Mock).mockResolvedValue(mockUser);
             (bcrypt.compare as jest.Mock).mockResolvedValue(true);
-            (generateToken as jest.Mock).mockReturnValue("jwt-token");
+            (generateAccessToken as jest.Mock).mockReturnValue("access-token");
+            (generateRefreshToken as jest.Mock).mockReturnValue({
+                token: "refresh-token",
+                tokenId: "token-id-123",
+            });
+            (RefreshTokenDB as unknown as jest.Mock).mockImplementation(() => ({
+                save: jest.fn().mockResolvedValue(true),
+            }));
 
             const result = await auth.login("test@example.com", "password123");
 
@@ -43,8 +52,14 @@ describe("Auth Model Tests", () => {
                 "password123",
                 "hashed-password",
             );
-            expect(generateToken).toHaveBeenCalledWith({ user_id: "user-123" });
-            expect(result).toEqual({ token: "jwt-token" });
+            expect(generateAccessToken).toHaveBeenCalledWith({
+                user_id: "user-123",
+            });
+            expect(generateRefreshToken).toHaveBeenCalledWith("user-123");
+            expect(result).toEqual({
+                accessToken: "access-token",
+                refreshToken: "refresh-token",
+            });
         });
 
         it("should login admin successfully", async () => {
@@ -57,7 +72,14 @@ describe("Auth Model Tests", () => {
 
             (UserDB.findOne as jest.Mock).mockResolvedValue(mockUser);
             (bcrypt.compare as jest.Mock).mockResolvedValue(true);
-            (generateToken as jest.Mock).mockReturnValue("admin-token");
+            (generateAccessToken as jest.Mock).mockReturnValue("admin-access");
+            (generateRefreshToken as jest.Mock).mockReturnValue({
+                token: "admin-refresh",
+                tokenId: "token-id-456",
+            });
+            (RefreshTokenDB as unknown as jest.Mock).mockImplementation(() => ({
+                save: jest.fn().mockResolvedValue(true),
+            }));
 
             const result = await auth.login(
                 "admin@example.com",
@@ -65,7 +87,10 @@ describe("Auth Model Tests", () => {
                 true,
             );
 
-            expect(result).toEqual({ token: "admin-token" });
+            expect(result).toEqual({
+                accessToken: "admin-access",
+                refreshToken: "admin-refresh",
+            });
         });
 
         it("should throw MISSING_FIELDS when email is missing", async () => {

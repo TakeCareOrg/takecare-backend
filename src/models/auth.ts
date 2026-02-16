@@ -1,9 +1,15 @@
 import { UserDB } from "@database/models/user";
 import { VerificationCodeDB } from "@database/models/verificationCodes";
+import { RefreshTokenDB } from "@database/models/refreshToken";
 import Logger from "@libs/logger";
 import sendVericationEmail from "@services/mail/templates/email-verification";
 import sendResetPasswordEmail from "@services/mail/templates/reset-password";
-import { generateToken } from "@utils/jwt";
+import {
+    generateAccessToken,
+    generateRefreshToken,
+    verifyRefreshToken,
+    REFRESH_TOKEN_EXPIRY_MS,
+} from "@utils/jwt";
 import bcrypt from "bcryptjs";
 import { randomUUID, randomInt } from "crypto";
 
@@ -41,7 +47,8 @@ class Auth {
                 created_at: new Date().toISOString(),
             });
 
-            const token = generateToken({ user_id: user.user_id });
+            const accessToken = generateAccessToken({ user_id: user.user_id });
+            const refreshToken = generateRefreshToken(user.user_id);
 
             // Create a new verification code
             const verifyCode = new VerificationCodeDB({
@@ -49,17 +56,28 @@ class Auth {
                 code: randomInt(100000, 999999),
             });
 
-            // Save the user and verification code to the database
+            // Store the refresh token in the database for revocation support
+            const refreshTokenDoc = new RefreshTokenDB({
+                user_id: user.user_id,
+                token_id: refreshToken.tokenId,
+                expires_at: new Date(Date.now() + REFRESH_TOKEN_EXPIRY_MS),
+            });
+
+            // Save the user, verification code, and refresh token to the database
             await Promise.all([
                 user.save(),
                 verifyCode.save(),
+                refreshTokenDoc.save(),
                 sendVericationEmail({
                     code: verifyCode.code.toString(),
                     to: user.email,
                 }),
             ]);
 
-            return { token };
+            return {
+                accessToken,
+                refreshToken: refreshToken.token,
+            };
         } catch (error) {
             Logger.error(`Error creating new user ${error}`);
             throw new Error("AN_ERROR_OCCURRED");
@@ -88,9 +106,20 @@ class Auth {
                 throw new Error("UNAUTHORIZED");
             }
 
-            const token = generateToken({ user_id: user.user_id });
+            const accessToken = generateAccessToken({ user_id: user.user_id });
+            const refreshToken = generateRefreshToken(user.user_id);
 
-            return { token };
+            // Store the refresh token in the database
+            await new RefreshTokenDB({
+                user_id: user.user_id,
+                token_id: refreshToken.tokenId,
+                expires_at: new Date(Date.now() + REFRESH_TOKEN_EXPIRY_MS),
+            }).save();
+
+            return {
+                accessToken,
+                refreshToken: refreshToken.token,
+            };
         } catch (e) {
             Logger.error(`Login error: ${e}`);
             throw new Error("AN_ERROR_OCCURRED");
@@ -202,8 +231,8 @@ class Auth {
             // Code is valid — remove it so it can't be reused
             await verificationCode.deleteOne();
 
-            // Return a short-lived token the client will send to reset-password
-            const token = generateToken({ user_id: user.user_id });
+            // Return a short-lived access token the client will send to reset-password
+            const token = generateAccessToken({ user_id: user.user_id });
 
             return { token };
         } catch (error) {
@@ -235,12 +264,87 @@ class Auth {
             if (result.matchedCount === 0) {
                 throw new Error("USER_NOT_FOUND");
             }
+
+            // Revoke all refresh tokens when password is reset
+            await RefreshTokenDB.deleteMany({ user_id: userId });
         } catch (error) {
             if (error instanceof Error && error.message === "USER_NOT_FOUND") {
                 throw error;
             }
             Logger.error(`Reset password error: ${error}`);
             throw new Error("AN_ERROR_OCCURRED");
+        }
+    }
+
+    /**
+     * Use a valid refresh token to get a new access token.
+     * The old refresh token is revoked and a new one is issued (token rotation).
+     */
+    async refreshAccessToken(refreshTokenStr: string) {
+        if (!refreshTokenStr) {
+            throw new Error("MISSING_FIELDS");
+        }
+
+        try {
+            const payload = verifyRefreshToken(refreshTokenStr);
+
+            // Check that the refresh token exists in the database (not revoked)
+            const storedToken = await RefreshTokenDB.findOne({
+                token_id: payload.jti,
+                user_id: payload.user_id,
+            });
+
+            if (!storedToken) {
+                throw new Error("TOKEN_REVOKED");
+            }
+
+            // Revoke the old refresh token (token rotation)
+            await storedToken.deleteOne();
+
+            // Issue new token pair
+            const accessToken = generateAccessToken({
+                user_id: payload.user_id,
+            });
+            const newRefreshToken = generateRefreshToken(payload.user_id);
+
+            // Store the new refresh token
+            await new RefreshTokenDB({
+                user_id: payload.user_id,
+                token_id: newRefreshToken.tokenId,
+                expires_at: new Date(Date.now() + REFRESH_TOKEN_EXPIRY_MS),
+            }).save();
+
+            return {
+                accessToken,
+                refreshToken: newRefreshToken.token,
+            };
+        } catch (error) {
+            if (error instanceof Error && error.message === "TOKEN_REVOKED") {
+                throw error;
+            }
+            Logger.error(`Refresh token error: ${error}`);
+            throw new Error("INVALID_REFRESH_TOKEN");
+        }
+    }
+
+    /**
+     * Revoke a specific refresh token (logout from one device).
+     */
+    async logout(refreshTokenStr: string) {
+        if (!refreshTokenStr) {
+            throw new Error("MISSING_FIELDS");
+        }
+
+        try {
+            const payload = verifyRefreshToken(refreshTokenStr);
+
+            await RefreshTokenDB.deleteOne({
+                token_id: payload.jti,
+                user_id: payload.user_id,
+            });
+        } catch (error) {
+            Logger.error(`Logout error: ${error}`);
+            // Silently succeed even if token is already invalid
         }
     }
 }

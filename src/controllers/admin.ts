@@ -18,7 +18,10 @@ export const loginAdmin: RequestMiddleware = async (req, res) => {
         const auth = new Auth();
         const data = await auth.login(email, password, true);
 
-        res.json({ token: data.token });
+        res.json({
+            accessToken: data.accessToken,
+            refreshToken: data.refreshToken,
+        });
     } catch (error) {
         if (error instanceof Error) {
             Logger.error(`${StatusCodes.INTERNAL_SERVER_ERROR}: ${error}`);

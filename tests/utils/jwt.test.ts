@@ -1,61 +1,110 @@
 import jwt from "jsonwebtoken";
-import { generateToken, verifyToken, UserPayload } from "../../src/utils/jwt"; // Adapte le chemin si nécessaire
-import Logger from "@libs/logger";
+import {
+    generateAccessToken,
+    generateRefreshToken,
+    verifyAccessToken,
+    verifyRefreshToken,
+    generateToken,
+    verifyToken,
+    UserPayload,
+} from "../../src/utils/jwt";
+import Logger from "../../src/libs/logger";
+import { getSecrets } from "../../src/config/secrets";
 
 jest.mock("jsonwebtoken");
-jest.mock("@libs/logger");
+jest.mock("../../src/libs/logger");
+jest.mock("../../src/config/secrets");
+jest.mock("crypto", () => ({
+    ...jest.requireActual("crypto"),
+    randomUUID: jest.fn().mockReturnValue("mock-uuid-1234"),
+}));
 
 describe("JWT Utility Functions", () => {
-    const SECRET_KEY = "mysecret";
+    const MOCK_PRIVATE_KEY = Buffer.from("mock-private-key").toString(
+        "base64",
+    );
+    const MOCK_PUBLIC_KEY = Buffer.from("mock-public-key").toString("base64");
+
     const mockUser: UserPayload = {
         user_id: "user123",
     };
 
     beforeEach(() => {
-        process.env.JWT_SECRET = SECRET_KEY;
+        (getSecrets as jest.Mock).mockReturnValue({
+            jwt: {
+                JWT_PRIVATE_KEY: MOCK_PRIVATE_KEY,
+                JWT_PUBLIC_KEY: MOCK_PUBLIC_KEY,
+            },
+        });
         jest.clearAllMocks();
     });
 
-    afterEach(() => {
-        delete process.env.JWT_SECRET;
-    });
+    describe("generateAccessToken", () => {
+        it("should generate a short-lived access token with RS256", () => {
+            (jwt.sign as jest.Mock).mockReturnValue("mocked_access_token");
 
-    describe("generateToken", () => {
-        it("should generate a JWT token", () => {
-            (jwt.sign as jest.Mock).mockReturnValue("mocked_token");
+            const token = generateAccessToken(mockUser);
 
-            const token = generateToken(mockUser);
-
-            expect(jwt.sign).toHaveBeenCalledWith(mockUser, SECRET_KEY, {
-                expiresIn: "1h",
-            });
-            expect(token).toBe("mocked_token");
+            expect(jwt.sign).toHaveBeenCalledWith(
+                mockUser,
+                "mock-private-key",
+                { algorithm: "RS256", expiresIn: "15m" },
+            );
+            expect(token).toBe("mocked_access_token");
         });
 
-        it("should throw an error if JWT_SECRET is not defined", () => {
-            delete process.env.JWT_SECRET;
+        it("should throw an error if secrets are not initialized", () => {
+            (getSecrets as jest.Mock).mockImplementation(() => {
+                throw new Error(
+                    "Secrets not initialized. Call setSecrets() after Vault init.",
+                );
+            });
 
-            expect(() => generateToken(mockUser)).toThrow(
-                "JWT_SECRET is not defined",
+            expect(() => generateAccessToken(mockUser)).toThrow(
+                "Secrets not initialized",
             );
         });
     });
 
-    describe("verifyToken", () => {
-        it("should verify a valid token", () => {
+    describe("generateRefreshToken", () => {
+        it("should generate a long-lived refresh token with a unique jti", () => {
+            (jwt.sign as jest.Mock).mockReturnValue("mocked_refresh_token");
+
+            const result = generateRefreshToken("user123");
+
+            expect(jwt.sign).toHaveBeenCalledWith(
+                { user_id: "user123", jti: "mock-uuid-1234" },
+                "mock-private-key",
+                { algorithm: "RS256", expiresIn: "7d" },
+            );
+            expect(result.token).toBe("mocked_refresh_token");
+            expect(result.tokenId).toBe("mock-uuid-1234");
+        });
+    });
+
+    describe("verifyAccessToken", () => {
+        it("should verify a valid access token with RS256", () => {
             (jwt.verify as jest.Mock).mockReturnValue(mockUser);
 
-            const result = verifyToken("valid_token");
+            const result = verifyAccessToken("valid_token");
 
-            expect(jwt.verify).toHaveBeenCalledWith("valid_token", SECRET_KEY);
+            expect(jwt.verify).toHaveBeenCalledWith(
+                "valid_token",
+                "mock-public-key",
+                { algorithms: ["RS256"] },
+            );
             expect(result).toEqual(mockUser);
         });
 
-        it("should throw an error if JWT_SECRET is not defined", () => {
-            delete process.env.JWT_SECRET;
+        it("should throw an error if secrets are not initialized", () => {
+            (getSecrets as jest.Mock).mockImplementation(() => {
+                throw new Error(
+                    "Secrets not initialized. Call setSecrets() after Vault init.",
+                );
+            });
 
-            expect(() => verifyToken("valid_token")).toThrow(
-                "JWT_SECRET is not defined",
+            expect(() => verifyAccessToken("valid_token")).toThrow(
+                "Secrets not initialized",
             );
         });
 
@@ -65,8 +114,48 @@ describe("JWT Utility Functions", () => {
                 throw error;
             });
 
-            expect(() => verifyToken("invalid_token")).toThrow("Invalid token");
+            expect(() => verifyAccessToken("invalid_token")).toThrow(
+                "Invalid token",
+            );
             expect(Logger.error).toHaveBeenCalledWith(error);
+        });
+    });
+
+    describe("verifyRefreshToken", () => {
+        it("should verify a valid refresh token and return payload with jti", () => {
+            const mockPayload = { user_id: "user123", jti: "some-uuid" };
+            (jwt.verify as jest.Mock).mockReturnValue(mockPayload);
+
+            const result = verifyRefreshToken("valid_refresh_token");
+
+            expect(jwt.verify).toHaveBeenCalledWith(
+                "valid_refresh_token",
+                "mock-public-key",
+                { algorithms: ["RS256"] },
+            );
+            expect(result).toEqual(mockPayload);
+        });
+
+        it("should throw 'Invalid refresh token' for an expired refresh token", () => {
+            const error = new Error("jwt expired");
+            (jwt.verify as jest.Mock).mockImplementation(() => {
+                throw error;
+            });
+
+            expect(() => verifyRefreshToken("expired_token")).toThrow(
+                "Invalid refresh token",
+            );
+            expect(Logger.error).toHaveBeenCalledWith(error);
+        });
+    });
+
+    describe("backward compatibility aliases", () => {
+        it("generateToken should be an alias for generateAccessToken", () => {
+            expect(generateToken).toBe(generateAccessToken);
+        });
+
+        it("verifyToken should be an alias for verifyAccessToken", () => {
+            expect(verifyToken).toBe(verifyAccessToken);
         });
     });
 });

@@ -46,7 +46,8 @@ export function loadSecretsFromEnv(): {
     };
 
     const jwtSecrets: JwtSecrets = {
-        JWT_SECRET: process.env.JWT_SECRET || "",
+        JWT_PRIVATE_KEY: process.env.JWT_PRIVATE_KEY || "",
+        JWT_PUBLIC_KEY: process.env.JWT_PUBLIC_KEY || "",
     };
 
     const mailSecrets: MailSecrets = {

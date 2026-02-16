@@ -44,7 +44,8 @@ describe("User Authentication Tests", () => {
                 password: "SecureP@ssw0rd",
             };
             (Auth.prototype.createNewUser as jest.Mock).mockResolvedValue({
-                token: "mock-token-12345",
+                accessToken: "mock-access-token",
+                refreshToken: "mock-refresh-token",
             });
 
             await createNewUser(req as Request, res as Response, next);
@@ -56,7 +57,8 @@ describe("User Authentication Tests", () => {
             expect(userCreatedCounter.inc).toHaveBeenCalled();
             expect(res.status).toHaveBeenCalledWith(StatusCodes.CREATED);
             expect(res.json).toHaveBeenCalledWith({
-                token: "mock-token-12345",
+                accessToken: "mock-access-token",
+                refreshToken: "mock-refresh-token",
             });
         });
 
@@ -173,7 +175,8 @@ describe("User Authentication Tests", () => {
             };
 
             (Auth.prototype.createNewUser as jest.Mock).mockResolvedValue({
-                token: "mock-token",
+                accessToken: "mock-access",
+                refreshToken: "mock-refresh",
             });
 
             await createNewUser(req as Request, res as Response, next);
@@ -191,7 +194,8 @@ describe("User Authentication Tests", () => {
             };
 
             (Auth.prototype.createNewUser as jest.Mock).mockResolvedValue({
-                token: "mock-token",
+                accessToken: "mock-access",
+                refreshToken: "mock-refresh",
             });
 
             await createNewUser(req as Request, res as Response, next);
@@ -209,7 +213,8 @@ describe("User Authentication Tests", () => {
             };
 
             (Auth.prototype.createNewUser as jest.Mock).mockResolvedValue({
-                token: "mock-token",
+                accessToken: "mock-access",
+                refreshToken: "mock-refresh",
             });
 
             await createNewUser(req as Request, res as Response, next);
@@ -227,7 +232,8 @@ describe("User Authentication Tests", () => {
             };
 
             (Auth.prototype.login as jest.Mock).mockResolvedValue({
-                token: "valid-jwt-token",
+                accessToken: "valid-access-token",
+                refreshToken: "valid-refresh-token",
             });
 
             await login(req as Request, res as Response, next);
@@ -237,7 +243,10 @@ describe("User Authentication Tests", () => {
                 "correctPassword",
             );
             expect(res.status).toHaveBeenCalledWith(StatusCodes.OK);
-            expect(res.json).toHaveBeenCalledWith({ token: "valid-jwt-token" });
+            expect(res.json).toHaveBeenCalledWith({
+                accessToken: "valid-access-token",
+                refreshToken: "valid-refresh-token",
+            });
         });
 
         it("should return BAD_REQUEST if email is missing", async () => {
@@ -352,7 +361,8 @@ describe("User Authentication Tests", () => {
             };
 
             (Auth.prototype.login as jest.Mock).mockResolvedValue({
-                token: "token",
+                accessToken: "mock-access",
+                refreshToken: "mock-refresh",
             });
 
             await login(req as Request, res as Response, next);

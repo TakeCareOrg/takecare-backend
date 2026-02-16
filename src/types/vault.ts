@@ -5,7 +5,8 @@ export interface MongoDbSecrets {
 }
 
 export interface JwtSecrets {
-    JWT_SECRET: string;
+    JWT_PRIVATE_KEY: string;
+    JWT_PUBLIC_KEY: string;
 }
 
 export interface MailSecrets {
