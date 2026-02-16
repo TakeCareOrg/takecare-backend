@@ -89,6 +89,12 @@ describe("gamificationService", () => {
                 user_id: "user123",
                 achievements: [
                     {
+                        achievementId: "daily_steps_10",
+                        pointsEarned: 1,
+                        completedAt: "2024-02-08T12:00:00Z",
+                        metadata: { title: "Test", icon: "👟" },
+                    },
+                    {
                         achievementId: "daily_steps_1k",
                         pointsEarned: 3,
                         completedAt: "2024-02-08T12:00:00Z",
