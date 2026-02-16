@@ -1,6 +1,17 @@
 import { AchievementRules } from "../../types";
 
 export const DAILY_STEPS_RULES: AchievementRules = {
+    DAILY_STEPS_1: {
+        id: "daily_steps_10",
+        type: "daily",
+        validator: (data) => data.steps >= 10,
+        points: 1,
+        metadata: {
+            title: "achievements.daily.steps_10.title",
+            description: "achievements.daily.steps_10.description",
+            icon: "👟",
+        },
+    },
     DAILY_STEPS_1K: {
         id: "daily_steps_1k",
         type: "daily",

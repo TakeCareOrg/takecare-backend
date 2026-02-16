@@ -1,6 +1,10 @@
 {
     "achievements": {
         "daily": {
+            "steps_10": {
+                "title": "10 pas quotidiens",
+                "description": "Marchez 10 pas en une journée"
+            },
             "steps_1k": {
                 "title": "1000 pas quotidiens",
                 "description": "Marchez 1000 pas en une journée"

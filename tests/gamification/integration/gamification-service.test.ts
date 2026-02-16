@@ -1,113 +1,144 @@
 import { processUserSteps } from "../../../src/gamification/services/gamification-service";
 import { UserDB } from "../../../src/database/models/user";
+import { UserGamificationDB } from "../../../src/database/models/user_gamification";
 
 jest.mock("../../../src/database/models/user");
+jest.mock("../../../src/database/models/user_gamification");
 
 describe("gamificationService", () => {
     const mockUserDB = UserDB as jest.Mocked<typeof UserDB>;
+    const mockUserGamificationDB = UserGamificationDB as jest.Mocked<
+        typeof UserGamificationDB
+    >;
+
+    const createMockQuery = (result: any) => {
+        const mockQuery = {
+            lean: jest.fn().mockResolvedValue(result),
+            select: jest.fn(),
+        };
+        mockQuery.select.mockReturnValue(mockQuery);
+        return mockQuery;
+    };
 
     beforeEach(() => {
         jest.clearAllMocks();
+        (mockUserGamificationDB.findOne as jest.Mock).mockImplementation(() =>
+            createMockQuery(null),
+        );
     });
 
     describe("processUserSteps", () => {
         it("should process new user with first achievement", async () => {
             const mockUser = {
                 user_id: "user123",
-                gamification: {
-                    achievements: [],
-                    totalPoints: 0,
-                },
-                dailyActivities: [
-                    {
-                        date: new Date().toISOString(),
-                        steps: 6000,
-                        completed: true,
-                    },
-                ],
             };
 
-            (mockUserDB.findOne as jest.Mock)
-                .mockReturnValueOnce({
-                    select: jest.fn().mockReturnValue({
-                        lean: jest.fn().mockResolvedValue(mockUser),
-                    }),
-                })
-                .mockReturnValueOnce({
-                    select: jest.fn().mockResolvedValue(mockUser),
-                });
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const todayISO = today.toISOString();
 
-            (mockUserDB.findOneAndUpdate as jest.Mock).mockResolvedValue(
-                undefined,
+            const mockGamification = {
+                user_id: "user123",
+                achievements: [],
+                totalPoints: 0,
+                dailyActivities: [],
+            };
+
+            (mockUserDB.findOne as jest.Mock).mockReturnValue(
+                createMockQuery(mockUser),
             );
+
+            let callCount = 0;
+            (mockUserGamificationDB.findOne as jest.Mock).mockImplementation(
+                () => {
+                    callCount++;
+                    if (callCount <= 2) {
+                        return createMockQuery(null);
+                    }
+                    return createMockQuery(mockGamification);
+                },
+            );
+
+            (mockUserGamificationDB.create as jest.Mock).mockResolvedValue(
+                mockGamification,
+            );
+            (
+                mockUserGamificationDB.findOneAndUpdate as jest.Mock
+            ).mockResolvedValue(undefined);
 
             const result = await processUserSteps("user123", 6000);
 
             expect(result.newAchievements.length).toBeGreaterThan(0);
             expect(result.pointsEarned).toBeGreaterThan(0);
-            expect(result.currentStreak).toBe(1);
+            expect(result.currentStreak).toBe(0);
             expect(result.levelInfo.level).toBeGreaterThanOrEqual(0);
             expect(result.totalPoints).toBeGreaterThanOrEqual(0);
-            expect(mockUserDB.findOneAndUpdate).toHaveBeenCalled();
+            expect(mockUserGamificationDB.findOneAndUpdate).toHaveBeenCalled();
         });
 
         it("should not save when no new achievements and no streak bonus", async () => {
             const mockUser = {
                 user_id: "user123",
-                gamification: {
-                    achievements: [
-                        {
-                            achievementId: "daily_steps_1k",
-                            pointsEarned: 3,
-                            completedAt: "2024-02-08T12:00:00Z",
-                            metadata: { title: "Test", icon: "👟" },
-                        },
-                        {
-                            achievementId: "daily_steps_2k",
-                            pointsEarned: 5,
-                            completedAt: "2024-02-08T12:00:00Z",
-                            metadata: { title: "Test", icon: "👟" },
-                        },
-                        {
-                            achievementId: "daily_steps_5k",
-                            pointsEarned: 10,
-                            completedAt: "2024-02-08T12:00:00Z",
-                            metadata: { title: "Test", icon: "👟" },
-                        },
-                    ],
-                    totalPoints: 10,
-                },
+            };
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const todayISO = today.toISOString();
+
+            const mockGamification = {
+                user_id: "user123",
+                achievements: [
+                    {
+                        achievementId: "daily_steps_1k",
+                        pointsEarned: 3,
+                        completedAt: "2024-02-08T12:00:00Z",
+                        metadata: { title: "Test", icon: "👟" },
+                    },
+                    {
+                        achievementId: "daily_steps_2k",
+                        pointsEarned: 5,
+                        completedAt: "2024-02-08T12:00:00Z",
+                        metadata: { title: "Test", icon: "👟" },
+                    },
+                    {
+                        achievementId: "daily_steps_5k",
+                        pointsEarned: 10,
+                        completedAt: "2024-02-08T12:00:00Z",
+                        metadata: { title: "Test", icon: "👟" },
+                    },
+                ],
+                totalPoints: 10,
                 dailyActivities: [
                     {
-                        date: new Date().toISOString(),
+                        date: todayISO,
                         steps: 6000,
                         completed: true,
                     },
                 ],
             };
 
-            (mockUserDB.findOne as jest.Mock)
-                .mockReturnValueOnce({
-                    select: jest.fn().mockReturnValue({
-                        lean: jest.fn().mockResolvedValue(mockUser),
-                    }),
-                })
-                .mockReturnValueOnce({
-                    select: jest.fn().mockResolvedValue(mockUser),
-                });
+            (mockUserDB.findOne as jest.Mock).mockReturnValue(
+                createMockQuery(mockUser),
+            );
+            (mockUserGamificationDB.findOne as jest.Mock).mockReturnValue(
+                createMockQuery(mockGamification),
+            );
 
             const result = await processUserSteps("user123", 6000);
 
             expect(result.newAchievements).toHaveLength(0);
             expect(result.pointsEarned).toBe(0);
             expect(result.totalPoints).toBe(10);
-            expect(mockUserDB.findOneAndUpdate).not.toHaveBeenCalled();
+            expect(
+                mockUserGamificationDB.findOneAndUpdate,
+            ).not.toHaveBeenCalled();
         });
 
         it("should award streak bonus for 7 consecutive days", async () => {
             const activities = Array.from({ length: 7 }, (_, i) => {
                 const date = new Date();
                 date.setDate(date.getDate() - i);
+                date.setHours(0, 0, 0, 0);
                 return {
                     date: date.toISOString(),
                     steps: 6000,
@@ -117,39 +148,38 @@ describe("gamificationService", () => {
 
             const mockUser = {
                 user_id: "user123",
-                gamification: {
-                    achievements: [],
-                    totalPoints: 0,
-                },
+            };
+
+            const mockGamification = {
+                user_id: "user123",
+                achievements: [],
+                totalPoints: 0,
                 dailyActivities: activities,
             };
 
-            (mockUserDB.findOne as jest.Mock)
-                .mockReturnValueOnce({
-                    select: jest.fn().mockReturnValue({
-                        lean: jest.fn().mockResolvedValue(mockUser),
-                    }),
-                })
-                .mockReturnValueOnce({
-                    select: jest.fn().mockResolvedValue(mockUser),
-                });
-
-            (mockUserDB.findOneAndUpdate as jest.Mock).mockResolvedValue(
-                undefined,
+            (mockUserDB.findOne as jest.Mock).mockReturnValue(
+                createMockQuery(mockUser),
             );
+            (mockUserGamificationDB.findOne as jest.Mock).mockReturnValue(
+                createMockQuery(mockGamification),
+            );
+            (
+                mockUserGamificationDB.findOneAndUpdate as jest.Mock
+            ).mockResolvedValue(undefined);
 
             const result = await processUserSteps("user123", 6000);
 
             expect(result.currentStreak).toBe(7);
             expect(result.streakBonus).toBe(20);
             expect(result.pointsEarned).toBeGreaterThan(20);
-            expect(mockUserDB.findOneAndUpdate).toHaveBeenCalled();
+            expect(mockUserGamificationDB.findOneAndUpdate).toHaveBeenCalled();
         });
 
         it("should handle weekly challenge completion", async () => {
             const activities = Array.from({ length: 7 }, (_, i) => {
                 const date = new Date();
                 date.setDate(date.getDate() - i);
+                date.setHours(0, 0, 0, 0);
                 return {
                     date: date.toISOString(),
                     steps: 7200,
@@ -159,26 +189,24 @@ describe("gamificationService", () => {
 
             const mockUser = {
                 user_id: "user123",
-                gamification: {
-                    achievements: [],
-                    totalPoints: 0,
-                },
+            };
+
+            const mockGamification = {
+                user_id: "user123",
+                achievements: [],
+                totalPoints: 0,
                 dailyActivities: activities,
             };
 
-            (mockUserDB.findOne as jest.Mock)
-                .mockReturnValueOnce({
-                    select: jest.fn().mockReturnValue({
-                        lean: jest.fn().mockResolvedValue(mockUser),
-                    }),
-                })
-                .mockReturnValueOnce({
-                    select: jest.fn().mockResolvedValue(mockUser),
-                });
-
-            (mockUserDB.findOneAndUpdate as jest.Mock).mockResolvedValue(
-                undefined,
+            (mockUserDB.findOne as jest.Mock).mockReturnValue(
+                createMockQuery(mockUser),
             );
+            (mockUserGamificationDB.findOne as jest.Mock).mockReturnValue(
+                createMockQuery(mockGamification),
+            );
+            (
+                mockUserGamificationDB.findOneAndUpdate as jest.Mock
+            ).mockResolvedValue(undefined);
 
             const result = await processUserSteps("user123", 7200);
 
@@ -192,47 +220,45 @@ describe("gamificationService", () => {
         it("should level up user correctly", async () => {
             const mockUser = {
                 user_id: "user123",
-                gamification: {
-                    achievements: [],
-                    totalPoints: 5,
-                },
+            };
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const todayISO = today.toISOString();
+
+            const mockGamification = {
+                user_id: "user123",
+                achievements: [],
+                totalPoints: 5,
                 dailyActivities: [
                     {
-                        date: new Date().toISOString(),
+                        date: todayISO,
                         steps: 6000,
                         completed: true,
                     },
                 ],
             };
 
-            (mockUserDB.findOne as jest.Mock)
-                .mockReturnValueOnce({
-                    select: jest.fn().mockReturnValue({
-                        lean: jest.fn().mockResolvedValue(mockUser),
-                    }),
-                })
-                .mockReturnValueOnce({
-                    select: jest.fn().mockResolvedValue(mockUser),
-                });
-
-            (mockUserDB.findOneAndUpdate as jest.Mock).mockResolvedValue(
-                undefined,
+            (mockUserDB.findOne as jest.Mock).mockReturnValue(
+                createMockQuery(mockUser),
             );
+            (mockUserGamificationDB.findOne as jest.Mock).mockReturnValue(
+                createMockQuery(mockGamification),
+            );
+            (
+                mockUserGamificationDB.findOneAndUpdate as jest.Mock
+            ).mockResolvedValue(undefined);
 
             const result = await processUserSteps("user123", 6000);
 
             expect(result.totalPoints).toBeGreaterThanOrEqual(10);
             expect(result.levelInfo.level).toBeGreaterThanOrEqual(1);
-            expect(mockUserDB.findOneAndUpdate).toHaveBeenCalled();
+            expect(mockUserGamificationDB.findOneAndUpdate).toHaveBeenCalled();
         });
 
         it("should handle database errors gracefully", async () => {
             (mockUserDB.findOne as jest.Mock).mockReturnValue({
-                select: jest.fn().mockReturnValue({
-                    lean: jest
-                        .fn()
-                        .mockRejectedValue(new Error("Database error")),
-                }),
+                lean: jest.fn().mockRejectedValue(new Error("Database error")),
             });
 
             await expect(processUserSteps("user123", 6000)).rejects.toThrow(
@@ -243,39 +269,54 @@ describe("gamificationService", () => {
         it("should handle user with no previous activities", async () => {
             const mockUser = {
                 user_id: "user123",
-                gamification: {
-                    achievements: [],
-                    totalPoints: 0,
-                },
+            };
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const todayISO = today.toISOString();
+
+            const mockGamification = {
+                user_id: "user123",
+                achievements: [],
+                totalPoints: 0,
                 dailyActivities: [],
             };
 
-            (mockUserDB.findOne as jest.Mock)
-                .mockReturnValueOnce({
-                    select: jest.fn().mockReturnValue({
-                        lean: jest.fn().mockResolvedValue(mockUser),
-                    }),
-                })
-                .mockReturnValueOnce({
-                    select: jest.fn().mockResolvedValue(mockUser),
-                });
-
-            (mockUserDB.findOneAndUpdate as jest.Mock).mockResolvedValue(
-                undefined,
+            (mockUserDB.findOne as jest.Mock).mockReturnValue(
+                createMockQuery(mockUser),
             );
+
+            let callCount = 0;
+            (mockUserGamificationDB.findOne as jest.Mock).mockImplementation(
+                () => {
+                    callCount++;
+                    if (callCount <= 2) {
+                        return createMockQuery(null);
+                    }
+                    return createMockQuery(mockGamification);
+                },
+            );
+
+            (mockUserGamificationDB.create as jest.Mock).mockResolvedValue(
+                mockGamification,
+            );
+            (
+                mockUserGamificationDB.findOneAndUpdate as jest.Mock
+            ).mockResolvedValue(undefined);
 
             const result = await processUserSteps("user123", 6000);
 
             expect(result.currentStreak).toBe(0);
             expect(result.streakBonus).toBe(0);
             expect(result.totalPoints).toBeGreaterThanOrEqual(0);
-            expect(mockUserDB.findOneAndUpdate).toHaveBeenCalled();
+            expect(mockUserGamificationDB.findOneAndUpdate).toHaveBeenCalled();
         });
 
         it("should handle multiple achievements in single call", async () => {
             const activities = Array.from({ length: 7 }, (_, i) => {
                 const date = new Date();
                 date.setDate(date.getDate() - i);
+                date.setHours(0, 0, 0, 0);
                 return {
                     date: date.toISOString(),
                     steps: 15000,
@@ -285,26 +326,24 @@ describe("gamificationService", () => {
 
             const mockUser = {
                 user_id: "user123",
-                gamification: {
-                    achievements: [],
-                    totalPoints: 0,
-                },
+            };
+
+            const mockGamification = {
+                user_id: "user123",
+                achievements: [],
+                totalPoints: 0,
                 dailyActivities: activities,
             };
 
-            (mockUserDB.findOne as jest.Mock)
-                .mockReturnValueOnce({
-                    select: jest.fn().mockReturnValue({
-                        lean: jest.fn().mockResolvedValue(mockUser),
-                    }),
-                })
-                .mockReturnValueOnce({
-                    select: jest.fn().mockResolvedValue(mockUser),
-                });
-
-            (mockUserDB.findOneAndUpdate as jest.Mock).mockResolvedValue(
-                undefined,
+            (mockUserDB.findOne as jest.Mock).mockReturnValue(
+                createMockQuery(mockUser),
             );
+            (mockUserGamificationDB.findOne as jest.Mock).mockReturnValue(
+                createMockQuery(mockGamification),
+            );
+            (
+                mockUserGamificationDB.findOneAndUpdate as jest.Mock
+            ).mockResolvedValue(undefined);
 
             const result = await processUserSteps("user123", 15000);
 
@@ -317,6 +356,7 @@ describe("gamificationService", () => {
             const activities = Array.from({ length: 3 }, (_, i) => {
                 const date = new Date();
                 date.setDate(date.getDate() - i);
+                date.setHours(0, 0, 0, 0);
                 return {
                     date: date.toISOString(),
                     steps: 6000,
@@ -326,26 +366,24 @@ describe("gamificationService", () => {
 
             const mockUser = {
                 user_id: "user123",
-                gamification: {
-                    achievements: [],
-                    totalPoints: 0,
-                },
+            };
+
+            const mockGamification = {
+                user_id: "user123",
+                achievements: [],
+                totalPoints: 0,
                 dailyActivities: activities,
             };
 
-            (mockUserDB.findOne as jest.Mock)
-                .mockReturnValueOnce({
-                    select: jest.fn().mockReturnValue({
-                        lean: jest.fn().mockResolvedValue(mockUser),
-                    }),
-                })
-                .mockReturnValueOnce({
-                    select: jest.fn().mockResolvedValue(mockUser),
-                });
-
-            (mockUserDB.findOneAndUpdate as jest.Mock).mockResolvedValue(
-                undefined,
+            (mockUserDB.findOne as jest.Mock).mockReturnValue(
+                createMockQuery(mockUser),
             );
+            (mockUserGamificationDB.findOne as jest.Mock).mockReturnValue(
+                createMockQuery(mockGamification),
+            );
+            (
+                mockUserGamificationDB.findOneAndUpdate as jest.Mock
+            ).mockResolvedValue(undefined);
 
             const result = await processUserSteps("user123", 6000);
 
@@ -358,6 +396,7 @@ describe("gamificationService", () => {
             const activities = Array.from({ length: 2 }, (_, i) => {
                 const date = new Date();
                 date.setDate(date.getDate() - i);
+                date.setHours(0, 0, 0, 0);
                 return {
                     date: date.toISOString(),
                     steps: 6000,
@@ -367,26 +406,24 @@ describe("gamificationService", () => {
 
             const mockUser = {
                 user_id: "user123",
-                gamification: {
-                    achievements: [],
-                    totalPoints: 0,
-                },
+            };
+
+            const mockGamification = {
+                user_id: "user123",
+                achievements: [],
+                totalPoints: 0,
                 dailyActivities: activities,
             };
 
-            (mockUserDB.findOne as jest.Mock)
-                .mockReturnValueOnce({
-                    select: jest.fn().mockReturnValue({
-                        lean: jest.fn().mockResolvedValue(mockUser),
-                    }),
-                })
-                .mockReturnValueOnce({
-                    select: jest.fn().mockResolvedValue(mockUser),
-                });
-
-            (mockUserDB.findOneAndUpdate as jest.Mock).mockResolvedValue(
-                undefined,
+            (mockUserDB.findOne as jest.Mock).mockReturnValue(
+                createMockQuery(mockUser),
             );
+            (mockUserGamificationDB.findOne as jest.Mock).mockReturnValue(
+                createMockQuery(mockGamification),
+            );
+            (
+                mockUserGamificationDB.findOneAndUpdate as jest.Mock
+            ).mockResolvedValue(undefined);
 
             const result = await processUserSteps("user123", 6000);
 
@@ -399,6 +436,7 @@ describe("gamificationService", () => {
             const activities = Array.from({ length: 7 }, (_, i) => {
                 const date = new Date();
                 date.setDate(date.getDate() - i);
+                date.setHours(0, 0, 0, 0);
                 return {
                     date: date.toISOString(),
                     steps: 7143,
@@ -408,26 +446,24 @@ describe("gamificationService", () => {
 
             const mockUser = {
                 user_id: "user123",
-                gamification: {
-                    achievements: [],
-                    totalPoints: 0,
-                },
+            };
+
+            const mockGamification = {
+                user_id: "user123",
+                achievements: [],
+                totalPoints: 0,
                 dailyActivities: activities,
             };
 
-            (mockUserDB.findOne as jest.Mock)
-                .mockReturnValueOnce({
-                    select: jest.fn().mockReturnValue({
-                        lean: jest.fn().mockResolvedValue(mockUser),
-                    }),
-                })
-                .mockReturnValueOnce({
-                    select: jest.fn().mockResolvedValue(mockUser),
-                });
-
-            (mockUserDB.findOneAndUpdate as jest.Mock).mockResolvedValue(
-                undefined,
+            (mockUserDB.findOne as jest.Mock).mockReturnValue(
+                createMockQuery(mockUser),
             );
+            (mockUserGamificationDB.findOne as jest.Mock).mockReturnValue(
+                createMockQuery(mockGamification),
+            );
+            (
+                mockUserGamificationDB.findOneAndUpdate as jest.Mock
+            ).mockResolvedValue(undefined);
 
             const result = await processUserSteps("user123", 7143);
 
@@ -441,39 +477,41 @@ describe("gamificationService", () => {
         it("should handle user with existing achievements", async () => {
             const mockUser = {
                 user_id: "user123",
-                gamification: {
-                    achievements: [
-                        {
-                            achievementId: "daily_steps_5k",
-                            pointsEarned: 10,
-                            completedAt: "2024-02-01T12:00:00Z",
-                            metadata: { title: "5000 steps", icon: "" },
-                        },
-                    ],
-                    totalPoints: 10,
-                },
+            };
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const todayISO = today.toISOString();
+
+            const mockGamification = {
+                user_id: "user123",
+                achievements: [
+                    {
+                        achievementId: "daily_steps_5k",
+                        pointsEarned: 10,
+                        completedAt: "2024-02-01T12:00:00Z",
+                        metadata: { title: "5000 steps", icon: "" },
+                    },
+                ],
+                totalPoints: 10,
                 dailyActivities: [
                     {
-                        date: new Date().toISOString(),
+                        date: todayISO,
                         steps: 10000,
                         completed: true,
                     },
                 ],
             };
 
-            (mockUserDB.findOne as jest.Mock)
-                .mockReturnValueOnce({
-                    select: jest.fn().mockReturnValue({
-                        lean: jest.fn().mockResolvedValue(mockUser),
-                    }),
-                })
-                .mockReturnValueOnce({
-                    select: jest.fn().mockResolvedValue(mockUser),
-                });
-
-            (mockUserDB.findOneAndUpdate as jest.Mock).mockResolvedValue(
-                undefined,
+            (mockUserDB.findOne as jest.Mock).mockReturnValue(
+                createMockQuery(mockUser),
             );
+            (mockUserGamificationDB.findOne as jest.Mock).mockReturnValue(
+                createMockQuery(mockGamification),
+            );
+            (
+                mockUserGamificationDB.findOneAndUpdate as jest.Mock
+            ).mockResolvedValue(undefined);
 
             const result = await processUserSteps("user123", 10000);
 
@@ -487,32 +525,34 @@ describe("gamificationService", () => {
         it("should correctly accumulate points over time", async () => {
             const mockUser = {
                 user_id: "user123",
-                gamification: {
-                    achievements: [],
-                    totalPoints: 50,
-                },
+            };
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const todayISO = today.toISOString();
+
+            const mockGamification = {
+                user_id: "user123",
+                achievements: [],
+                totalPoints: 50,
                 dailyActivities: [
                     {
-                        date: new Date().toISOString(),
+                        date: todayISO,
                         steps: 15000,
                         completed: true,
                     },
                 ],
             };
 
-            (mockUserDB.findOne as jest.Mock)
-                .mockReturnValueOnce({
-                    select: jest.fn().mockReturnValue({
-                        lean: jest.fn().mockResolvedValue(mockUser),
-                    }),
-                })
-                .mockReturnValueOnce({
-                    select: jest.fn().mockResolvedValue(mockUser),
-                });
-
-            (mockUserDB.findOneAndUpdate as jest.Mock).mockResolvedValue(
-                undefined,
+            (mockUserDB.findOne as jest.Mock).mockReturnValue(
+                createMockQuery(mockUser),
             );
+            (mockUserGamificationDB.findOne as jest.Mock).mockReturnValue(
+                createMockQuery(mockGamification),
+            );
+            (
+                mockUserGamificationDB.findOneAndUpdate as jest.Mock
+            ).mockResolvedValue(undefined);
 
             const result = await processUserSteps("user123", 15000);
 

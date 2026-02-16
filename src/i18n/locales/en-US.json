@@ -1,6 +1,10 @@
 {
     "achievements": {
         "daily": {
+            "steps_10": {
+                "title": "10 daily steps",
+                "description": "Walk 10 steps in one day"
+            },
             "steps_1k": {
                 "title": "1000 daily steps",
                 "description": "Walk 1000 steps in one day"
