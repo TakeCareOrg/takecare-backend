@@ -31,18 +31,18 @@ describe("Quiz Data Controller Tests", () => {
     });
 
     describe("getQuizData", () => {
-        it("should return quiz data successfully with default language (en)", async () => {
+        it("should return quiz data successfully with default language (fr)", async () => {
             const mockQuizData = {
-                en: {
+                fr: {
                     questions: [
                         {
                             id: 1,
-                            question: "What is your age?",
+                            question: "Quel est votre âge?",
                             type: "number",
                         },
                         {
                             id: 2,
-                            question: "What is your weight?",
+                            question: "Quel est votre poids?",
                             type: "number",
                         },
                     ],
@@ -62,7 +62,7 @@ describe("Quiz Data Controller Tests", () => {
             expect(filesUtils.getFile).toHaveBeenCalled();
             expect(res.status).toHaveBeenCalledWith(200);
             expect(res.json).toHaveBeenCalledWith({
-                health: mockQuizData.en,
+                health: mockQuizData.fr,
             });
         });
 
@@ -78,7 +78,7 @@ describe("Quiz Data Controller Tests", () => {
 
             req.user = { user_id: "123" };
             req.params = { type: "fitness" };
-            req.query = { lang: "fr" };
+            req.query = { lang: "en" };
 
             (filesUtils.getFile as jest.Mock).mockResolvedValue(
                 Buffer.from(JSON.stringify(mockQuizData)),
@@ -88,7 +88,7 @@ describe("Quiz Data Controller Tests", () => {
 
             expect(res.status).toHaveBeenCalledWith(200);
             expect(res.json).toHaveBeenCalledWith({
-                fitness: mockQuizData.fr,
+                fitness: mockQuizData.en,
             });
         });
 
@@ -177,7 +177,7 @@ describe("Quiz Data Controller Tests", () => {
 
         it("should return undefined when requested language is not available", async () => {
             const mockQuizData = {
-                en: {
+                fr: {
                     questions: [{ id: 1, question: "Question" }],
                 },
             };
@@ -219,7 +219,7 @@ describe("Quiz Data Controller Tests", () => {
 
             for (const type of types) {
                 const mockData = {
-                    en: {
+                    fr: {
                         questions: [{ id: 1, question: `${type} question` }],
                     },
                 };
@@ -235,7 +235,7 @@ describe("Quiz Data Controller Tests", () => {
                 await getQuizData(req as Request, res as Response, next);
 
                 expect(res.json).toHaveBeenCalledWith({
-                    [type]: mockData.en,
+                    [type]: mockData.fr,
                 });
 
                 jest.clearAllMocks();
@@ -244,7 +244,7 @@ describe("Quiz Data Controller Tests", () => {
 
         it("should allow access when user object exists even with null user_id", async () => {
             const mockQuizData = {
-                en: { questions: [{ id: 1, question: "Question" }] },
+                fr: { questions: [{ id: 1, question: "Question" }] },
             };
 
             req.user = { user_id: null } as never;
@@ -264,7 +264,7 @@ describe("Quiz Data Controller Tests", () => {
             req.params = { type: "../../../etc/passwd" };
 
             const mockData = {
-                en: { questions: [] },
+                fr: { questions: [] },
             };
 
             (filesUtils.getFile as jest.Mock).mockResolvedValue(
@@ -279,7 +279,7 @@ describe("Quiz Data Controller Tests", () => {
 
         it("should handle large quiz data files", async () => {
             const largeQuizData = {
-                en: {
+                fr: {
                     questions: Array.from({ length: 1000 }, (_, i) => ({
                         id: i,
                         question: `Question ${i}`,
@@ -299,7 +299,7 @@ describe("Quiz Data Controller Tests", () => {
 
             expect(res.status).toHaveBeenCalledWith(200);
             expect(res.json).toHaveBeenCalledWith({
-                comprehensive: largeQuizData.en,
+                comprehensive: largeQuizData.fr,
             });
         });
     });

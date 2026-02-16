@@ -3,6 +3,8 @@ import cors from "cors";
 import express from "express";
 import helmet from "helmet";
 import swaggerUi from "swagger-ui-express";
+import middleware from "i18next-http-middleware";
+import i18next from "@config/i18n";
 
 // Import the routes
 import adminRouter from "@routes/adminRouter";
@@ -12,6 +14,7 @@ import indexRouter from "@routes/index";
 import metricsRouter from "@routes/metricsRouter";
 import quizDataRouter from "@routes/quizRouter";
 import userRouter from "@routes/userRouter";
+import gamificationRouter from "@routes/gamificationRouter";
 
 import swaggerDocs from "@config/swagger";
 import promBundle from "express-prom-bundle";
@@ -39,6 +42,8 @@ app.use(helmet());
 app.use(cors());
 // Use Morgan middleware for logging requests
 app.use(morganMiddleware);
+// Add translations to back-end
+app.use(middleware.handle(i18next));
 
 // Tell the app to use the routes
 app.use("/", indexRouter);
@@ -47,6 +52,7 @@ app.use("/admin", adminRouter);
 app.use("/users", userRouter);
 app.use("/chat", chatRouter);
 app.use("/quiz", quizDataRouter);
+app.use("/gamification", gamificationRouter);
 app.use("/metrics", metricsRouter);
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));

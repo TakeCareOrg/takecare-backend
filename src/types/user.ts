@@ -1,11 +1,37 @@
 import { USER_DATA_UPDATES_TYPES } from "@constants/data-updates";
 
+export interface AchievementMetadata {
+    title: string;
+    icon: string;
+    description?: string;
+}
+
+export interface AchievementResult {
+    achievementId: string;
+    pointsEarned: number;
+    completedAt: string;
+    metadata: AchievementMetadata;
+}
+
+export interface DailyActivity {
+    date: string;
+    steps: number;
+    completed: boolean;
+}
+
+export interface Gamification {
+    achievements: AchievementResult[];
+    totalPoints: number;
+}
+
 export interface User extends UserAttributions {
     user_id: string;
     email: string;
     appleId?: string;
     social_conn?: string;
     password: string;
+    gamification?: Gamification;
+    dailyActivities?: DailyActivity[];
     created_at: Date;
 }
 
@@ -55,6 +81,8 @@ export interface UserInfoPayload extends UserAttributions {
     user_id: string;
     email: string;
     health: UserHealthAttributions;
+    gamification?: Gamification;
+    dailyActivities?: DailyActivity[];
 }
 
 export interface UserComplete extends User {
