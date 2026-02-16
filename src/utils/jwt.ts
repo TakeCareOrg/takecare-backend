@@ -7,9 +7,14 @@ export interface UserPayload {
     user_id: string;
 }
 
+export interface AccessTokenPayload extends UserPayload {
+    typ: "access";
+}
+
 export interface RefreshPayload {
     user_id: string;
     jti: string;
+    typ: "refresh";
 }
 
 const ACCESS_TOKEN_EXPIRY = "15m";
@@ -24,7 +29,8 @@ function decodeKey(base64Key: string): string {
 export const generateAccessToken = (payload: UserPayload) => {
     const { JWT_PRIVATE_KEY } = getSecrets().jwt;
     const privateKey = decodeKey(JWT_PRIVATE_KEY);
-    return jwt.sign(payload, privateKey, {
+    const accessPayload: AccessTokenPayload = { ...payload, typ: "access" };
+    return jwt.sign(accessPayload, privateKey, {
         algorithm: "RS256",
         expiresIn: ACCESS_TOKEN_EXPIRY,
     });
@@ -38,7 +44,12 @@ export const generateRefreshToken = (
     const privateKey = decodeKey(JWT_PRIVATE_KEY);
     const tokenId = randomUUID();
 
-    const token = jwt.sign({ user_id: userId, jti: tokenId }, privateKey, {
+    const refreshPayload: RefreshPayload = {
+        user_id: userId,
+        jti: tokenId,
+        typ: "refresh",
+    };
+    const token = jwt.sign(refreshPayload, privateKey, {
         algorithm: "RS256",
         expiresIn: REFRESH_TOKEN_EXPIRY,
     });
@@ -47,14 +58,22 @@ export const generateRefreshToken = (
 };
 
 // Verify an access token (verified with RSA public key)
+// Rejects refresh tokens by checking the typ claim
 export const verifyAccessToken = (token: string): UserPayload => {
     const { JWT_PUBLIC_KEY } = getSecrets().jwt;
     const publicKey = decodeKey(JWT_PUBLIC_KEY);
 
     try {
-        return jwt.verify(token, publicKey, {
+        const decoded = jwt.verify(token, publicKey, {
             algorithms: ["RS256"],
-        }) as UserPayload;
+        }) as AccessTokenPayload;
+
+        // Reject refresh tokens used as access tokens
+        if (decoded.typ !== "access") {
+            throw new Error("Invalid token type");
+        }
+
+        return { user_id: decoded.user_id };
     } catch (error) {
         Logger.error(error);
         throw new Error("Invalid token");
@@ -62,14 +81,22 @@ export const verifyAccessToken = (token: string): UserPayload => {
 };
 
 // Verify a refresh token and return the full payload (including jti)
+// Rejects access tokens by checking the typ claim
 export const verifyRefreshToken = (token: string): RefreshPayload => {
     const { JWT_PUBLIC_KEY } = getSecrets().jwt;
     const publicKey = decodeKey(JWT_PUBLIC_KEY);
 
     try {
-        return jwt.verify(token, publicKey, {
+        const decoded = jwt.verify(token, publicKey, {
             algorithms: ["RS256"],
         }) as RefreshPayload;
+
+        // Reject access tokens used as refresh tokens
+        if (decoded.typ !== "refresh") {
+            throw new Error("Invalid token type");
+        }
+
+        return decoded;
     } catch (error) {
         Logger.error(error);
         throw new Error("Invalid refresh token");

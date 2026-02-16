@@ -20,9 +20,7 @@ jest.mock("crypto", () => ({
 }));
 
 describe("JWT Utility Functions", () => {
-    const MOCK_PRIVATE_KEY = Buffer.from("mock-private-key").toString(
-        "base64",
-    );
+    const MOCK_PRIVATE_KEY = Buffer.from("mock-private-key").toString("base64");
     const MOCK_PUBLIC_KEY = Buffer.from("mock-public-key").toString("base64");
 
     const mockUser: UserPayload = {
@@ -40,13 +38,13 @@ describe("JWT Utility Functions", () => {
     });
 
     describe("generateAccessToken", () => {
-        it("should generate a short-lived access token with RS256", () => {
+        it("should generate a short-lived access token with RS256 and typ claim", () => {
             (jwt.sign as jest.Mock).mockReturnValue("mocked_access_token");
 
             const token = generateAccessToken(mockUser);
 
             expect(jwt.sign).toHaveBeenCalledWith(
-                mockUser,
+                { ...mockUser, typ: "access" },
                 "mock-private-key",
                 { algorithm: "RS256", expiresIn: "15m" },
             );
@@ -67,13 +65,13 @@ describe("JWT Utility Functions", () => {
     });
 
     describe("generateRefreshToken", () => {
-        it("should generate a long-lived refresh token with a unique jti", () => {
+        it("should generate a long-lived refresh token with a unique jti and typ claim", () => {
             (jwt.sign as jest.Mock).mockReturnValue("mocked_refresh_token");
 
             const result = generateRefreshToken("user123");
 
             expect(jwt.sign).toHaveBeenCalledWith(
-                { user_id: "user123", jti: "mock-uuid-1234" },
+                { user_id: "user123", jti: "mock-uuid-1234", typ: "refresh" },
                 "mock-private-key",
                 { algorithm: "RS256", expiresIn: "7d" },
             );
@@ -83,8 +81,11 @@ describe("JWT Utility Functions", () => {
     });
 
     describe("verifyAccessToken", () => {
-        it("should verify a valid access token with RS256", () => {
-            (jwt.verify as jest.Mock).mockReturnValue(mockUser);
+        it("should verify a valid access token with RS256 and correct typ", () => {
+            (jwt.verify as jest.Mock).mockReturnValue({
+                ...mockUser,
+                typ: "access",
+            });
 
             const result = verifyAccessToken("valid_token");
 
@@ -94,6 +95,28 @@ describe("JWT Utility Functions", () => {
                 { algorithms: ["RS256"] },
             );
             expect(result).toEqual(mockUser);
+        });
+
+        it("should reject a refresh token used as access token", () => {
+            (jwt.verify as jest.Mock).mockReturnValue({
+                user_id: "user123",
+                jti: "some-uuid",
+                typ: "refresh",
+            });
+
+            expect(() => verifyAccessToken("refresh_token_as_access")).toThrow(
+                "Invalid token",
+            );
+            expect(Logger.error).toHaveBeenCalled();
+        });
+
+        it("should reject a token without typ claim", () => {
+            (jwt.verify as jest.Mock).mockReturnValue(mockUser);
+
+            expect(() => verifyAccessToken("token_without_typ")).toThrow(
+                "Invalid token",
+            );
+            expect(Logger.error).toHaveBeenCalled();
         });
 
         it("should throw an error if secrets are not initialized", () => {
@@ -122,8 +145,12 @@ describe("JWT Utility Functions", () => {
     });
 
     describe("verifyRefreshToken", () => {
-        it("should verify a valid refresh token and return payload with jti", () => {
-            const mockPayload = { user_id: "user123", jti: "some-uuid" };
+        it("should verify a valid refresh token and return payload with jti and typ", () => {
+            const mockPayload = {
+                user_id: "user123",
+                jti: "some-uuid",
+                typ: "refresh",
+            };
             (jwt.verify as jest.Mock).mockReturnValue(mockPayload);
 
             const result = verifyRefreshToken("valid_refresh_token");
@@ -134,6 +161,28 @@ describe("JWT Utility Functions", () => {
                 { algorithms: ["RS256"] },
             );
             expect(result).toEqual(mockPayload);
+        });
+
+        it("should reject an access token used as refresh token", () => {
+            (jwt.verify as jest.Mock).mockReturnValue({
+                user_id: "user123",
+                typ: "access",
+            });
+
+            expect(() => verifyRefreshToken("access_token_as_refresh")).toThrow(
+                "Invalid refresh token",
+            );
+            expect(Logger.error).toHaveBeenCalled();
+        });
+
+        it("should reject a token without typ claim", () => {
+            const mockPayload = { user_id: "user123", jti: "some-uuid" };
+            (jwt.verify as jest.Mock).mockReturnValue(mockPayload);
+
+            expect(() => verifyRefreshToken("token_without_typ")).toThrow(
+                "Invalid refresh token",
+            );
+            expect(Logger.error).toHaveBeenCalled();
         });
 
         it("should throw 'Invalid refresh token' for an expired refresh token", () => {
