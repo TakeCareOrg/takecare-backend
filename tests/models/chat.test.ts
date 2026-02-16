@@ -1,3 +1,14 @@
+jest.mock("../../src/config/secrets", () => ({
+    getSecrets: jest.fn(() => ({
+        together: {
+            TOGETHER_API_KEY: "fake-api-key",
+        },
+        chat: {
+            CHAT_START_MESSAGE: "I'm a fake chatbot who's there to not help you",
+        },
+    })),
+}));
+
 import { Chat } from "../../src/models/chat/chat";
 import { Together } from "together-ai";
 import Logger from "@libs/logger";
@@ -6,10 +17,6 @@ import TakeCareUserChatTokens from "../../src/models/user/chat-tokens";
 jest.mock("together-ai");
 jest.mock("@libs/logger");
 jest.mock("../../src/models/user/chat-tokens");
-
-process.env.TOGETHER_API_KEY = "fake-api-key";
-process.env.CHAT_START_MESSAGE =
-    "I'm a fake chatbot who's there to not help you";
 
 describe("Chat", () => {
     let chat: Chat;
@@ -32,6 +39,10 @@ describe("Chat", () => {
                 },
             },
         }));
+    });
+
+    afterEach(() => {
+        jest.clearAllMocks();
     });
 
     it("should throw an error if user_id is not provided", async () => {

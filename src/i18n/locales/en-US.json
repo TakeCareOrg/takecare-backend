@@ -1,0 +1,92 @@
+{
+    "achievements": {
+        "daily": {
+            "steps_10": {
+                "title": "10 daily steps",
+                "description": "Walk 10 steps in one day"
+            },
+            "steps_1k": {
+                "title": "1000 daily steps",
+                "description": "Walk 1000 steps in one day"
+            },
+            "steps_2k": {
+                "title": "2000 daily steps",
+                "description": "Walk 2000 steps in one day"
+            },
+            "steps_5k": {
+                "title": "5000 daily steps",
+                "description": "Walk 5000 steps in one day"
+            },
+            "steps_10k": {
+                "title": "10000 daily steps",
+                "description": "Walk 10000 steps in one day"
+            },
+            "steps_15k": {
+                "title": "15000 daily steps",
+                "description": "Walk 15000 steps in one day"
+            }
+        },
+        "weekly": {
+            "steps_15k": {
+                "title": "15000 weekly steps",
+                "description": "Walk 15000 steps in one week"
+            },
+            "steps_30k": {
+                "title": "30000 weekly steps",
+                "description": "Walk 30000 steps in one week"
+            },
+            "steps_40k": {
+                "title": "40000 weekly steps",
+                "description": "Walk 40000 steps in one week"
+            },
+            "steps_50k": {
+                "title": "50000 weekly steps",
+                "description": "Walk 50000 steps in one week"
+            },
+            "steps_70k": {
+                "title": "70000 weekly steps",
+                "description": "Walk 70000 steps in one week"
+            }
+        },
+        "milestone": {
+            "steps_100k": {
+                "title": "100000 total steps",
+                "description": "Reach 100000 cumulative steps"
+            },
+            "steps_200k": {
+                "title": "200000 total steps",
+                "description": "Reach 200000 cumulative steps"
+            },
+            "steps_300k": {
+                "title": "300000 total steps",
+                "description": "Reach 300000 cumulative steps"
+            },
+            "steps_400k": {
+                "title": "400000 total steps",
+                "description": "Reach 400000 cumulative steps"
+            },
+            "steps_500k": {
+                "title": "500000 total steps",
+                "description": "Reach 500000 cumulative steps"
+            },
+            "steps_1m": {
+                "title": "1 million steps",
+                "description": "Reach 1 million cumulative steps"
+            }
+        }
+    },
+    "levels": {
+        "titles": {
+            "0": "Beginner",
+            "1": "Novice",
+            "2": "Intermediate",
+            "3": "Confirmed",
+            "4": "Expert",
+            "5": "Master",
+            "6": "Champion",
+            "7": "Legend",
+            "8": "Elite",
+            "9": "Grand Master"
+        }
+    }
+}
