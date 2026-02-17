@@ -10,7 +10,9 @@ const connectToMongoDB = async (DATABASE_URL: string | undefined) => {
     const isDev: boolean = process.env.NODE_ENV === "development";
 
     try {
-        const DB_OPTIONS = isDev ? { dbName: "dev" } : { dbName: "takecare" };
+        const DB_OPTIONS = isDev
+            ? { dbName: "dev" }
+            : { dbName: "takecare-prod" };
 
         await mongoose.connect(DATABASE_URL, DB_OPTIONS);
         Logger.info("Connected to MongoDB");
