@@ -645,14 +645,14 @@ describe("User Model Tests", () => {
             });
         });
 
-        it("should return undefined when no health data exists", async () => {
+        it("should return an empty object when no health data exists", async () => {
             UserHealthAttributionsDB.findOne = jest
                 .fn()
                 .mockResolvedValue(null);
 
             const result = await user.getHealthData();
 
-            expect(result).toBeUndefined();
+            expect(result).toEqual({});
         });
 
         it("should throw AN_ERROR_OCCURRED when user_id is empty", async () => {
@@ -663,7 +663,7 @@ describe("User Model Tests", () => {
             );
         });
 
-        it("should log error and return undefined when decryption fails", async () => {
+        it("should log error and return an empty object when decryption fails", async () => {
             const mockHealthInfo = {
                 created_at: new Date(),
                 toObject: jest.fn().mockReturnValue({ weight: "encrypted" }),
@@ -682,7 +682,7 @@ describe("User Model Tests", () => {
                 `Failed to decrypt health data for user ${mockUserId}`,
                 expect.any(Error),
             );
-            expect(result).toBeUndefined();
+            expect(result).toEqual({});
         });
 
         it("should throw when database query fails", async () => {

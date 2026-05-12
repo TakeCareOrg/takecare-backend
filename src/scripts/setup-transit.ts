@@ -14,7 +14,7 @@ async function setupTransit() {
         // Initialize Vault connection
         await vaultService.init();
         // Setup Transit engine with default configuration
-        await vaultService.setupTransit("transit", "user-data");
+        await vaultService.setupTransit("transit", "health-data");
         Logger.info("✅ Transit engine setup complete!");
 
         process.exit(0);
