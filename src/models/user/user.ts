@@ -386,8 +386,6 @@ class User {
                     user_id: this.user_id,
                     created_at: userHealthInfo.created_at,
                 };
-
-                return healthData;
             } catch (error) {
                 Logger.error(
                     `Failed to decrypt health data for user ${this.user_id}`,
@@ -395,6 +393,7 @@ class User {
                 );
             }
         }
+        return healthData;
     }
 }
 
