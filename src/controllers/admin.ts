@@ -1,4 +1,5 @@
 import { UserDB } from "@database/models/user";
+import { AuditLogDB } from "@database/models/auditLog";
 import { RequestMiddleware } from "@dtypes/express";
 import Logger from "@libs/logger";
 import { Auth } from "@models/auth";
@@ -131,4 +132,44 @@ export const editUser: RequestMiddleware = async (req, res) => {
     }
 };
 
-export default { loginAdmin, me, getUsers, editUser, getHealthData };
+export const getUserLogs: RequestMiddleware = async (req, res) => {
+    const { userId } = req.params;
+    if (!userId || typeof userId !== "string") {
+        res.status(StatusCodes.BAD_REQUEST).json({ message: "Invalid userId" });
+        return;
+    }
+
+    const page = Math.max(1, parseInt(req.query.page as string) || 1);
+    const limit = Math.min(
+        100,
+        Math.max(1, parseInt(req.query.limit as string) || 50),
+    );
+    const skip = (page - 1) * limit;
+
+    try {
+        const [logs, total] = await Promise.all([
+            AuditLogDB.find({ userId })
+                .sort({ timestamp: -1 })
+                .skip(skip)
+                .limit(limit)
+                .select("-_id -__v"),
+            AuditLogDB.countDocuments({ userId }),
+        ]);
+
+        res.json({ logs, total, page, limit });
+    } catch (error) {
+        Logger.error(`${StatusCodes.INTERNAL_SERVER_ERROR}: ${error}`);
+        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            message: "Internal server error",
+        });
+    }
+};
+
+export default {
+    loginAdmin,
+    me,
+    getUsers,
+    editUser,
+    getHealthData,
+    getUserLogs,
+};

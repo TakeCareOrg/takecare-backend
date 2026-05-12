@@ -1,6 +1,7 @@
+import express from "express";
+import dotenv from "dotenv";
 import morganMiddleware from "@middlewares/morganMiddleware";
 import cors from "cors";
-import express from "express";
 import helmet from "helmet";
 import swaggerUi from "swagger-ui-express";
 import middleware from "i18next-http-middleware";
@@ -18,7 +19,9 @@ import gamificationRouter from "@routes/gamificationRouter";
 
 import swaggerDocs from "@config/swagger";
 import promBundle from "express-prom-bundle";
+import { auditMiddleware } from "@middlewares/auditMiddleware";
 
+dotenv.config();
 const app = express();
 
 const metricsMiddleware = promBundle({
@@ -39,9 +42,18 @@ app.use(express.urlencoded({ extended: true }));
 // Use Helmet to secure Express app by setting various HTTP headers
 app.use(helmet());
 // Enable CORS with various options
-app.use(cors());
+app.use(
+    cors({
+        origin: "http://localhost:5173",
+        credentials: true,
+        methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+        allowedHeaders: ["Content-Type", "Authorization"],
+    }),
+);
 // Use Morgan middleware for logging requests
 app.use(morganMiddleware);
+// Audit middleware — logs authenticated user actions to MongoDB
+app.use(auditMiddleware);
 // Add translations to back-end
 app.use(middleware.handle(i18next));
 
