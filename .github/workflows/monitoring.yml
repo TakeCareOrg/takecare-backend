@@ -64,8 +64,23 @@ jobs:
                       docker compose pull
                       docker compose up -d --remove-orphans
 
-                      # Sanity checks
-                      sleep 5
                       docker compose ps
-                      curl -fsS http://127.0.0.1:9090/-/ready  >/dev/null && echo "Prometheus: ready"
-                      curl -fsS http://127.0.0.1:7001/api/health >/dev/null && echo "Grafana: healthy"
+
+                      # Poll readiness — Grafana can take 15-20s to finish
+                      # DB migrations + provisioning on first boot.
+                      wait_for() {
+                          local name=$1 url=$2
+                          for i in $(seq 1 24); do
+                              if curl -fsS "$url" >/dev/null 2>&1; then
+                                  echo "$name: ready (after $((i * 5))s)"
+                                  return 0
+                              fi
+                              sleep 5
+                          done
+                          echo "$name: not ready after 120s"
+                          docker compose logs --tail=80 "$name"
+                          return 1
+                      }
+
+                      wait_for prometheus http://127.0.0.1:9090/-/ready
+                      wait_for grafana    http://127.0.0.1:7001/api/health
