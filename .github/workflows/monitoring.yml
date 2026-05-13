@@ -1,0 +1,71 @@
+name: Deploy Monitoring
+
+# Brings up / refreshes the Prometheus + Grafana stack on the VPS.
+# Triggered automatically when files under monitoring/** change on main,
+# and manually via workflow_dispatch.
+#
+# Required secrets (same VPS as deploy.yml):
+#   VPS_HOST, VPS_USER, SSH_PRIVATE_KEY
+#   GRAFANA_PASSWORD     -> admin password for Grafana
+#
+# Configured below (not a secret, just env):
+#   GRAFANA_DOMAIN       -> public hostname served by nginx
+
+on:
+    push:
+        branches: [main]
+        paths:
+            - "monitoring/**"
+            - ".github/workflows/monitoring.yml"
+    workflow_dispatch:
+
+concurrency:
+    group: monitoring-deploy
+    cancel-in-progress: true
+
+env:
+    GRAFANA_DOMAIN: grafana-tc.loule.me
+
+jobs:
+    deploy-monitoring:
+        name: Deploy Prometheus + Grafana
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Copy monitoring/ to VPS
+              uses: appleboy/scp-action@v0.1.7
+              with:
+                  host: ${{ secrets.VPS_HOST }}
+                  username: ${{ secrets.VPS_USER }}
+                  key: ${{ secrets.SSH_PRIVATE_KEY }}
+                  source: "monitoring/"
+                  target: "~/takecare-monitoring"
+                  strip_components: 0
+
+            - name: Render .env and start the stack
+              uses: appleboy/ssh-action@v1.2.0
+              with:
+                  host: ${{ secrets.VPS_HOST }}
+                  username: ${{ secrets.VPS_USER }}
+                  key: ${{ secrets.SSH_PRIVATE_KEY }}
+                  envs: GRAFANA_PASSWORD
+                  script: |
+                      set -e
+                      cd ~/takecare-monitoring/monitoring
+
+                      # Write .env atomically from the secret (chmod 600)
+                      umask 077
+                      {
+                        printf 'GRAFANA_PASSWORD=%s\n' "${{ secrets.GRAFANA_PASSWORD }}"
+                        printf 'GRAFANA_DOMAIN=%s\n'   "${{ env.GRAFANA_DOMAIN }}"
+                      } > .env
+
+                      docker compose pull
+                      docker compose up -d --remove-orphans
+
+                      # Sanity checks
+                      sleep 5
+                      docker compose ps
+                      curl -fsS http://127.0.0.1:9090/-/ready  >/dev/null && echo "Prometheus: ready"
+                      curl -fsS http://127.0.0.1:7001/api/health >/dev/null && echo "Grafana: healthy"

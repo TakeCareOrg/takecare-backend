@@ -1,0 +1,26 @@
+global:
+    scrape_interval: 15s
+    scrape_timeout: 10s
+
+scrape_configs:
+    - job_name: "prometheus"
+      static_configs:
+          - targets: ["localhost:9090"]
+
+    - job_name: "takecare-api"
+      metrics_path: "/metrics"
+      static_configs:
+          # API containers run with `--network host` on the VPS (see
+          # .github/workflows/deploy.yml). They bind these ports on the host:
+          #   main    -> 3001 (takecare-api)
+          #   develop -> 3002 (takecare-api-beta)
+          # `host.docker.internal` resolves to the host gateway thanks to the
+          # extra_hosts entry in docker-compose.yml.
+          - targets: ["host.docker.internal:3001"]
+            labels:
+                env: "prod"
+                container: "takecare-api"
+          - targets: ["host.docker.internal:3002"]
+            labels:
+                env: "beta"
+                container: "takecare-api-beta"
