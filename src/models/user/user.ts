@@ -85,6 +85,18 @@ const updateUserInfoPayloadSchema = z
     })
     .strict();
 
+const updateAdminUserInfoPayloadSchema = z
+    .object({
+        first_name: z.string().min(1).max(50).optional(),
+        last_name: z.string().min(1).max(50).optional(),
+        avatar: z.string().url().optional(),
+        chat_tokens: z.number().int().min(0).optional(),
+        role: z.enum(["user", "admin"]).optional(),
+        verified: z.boolean().optional(),
+        quiz_finished: z.boolean().optional(),
+    })
+    .strip();
+
 const userCompleteSchema = userAttributionsSchema.extend({
     health: userHealthDataSchema.extend({
         user_id: z.string(),
@@ -314,6 +326,35 @@ class User {
             ]);
 
             return validatedData.data;
+        } catch (error) {
+            Logger.error(error);
+            throw new Error("AN_ERROR_OCCURRED");
+        }
+    }
+
+    async updateAdminUserInfo(
+        data: z.infer<typeof updateAdminUserInfoPayloadSchema>,
+    ): Promise<void> {
+        if (!this.user_id) {
+            throw new Error("USER_ID_REQUIRED");
+        }
+
+        const validatedData = updateAdminUserInfoPayloadSchema.safeParse(data);
+        if (!validatedData.success) {
+            throw new Error(validatedData.error.message);
+        }
+
+        if (Object.keys(validatedData.data).length === 0) return;
+
+        try {
+            const result = await UserDB.updateOne(
+                { user_id: this.user_id },
+                { $set: validatedData.data },
+            );
+
+            if (result.matchedCount === 0) {
+                throw new Error("USER_NOT_FOUND");
+            }
         } catch (error) {
             Logger.error(error);
             throw new Error("AN_ERROR_OCCURRED");

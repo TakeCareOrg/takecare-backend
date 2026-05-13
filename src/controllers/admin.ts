@@ -122,8 +122,15 @@ export const editUser: RequestMiddleware = async (req, res) => {
             });
             return;
         }
-        await userInstance.updateHealthData(modifiedUser.health);
-        res.json({ success: true });
+        const { health, ...profileData } = modifiedUser;
+
+        await Promise.all([
+            health ? userInstance.updateHealthData(health) : Promise.resolve(),
+            userInstance.updateAdminUserInfo(profileData),
+        ]);
+
+        const updatedUser = await userInstance.getUserInfo();
+        res.json({ success: true, user: updatedUser?.user });
     } catch (error) {
         Logger.error(`${StatusCodes.INTERNAL_SERVER_ERROR}: ${error}`);
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
