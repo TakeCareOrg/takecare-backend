@@ -48,30 +48,64 @@ Automatic, via [`.github/workflows/monitoring.yml`](../.github/workflows/monitor
 | `SSH_PRIVATE_KEY`  | SSH key (shared with `deploy.yml`)    |
 | `GRAFANA_PASSWORD` | Grafana admin password                |
 
+`GRAFANA_DOMAIN` is set as a plain workflow env (currently
+`grafana-tc.loule.me`), since it's not sensitive.
+
 ## Manual deploy on the VPS
 
 ```bash
 ssh <user>@<vps>
 cd ~/takecare-monitoring/monitoring   # or wherever you placed it
-cp .env.example .env && $EDITOR .env  # set GRAFANA_PASSWORD
+cp .env.example .env && $EDITOR .env  # set GRAFANA_PASSWORD + GRAFANA_DOMAIN
 docker compose up -d
 ```
 
-## Endpoints (localhost-only by design)
+## Endpoints
 
-| Service    | URL                       | Credentials                 |
-| ---------- | ------------------------- | --------------------------- |
-| Prometheus | http://127.0.0.1:9090     | none                        |
-| Grafana    | http://127.0.0.1:7001     | admin / `$GRAFANA_PASSWORD` |
+Both services keep their port bindings on `127.0.0.1` (the VPS itself).
+Public access is provided by the existing nginx, following the same
+`<service>-tc.loule.me` pattern as `api-tc.loule.me` and `vault-tc.loule.me`.
 
-Access from your laptop via SSH tunnel:
-
-```bash
-ssh -L 9090:127.0.0.1:9090 -L 7001:127.0.0.1:7001 <user>@<vps>
-```
+| Service    | Internal (on the VPS)     | Public                              |
+| ---------- | ------------------------- | ----------------------------------- |
+| Prometheus | http://127.0.0.1:9090     | none — not exposed (no auth)        |
+| Grafana    | http://127.0.0.1:7001     | https://grafana-tc.loule.me         |
 
 The "TakeCare Backend" dashboard is auto-provisioned on first boot
-(folder: "TakeCare").
+(folder: "TakeCare"). Log in as `admin` with `$GRAFANA_PASSWORD`.
+
+### One-time nginx setup
+
+```bash
+# On the VPS, from this repo's monitoring/ directory:
+sudo cp nginx/grafana-tc.loule.me.conf.example \
+        /etc/nginx/sites-available/grafana-tc.loule.me
+sudo ln -s /etc/nginx/sites-available/grafana-tc.loule.me \
+           /etc/nginx/sites-enabled/
+
+# Create the TLS cert (Let's Encrypt)
+sudo certbot --nginx -d grafana-tc.loule.me
+
+# Reload
+sudo nginx -t && sudo systemctl reload nginx
+```
+
+Don't forget the DNS `A` record for `grafana-tc.loule.me` pointing to the
+VPS, same as the other `*-tc.loule.me` entries.
+
+### Reaching Prometheus
+
+Prometheus has **no built-in auth** and is intentionally not exposed. Two
+options if you need to query it directly:
+
+```bash
+# 1. SSH tunnel
+ssh -L 9090:127.0.0.1:9090 <user>@<vps>
+# then http://127.0.0.1:9090
+
+# 2. Use Grafana's Explore tab — the Prometheus datasource is
+#    auto-provisioned and proxies queries server-side.
+```
 
 ## Local dev (API running on your laptop, not on the VPS)
 

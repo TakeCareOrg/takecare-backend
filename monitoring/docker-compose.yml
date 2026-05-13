@@ -36,6 +36,12 @@ services:
         environment:
             - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:?GRAFANA_PASSWORD must be set}
             - GF_USERS_ALLOW_SIGN_UP=false
+            # Reverse-proxy awareness: Grafana sits behind nginx, which
+            # terminates TLS for https://${GRAFANA_DOMAIN} and proxies to
+            # 127.0.0.1:7001 on the host.
+            - GF_SERVER_ROOT_URL=https://${GRAFANA_DOMAIN:?GRAFANA_DOMAIN must be set}
+            - GF_SERVER_DOMAIN=${GRAFANA_DOMAIN}
+            - GF_SECURITY_COOKIE_SECURE=true
         extra_hosts:
             - "host.docker.internal:host-gateway"
         ports:

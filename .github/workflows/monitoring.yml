@@ -7,6 +7,9 @@ name: Deploy Monitoring
 # Required secrets (same VPS as deploy.yml):
 #   VPS_HOST, VPS_USER, SSH_PRIVATE_KEY
 #   GRAFANA_PASSWORD     -> admin password for Grafana
+#
+# Configured below (not a secret, just env):
+#   GRAFANA_DOMAIN       -> public hostname served by nginx
 
 on:
     push:
@@ -19,6 +22,9 @@ on:
 concurrency:
     group: monitoring-deploy
     cancel-in-progress: true
+
+env:
+    GRAFANA_DOMAIN: grafana-tc.loule.me
 
 jobs:
     deploy-monitoring:
@@ -50,7 +56,10 @@ jobs:
 
                       # Write .env atomically from the secret (chmod 600)
                       umask 077
-                      printf 'GRAFANA_PASSWORD=%s\n' "${{ secrets.GRAFANA_PASSWORD }}" > .env
+                      {
+                        printf 'GRAFANA_PASSWORD=%s\n' "${{ secrets.GRAFANA_PASSWORD }}"
+                        printf 'GRAFANA_DOMAIN=%s\n'   "${{ env.GRAFANA_DOMAIN }}"
+                      } > .env
 
                       docker compose pull
                       docker compose up -d --remove-orphans
