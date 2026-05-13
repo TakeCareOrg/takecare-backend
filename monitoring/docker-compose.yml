@@ -1,15 +1,17 @@
 # monitoring/docker-compose.yml
 #
-# Standalone monitoring stack (Prometheus + Grafana).
-# Both services join the `takecare_net` network so they can reach the API
-# container by its service name (default: "express" on port 4000).
+# Standalone monitoring stack (Prometheus + Grafana) deployed on the same VPS
+# as the API. The API containers are started by .github/workflows/deploy.yml
+# with `--network host` and bind ports 3001 (main) / 3002 (develop) on the
+# host. Prometheus reaches them via the Docker host gateway, exposed inside
+# its container as `host.docker.internal` (works on Linux thanks to the
+# `host-gateway` magic value).
 #
-# 1. Create the shared network once:
-#      docker network create takecare_net
-# 2. Make sure the API container joins it too (set `networks: [takecare_net]`
-#    in the API's compose file, or run it with `--network takecare_net`).
-# 3. Copy .env.example to .env and set GRAFANA_PASSWORD.
-# 4. From this directory: docker compose up -d
+# Setup on the VPS:
+#   1. cp .env.example .env && edit GRAFANA_PASSWORD
+#   2. docker compose up -d
+#
+# Or, from CI: see .github/workflows/monitoring.yml
 services:
     prometheus:
         image: prom/prometheus:latest
@@ -19,10 +21,10 @@ services:
         command:
             - "--config.file=/etc/prometheus/prometheus.yml"
             - "--storage.tsdb.retention.time=15d"
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
         ports:
             - "127.0.0.1:9090:9090" # Only localhost, not public
-        networks:
-            - takecare_net
         restart: unless-stopped
 
     grafana:
@@ -34,10 +36,10 @@ services:
         environment:
             - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:?GRAFANA_PASSWORD must be set}
             - GF_USERS_ALLOW_SIGN_UP=false
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
         ports:
             - "127.0.0.1:7001:3000" # Only localhost
-        networks:
-            - takecare_net
         restart: unless-stopped
         depends_on:
             - prometheus
@@ -45,7 +47,3 @@ services:
 volumes:
     prometheus_data:
     grafana_data:
-
-networks:
-    takecare_net:
-        external: true
