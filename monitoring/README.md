@@ -76,22 +76,15 @@ The "TakeCare Backend" dashboard is auto-provisioned on first boot
 
 ### One-time nginx setup
 
-```bash
-# On the VPS, from this repo's monitoring/ directory:
-sudo cp nginx/grafana-tc.loule.me.conf.example \
-        /etc/nginx/sites-available/grafana-tc.loule.me
-sudo ln -s /etc/nginx/sites-available/grafana-tc.loule.me \
-           /etc/nginx/sites-enabled/
+Add a server block for `grafana-tc.loule.me` to the existing nginx config
+on the VPS — same pattern as `api-tc.loule.me` / `vault-tc.loule.me`.
+The upstream is `http://127.0.0.1:7001`. Don't forget WebSocket upgrade
+headers (`Upgrade`, `Connection`) so Grafana Live works.
 
-# Create the TLS cert (Let's Encrypt)
-sudo certbot --nginx -d grafana-tc.loule.me
+Also required:
 
-# Reload
-sudo nginx -t && sudo systemctl reload nginx
-```
-
-Don't forget the DNS `A` record for `grafana-tc.loule.me` pointing to the
-VPS, same as the other `*-tc.loule.me` entries.
+- A DNS `A` record for `grafana-tc.loule.me` pointing to the VPS
+- A TLS cert: `sudo certbot --nginx -d grafana-tc.loule.me`
 
 ### Reaching Prometheus
 
