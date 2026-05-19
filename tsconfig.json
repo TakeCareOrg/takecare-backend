@@ -7,22 +7,22 @@
         "module": "commonjs" /* Specify what module code is generated. */,
         "rootDir": "./src" /* Specify the root folder within your source files. */,
         /* JavaScript Support */
-        "baseUrl": "./src" /* Specify the base directory to resolve non-relative module names. */,
         "paths": {
-            "@middlewares/*": ["middlewares/*"],
-            "@routes/*": ["routes/*"],
-            "@libs/*": ["libs/*"],
-            "@models/*": ["models/*"],
-            "@services/*": ["services/*"],
-            "@dtypes/*": ["types/*"],
-            "@utils/*": ["utils/*"],
-            "@controllers/*": ["controllers/*"],
-            "@database/*": ["database/*"],
-            "@config/*": ["config/*"],
-            "@docs/*": ["docs/*"],
-            "@data/*": ["data/*"],
-            "@constants/*": ["constants/*"],
-            "@validators/*": ["validators/*"]
+            "@middlewares/*": ["./src/middlewares/*"],
+            "@routes/*": ["./src/routes/*"],
+            "@libs/*": ["./src/libs/*"],
+            "@models/*": ["./src/models/*"],
+            "@services/*": ["./src/services/*"],
+            "@dtypes/*": ["./src/types/*"],
+            "@utils/*": ["./src/utils/*"],
+            "@controllers/*": ["./src/controllers/*"],
+            "@database/*": ["./src/database/*"],
+            "@config/*": ["./src/config/*"],
+            "@docs/*": ["./src/docs/*"],
+            "@data/*": ["./src/data/*"],
+            "@constants/*": ["./src/constants/*"],
+            "@validators/*": ["./src/validators/*"],
+            "@jobs/*": ["./src/jobs/*"]
         },
 
         /* Emit */

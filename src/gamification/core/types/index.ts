@@ -61,4 +61,5 @@ export interface GamificationProcessResult {
     streakBonus: number;
     levelInfo: LevelInfo;
     totalPoints: number;
+    dailyActivities: DailyActivity[];
 }

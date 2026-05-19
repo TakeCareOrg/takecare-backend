@@ -32,14 +32,36 @@ export const processUserSteps = async (
     t?: TFunction,
 ): Promise<GamificationProcessResult> => {
     const userData = await dbAdapter.fetchUserGamificationData(userId);
-    await dbAdapter.fetchTodayActivity(userId);
+    const existingTodayActivity = await dbAdapter.fetchTodayActivity(userId);
 
-    const currentStreak = calculateStreak(userData.dailyActivities);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const todayISO = today.toISOString();
+
+    const todayActivity: DailyActivity = {
+        date: todayISO,
+        steps: Math.max(existingTodayActivity?.steps ?? 0, stepCount),
+        completed: true,
+    };
+
+    await dbAdapter.updateDailyActivity(userId, todayActivity);
+
+    const dailyActivities = existingTodayActivity
+        ? userData.dailyActivities.map((activity) => {
+              const activityDate = new Date(activity.date);
+              activityDate.setHours(0, 0, 0, 0);
+              return activityDate.getTime() === today.getTime()
+                  ? todayActivity
+                  : activity;
+          })
+        : [...userData.dailyActivities, todayActivity];
+
+    const currentStreak = calculateStreak(dailyActivities);
 
     const userProgress: UserProgress = {
         steps: stepCount,
         consecutiveDays: currentStreak,
-        weeklySteps: calculateWeeklySteps(userData.dailyActivities),
+        weeklySteps: calculateWeeklySteps(dailyActivities),
         timestamp: new Date().toISOString(),
     };
 
@@ -79,5 +101,6 @@ export const processUserSteps = async (
         streakBonus,
         levelInfo,
         totalPoints: updatedTotalPoints,
+        dailyActivities,
     };
 };

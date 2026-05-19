@@ -70,13 +70,13 @@ describe("gamificationService", () => {
 
             expect(result.newAchievements.length).toBeGreaterThan(0);
             expect(result.pointsEarned).toBeGreaterThan(0);
-            expect(result.currentStreak).toBe(0);
+            expect(result.currentStreak).toBe(1);
             expect(result.levelInfo.level).toBeGreaterThanOrEqual(0);
             expect(result.totalPoints).toBeGreaterThanOrEqual(0);
             expect(mockUserGamificationDB.findOneAndUpdate).toHaveBeenCalled();
         });
 
-        it("should not save when no new achievements and no streak bonus", async () => {
+        it("should not save achievements when no new achievements and no streak bonus", async () => {
             const mockUser = {
                 user_id: "user123",
             };
@@ -135,9 +135,14 @@ describe("gamificationService", () => {
             expect(result.newAchievements).toHaveLength(0);
             expect(result.pointsEarned).toBe(0);
             expect(result.totalPoints).toBe(10);
-            expect(
-                mockUserGamificationDB.findOneAndUpdate,
-            ).not.toHaveBeenCalled();
+            // findOneAndUpdate is still called once to persist today's
+            // DailyActivity, but saveUserAchievements (which would push a new
+            // achievement entry) must not be called when no new achievements
+            // were earned and no streak bonus is due.
+            const achievementSaves = (
+                mockUserGamificationDB.findOneAndUpdate as jest.Mock
+            ).mock.calls.filter(([, update]) => Boolean(update?.$push?.achievements));
+            expect(achievementSaves).toHaveLength(0);
         });
 
         it("should award streak bonus for 7 consecutive days", async () => {
@@ -312,7 +317,7 @@ describe("gamificationService", () => {
 
             const result = await processUserSteps("user123", 6000);
 
-            expect(result.currentStreak).toBe(0);
+            expect(result.currentStreak).toBe(1);
             expect(result.streakBonus).toBe(0);
             expect(result.totalPoints).toBeGreaterThanOrEqual(0);
             expect(mockUserGamificationDB.findOneAndUpdate).toHaveBeenCalled();
@@ -564,6 +569,56 @@ describe("gamificationService", () => {
 
             expect(result.totalPoints).toBeGreaterThan(50);
             expect(result.totalPoints).toBe(50 + result.pointsEarned);
+        });
+
+        it("should persist today's DailyActivity as completed for a brand new user (streak goes from 0 to 1)", async () => {
+            const mockUser = { user_id: "user123" };
+
+            const mockGamification = {
+                user_id: "user123",
+                achievements: [],
+                totalPoints: 0,
+                dailyActivities: [],
+            };
+
+            (mockUserDB.findOne as jest.Mock).mockReturnValue(
+                createMockQuery(mockUser),
+            );
+
+            let callCount = 0;
+            (mockUserGamificationDB.findOne as jest.Mock).mockImplementation(
+                () => {
+                    callCount++;
+                    if (callCount <= 2) {
+                        return createMockQuery(null);
+                    }
+                    return createMockQuery(mockGamification);
+                },
+            );
+
+            (mockUserGamificationDB.create as jest.Mock).mockResolvedValue(
+                mockGamification,
+            );
+            (
+                mockUserGamificationDB.findOneAndUpdate as jest.Mock
+            ).mockResolvedValue(undefined);
+
+            const result = await processUserSteps("user123", 0);
+
+            // Today's connection alone must bring the streak from 0 to 1,
+            // even when the user has zero recorded steps for the day.
+            expect(result.currentStreak).toBe(1);
+            expect(result.dailyActivities).toHaveLength(1);
+            expect(result.dailyActivities[0].completed).toBe(true);
+            expect(result.dailyActivities[0].steps).toBe(0);
+
+            // Verify the DailyActivity was actually pushed to the DB.
+            const activityPushes = (
+                mockUserGamificationDB.findOneAndUpdate as jest.Mock
+            ).mock.calls.filter(([, update]) =>
+                Boolean(update?.$push?.dailyActivities),
+            );
+            expect(activityPushes.length).toBeGreaterThan(0);
         });
     });
 });
