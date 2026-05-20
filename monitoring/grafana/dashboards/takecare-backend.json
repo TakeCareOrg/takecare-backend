@@ -2,16 +2,132 @@
     "annotations": { "list": [] },
     "editable": true,
     "fiscalYearStartMonth": 0,
-    "graphTooltip": 0,
+    "graphTooltip": 1,
     "id": null,
     "links": [],
     "liveNow": false,
     "panels": [
         {
             "type": "stat",
-            "title": "Requests / sec (5m)",
+            "title": "Total Requests",
             "id": 1,
             "gridPos": { "x": 0, "y": 0, "w": 6, "h": 4 },
+            "targets": [
+                {
+                    "expr": "sum(http_request_duration_seconds_count)",
+                    "refId": "A"
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "short",
+                    "color": { "fixedColor": "blue", "mode": "fixed" }
+                },
+                "overrides": []
+            },
+            "options": {
+                "reduceOptions": { "calcs": ["lastNotNull"] },
+                "textMode": "auto",
+                "colorMode": "background",
+                "orientation": "auto"
+            }
+        },
+        {
+            "type": "stat",
+            "title": "Users created (total)",
+            "id": 2,
+            "gridPos": { "x": 6, "y": 0, "w": 6, "h": 4 },
+            "targets": [
+                {
+                    "expr": "sum(user_created_total)",
+                    "refId": "A"
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "short",
+                    "color": { "fixedColor": "green", "mode": "fixed" }
+                },
+                "overrides": []
+            },
+            "options": {
+                "reduceOptions": { "calcs": ["lastNotNull"] },
+                "textMode": "auto",
+                "colorMode": "background",
+                "orientation": "auto"
+            }
+        },
+        {
+            "type": "stat",
+            "title": "Quizzes completed (total)",
+            "id": 3,
+            "gridPos": { "x": 12, "y": 0, "w": 6, "h": 4 },
+            "targets": [
+                {
+                    "expr": "sum(quizz_completed_total)",
+                    "refId": "A"
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "short",
+                    "color": { "fixedColor": "purple", "mode": "fixed" }
+                },
+                "overrides": []
+            },
+            "options": {
+                "reduceOptions": { "calcs": ["lastNotNull"] },
+                "textMode": "auto",
+                "colorMode": "background",
+                "orientation": "auto"
+            }
+        },
+        {
+            "type": "stat",
+            "title": "App uptime",
+            "id": 4,
+            "gridPos": { "x": 18, "y": 0, "w": 6, "h": 4 },
+            "targets": [
+                {
+                    "expr": "up{job=\"takecare-api\"}",
+                    "refId": "A"
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "short",
+                    "mappings": [
+                        {
+                            "type": "value",
+                            "options": {
+                                "0": { "text": "DOWN" },
+                                "1": { "text": "UP" }
+                            }
+                        }
+                    ],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            { "color": "red", "value": null },
+                            { "color": "green", "value": 1 }
+                        ]
+                    },
+                    "color": { "mode": "thresholds" }
+                },
+                "overrides": []
+            },
+            "options": {
+                "reduceOptions": { "calcs": ["lastNotNull"] },
+                "textMode": "auto",
+                "colorMode": "background",
+                "orientation": "auto"
+            }
+        },
+        {
+            "type": "stat",
+            "title": "Requests / sec (5m)",
+            "id": 5,
+            "gridPos": { "x": 0, "y": 4, "w": 12, "h": 4 },
             "targets": [
                 {
                     "expr": "sum(rate(http_request_duration_seconds_count[5m]))",
@@ -23,11 +139,7 @@
                 "overrides": []
             },
             "options": {
-                "reduceOptions": {
-                    "calcs": ["lastNotNull"],
-                    "fields": "",
-                    "values": false
-                },
+                "reduceOptions": { "calcs": ["lastNotNull"] },
                 "textMode": "auto",
                 "colorMode": "value",
                 "graphMode": "area",
@@ -37,8 +149,8 @@
         {
             "type": "stat",
             "title": "Error rate (5xx, 5m)",
-            "id": 2,
-            "gridPos": { "x": 6, "y": 0, "w": 6, "h": 4 },
+            "id": 6,
+            "gridPos": { "x": 12, "y": 4, "w": 12, "h": 4 },
             "targets": [
                 {
                     "expr": "sum(rate(http_request_duration_seconds_count{status_code=~\"5..\"}[5m])) / sum(rate(http_request_duration_seconds_count[5m]))",
@@ -61,30 +173,16 @@
                 "overrides": []
             },
             "options": {
-                "reduceOptions": { "calcs": ["lastNotNull"], "fields": "" },
+                "reduceOptions": { "calcs": ["lastNotNull"] },
                 "colorMode": "value",
                 "graphMode": "area"
             }
         },
         {
-            "type": "stat",
-            "title": "Users created (total)",
-            "id": 3,
-            "gridPos": { "x": 12, "y": 0, "w": 6, "h": 4 },
-            "targets": [{ "expr": "user_created_total", "refId": "A" }]
-        },
-        {
-            "type": "stat",
-            "title": "Quizz completed (total)",
-            "id": 4,
-            "gridPos": { "x": 18, "y": 0, "w": 6, "h": 4 },
-            "targets": [{ "expr": "quizz_completed_total", "refId": "A" }]
-        },
-        {
             "type": "timeseries",
-            "title": "Request latency (seconds)",
-            "id": 5,
-            "gridPos": { "x": 0, "y": 4, "w": 12, "h": 8 },
+            "title": "Response time p50 / p95 / p99",
+            "id": 7,
+            "gridPos": { "x": 0, "y": 8, "w": 24, "h": 8 },
             "targets": [
                 {
                     "expr": "histogram_quantile(0.50, sum by (le) (rate(http_request_duration_seconds_bucket[5m])))",
@@ -103,15 +201,19 @@
                 }
             ],
             "fieldConfig": {
-                "defaults": { "unit": "s" },
+                "defaults": {
+                    "unit": "s",
+                    "color": { "mode": "palette-classic" }
+                },
                 "overrides": []
-            }
+            },
+            "options": { "tooltip": { "mode": "multi" } }
         },
         {
             "type": "timeseries",
             "title": "Requests by status code (rps)",
-            "id": 6,
-            "gridPos": { "x": 12, "y": 4, "w": 12, "h": 8 },
+            "id": 8,
+            "gridPos": { "x": 0, "y": 16, "w": 12, "h": 8 },
             "targets": [
                 {
                     "expr": "sum by (status_code) (rate(http_request_duration_seconds_count[5m]))",
@@ -125,10 +227,31 @@
             }
         },
         {
+            "type": "piechart",
+            "title": "HTTP status codes distribution (last 1h)",
+            "id": 9,
+            "gridPos": { "x": 12, "y": 16, "w": 12, "h": 8 },
+            "targets": [
+                {
+                    "expr": "sum(increase(http_request_duration_seconds_count[1h])) by (status_code)",
+                    "legendFormat": "{{status_code}}",
+                    "refId": "A"
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "short",
+                    "color": { "mode": "palette-classic" }
+                },
+                "overrides": []
+            },
+            "options": { "pieType": "donut", "tooltip": { "mode": "multi" } }
+        },
+        {
             "type": "timeseries",
             "title": "Top routes by RPS",
-            "id": 7,
-            "gridPos": { "x": 0, "y": 12, "w": 12, "h": 8 },
+            "id": 10,
+            "gridPos": { "x": 0, "y": 24, "w": 12, "h": 8 },
             "targets": [
                 {
                     "expr": "topk(10, sum by (path, method) (rate(http_request_duration_seconds_count[5m])))",
@@ -142,10 +265,35 @@
             }
         },
         {
+            "type": "bargauge",
+            "title": "Slowest routes (avg response time)",
+            "id": 11,
+            "gridPos": { "x": 12, "y": 24, "w": 12, "h": 8 },
+            "targets": [
+                {
+                    "expr": "sort_desc(sum(rate(http_request_duration_seconds_sum[5m])) by (path) / sum(rate(http_request_duration_seconds_count[5m])) by (path))",
+                    "legendFormat": "{{path}}",
+                    "refId": "A"
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "s",
+                    "color": { "mode": "palette-classic" }
+                },
+                "overrides": []
+            },
+            "options": {
+                "orientation": "horizontal",
+                "reduceOptions": { "calcs": ["lastNotNull"] },
+                "displayMode": "gradient"
+            }
+        },
+        {
             "type": "timeseries",
             "title": "Node.js process (CPU / RSS)",
-            "id": 8,
-            "gridPos": { "x": 12, "y": 12, "w": 12, "h": 8 },
+            "id": 12,
+            "gridPos": { "x": 0, "y": 32, "w": 24, "h": 8 },
             "targets": [
                 {
                     "expr": "rate(process_cpu_seconds_total[1m])",
@@ -162,12 +310,12 @@
     ],
     "refresh": "30s",
     "schemaVersion": 39,
-    "tags": ["takecare", "backend"],
+    "tags": ["takecare", "backend", "api"],
     "templating": { "list": [] },
     "time": { "from": "now-1h", "to": "now" },
     "timepicker": {},
     "timezone": "",
-    "title": "TakeCare Backend",
+    "title": "TakeCare Backend — API Performance",
     "uid": "takecare-backend",
     "version": 1,
     "weekStart": ""
