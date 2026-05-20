@@ -42,9 +42,21 @@ app.use(express.urlencoded({ extended: true }));
 // Use Helmet to secure Express app by setting various HTTP headers
 app.use(helmet());
 // Enable CORS with various options
+const allowedOrigins = [
+    "http://localhost:5173",
+    "https://dashboard-tc.loule.me",
+];
 app.use(
     cors({
-        origin: "http://localhost:5173",
+        // Mobile apps (native networking) send no Origin header — allow those
+        // through; for browser origins, check against the whitelist.
+        origin: (origin, callback) => {
+            if (!origin || allowedOrigins.includes(origin)) {
+                callback(null, true);
+            } else {
+                callback(new Error(`Origin ${origin} not allowed by CORS`));
+            }
+        },
         credentials: true,
         methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
         allowedHeaders: ["Content-Type", "Authorization"],
