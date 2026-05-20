@@ -30,4 +30,12 @@ router.put(
     controller.editUser,
 );
 
+// GET -> /admin/users/:userId/logs
+router.get(
+    "/users/:userId/logs",
+    authenticateJWT,
+    isAdminMiddlware,
+    controller.getUserLogs,
+);
+
 export default router;
