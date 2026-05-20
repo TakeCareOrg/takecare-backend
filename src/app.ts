@@ -20,6 +20,7 @@ import gamificationRouter from "@routes/gamificationRouter";
 import swaggerDocs from "@config/swagger";
 import promBundle from "express-prom-bundle";
 import { auditMiddleware } from "@middlewares/auditMiddleware";
+import { register } from "@config/metrics";
 
 dotenv.config();
 const app = express();
@@ -32,6 +33,12 @@ const metricsMiddleware = promBundle({
         0.001, 0.01, 0.1, 1, 2, 3, 5, 7, 10, 15, 20, 25, 30, 35, 40, 50, 70,
         100, 200,
     ],
+    // Share the same Registry as src/config/metrics.ts so /metrics exposes
+    // both HTTP-bundle metrics and the custom business metrics. The custom
+    // route in @routes/metricsRouter serves register.metrics(), so we disable
+    // the bundle's auto-mounted endpoint to avoid two handlers on /metrics.
+    promRegistry: register,
+    autoregister: false,
 });
 
 app.use(metricsMiddleware);

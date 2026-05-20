@@ -1,4 +1,17 @@
-# ~/monitoring/docker-compose.yml
+# monitoring/docker-compose.yml
+#
+# Standalone monitoring stack (Prometheus + Grafana) deployed on the same VPS
+# as the API. The API containers are started by .github/workflows/deploy.yml
+# with `--network host` and bind ports 3001 (main) / 3002 (develop) on the
+# host. Prometheus reaches them via the Docker host gateway, exposed inside
+# its container as `host.docker.internal` (works on Linux thanks to the
+# `host-gateway` magic value).
+#
+# Setup on the VPS:
+#   1. cp .env.example .env && edit GRAFANA_PASSWORD
+#   2. docker compose up -d
+#
+# Or, from CI: see .github/workflows/monitoring.yml
 services:
     prometheus:
         image: prom/prometheus:latest
@@ -8,19 +21,29 @@ services:
         command:
             - "--config.file=/etc/prometheus/prometheus.yml"
             - "--storage.tsdb.retention.time=15d"
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
         ports:
             - "127.0.0.1:9090:9090" # Only localhost, not public
         restart: unless-stopped
 
     grafana:
-        image: grafana/grafana
+        image: grafana/grafana:latest
         volumes:
             - grafana_data:/var/lib/grafana
-            - ./provisioning:/etc/grafana/provisioning:ro
-            - ./dashboards:/var/lib/grafana/dashboards:ro
+            - ./grafana/provisioning:/etc/grafana/provisioning:ro
+            - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
         environment:
-            - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+            - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:?GRAFANA_PASSWORD must be set}
             - GF_USERS_ALLOW_SIGN_UP=false
+            # Reverse-proxy awareness: Grafana sits behind nginx, which
+            # terminates TLS for https://${GRAFANA_DOMAIN} and proxies to
+            # 127.0.0.1:7001 on the host.
+            - GF_SERVER_ROOT_URL=https://${GRAFANA_DOMAIN:?GRAFANA_DOMAIN must be set}
+            - GF_SERVER_DOMAIN=${GRAFANA_DOMAIN}
+            - GF_SECURITY_COOKIE_SECURE=true
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
         ports:
             - "127.0.0.1:7001:3000" # Only localhost
         restart: unless-stopped
